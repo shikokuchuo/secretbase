@@ -32,34 +32,6 @@
  *  https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf
  */
 
-#ifdef WORDS_BIGENDIAN
-#define MBEDTLS_GET_UINT64_LE(data, offset)                    \
-mbedtls_bswap64(mbedtls_get_unaligned_uint64((data) + (offset)))
-#else
-#define MBEDTLS_GET_UINT64_LE(data, offset)                    \
-mbedtls_get_unaligned_uint64((data) + (offset))
-#endif
-
-#define XOR_BYTE 0x6
-
-static inline uint64_t mbedtls_bswap64(uint64_t x) {
-  return
-  (x & 0x00000000000000ffULL) << 56 |
-    (x & 0x000000000000ff00ULL) << 40 |
-    (x & 0x0000000000ff0000ULL) << 24 |
-    (x & 0x00000000ff000000ULL) <<  8 |
-    (x & 0x000000ff00000000ULL) >>  8 |
-    (x & 0x0000ff0000000000ULL) >> 24 |
-    (x & 0x00ff000000000000ULL) >> 40 |
-    (x & 0xff00000000000000ULL) >> 56;
-}
-
-uint64_t mbedtls_get_unaligned_uint64(const void *p) {
-  uint64_t r;
-  memcpy(&r, p, sizeof(r));
-  return r;
-}
-
 static mbedtls_sha3_family_functions sha3_families[] = {
   { MBEDTLS_SHA3_SHAKE128, 1344,   0, 0x1F },
   { MBEDTLS_SHA3_SHAKE256, 1088,   0, 0x1F },

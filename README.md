@@ -6,9 +6,9 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/secretbase?color=112d4e)](https://CRAN.R-project.org/package=secretbase)
+status](https://www.r-pkg.org/badges/version/secretbase?color=42147b)](https://CRAN.R-project.org/package=secretbase)
 [![nanonext status
-badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=3f72af)](https://shikokuchuo.r-universe.dev/secretbase)
+badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https://shikokuchuo.r-universe.dev/secretbase)
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/nanonext/actions)
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/branch/main/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 <!-- badges: end -->
@@ -40,8 +40,8 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 `secretbase` offers one main function `sha3()`:
 
-To use the SHA-3 cryptographic hash algorithm, argument ‘size’ should be
-specified as one of ‘224’, ‘256’, ‘384’ or ‘512’.
+To use the SHA-3 cryptographic hash algorithm, specify argument ‘size’
+as one of ‘224’, ‘256’, ‘384’ or ‘512’.
 
 Alternatively, specify arbitrary output sizes to use the SHAKE256
 algorithm as an extendable-output function (XOF).
