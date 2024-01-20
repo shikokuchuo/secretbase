@@ -98,8 +98,11 @@
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
 <p><code>secretbase</code> offers one main function <code><a href="reference/sha3.html">sha3()</a></code>:</p>
-<p>To use the SHA-3 cryptographic hash algorithm, specify argument ‘size’ as one of ‘224’, ‘256’, ‘384’ or ‘512’.</p>
-<p>Specify an arbitrary output size to use the SHAKE256 algorithm as an extendable-output function (XOF).</p>
+<p>To use:</p>
+<ul>
+<li>SHA-3 cryptographic hash algorithm, specify ‘size’ as one of ‘224’, ‘256’, ‘384’ or ‘512’.</li>
+<li>SHAKE256 extendable-output function (XOF), specify any other arbitrary output size.</li>
+</ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/">secretbase</a></span><span class="op">)</span></span>
 <span></span>
@@ -110,19 +113,23 @@
 <span><span class="co">#&gt;  [1] a7 21 d5 75 70 e7 ce 36 6a de e2 fc cb e9 77 07 23 c6 e3 62 25 49 c3 1c 7c</span></span>
 <span><span class="co">#&gt; [26] ab 9d bb 4a 79 55 20</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地"</span>, size <span class="op">=</span> <span class="fl">224</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "df2b0bc4d37831d1ec6624312be9ab75e22e08eca52d059d184edf39"</span></span>
+<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, size <span class="op">=</span> <span class="fl">224</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "d9e291d0c9f3dc3007dc0c111aea0b6a938929c8b4766332d8ea791a"</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地"</span>, size <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "d9553a1e8d9ea1cf9d053f72c499d040a11724f32be6e568aba6b078950ae2679842806450bd62f97da8eca517a68c0aa386349140724968daceeac2eaa1340a"</span></span></code></pre></div>
-<p>To hash to an integer value (for example to generate random seeds for R’s pseudo RNGs), specify a size of ‘32’ and pass the resulting raw vector to <code><a href="reference/read_integer.html">read_integer()</a></code>.</p>
+<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, size <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"</span></span></code></pre></div>
+<p>To:</p>
+<ul>
+<li>hash to an integer value, specify a size of ‘32’ and pass the resulting raw vector to <code><a href="reference/read_integer.html">read_integer()</a></code>.</li>
+</ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hash</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地"</span>, size <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">hash</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, size <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">hash</span></span>
-<span><span class="co">#&gt; [1] 6a 92 94 19</span></span>
+<span><span class="co">#&gt; [1] 7f c2 38 77</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/read_integer.html">read_integer</a></span><span class="op">(</span><span class="va">hash</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 429167210</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
+<p>This may be used to generate random seeds for R’s pseudo RNGs.</p>
 </div>
 <div class="section level3">
 <h3 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>

@@ -97,9 +97,9 @@ string or, if FALSE, a raw vector.</p></dd>
 <p>The result of hashing is always a byte sequence, which is converted to a
     character string hex representation if 'convert' is TRUE, or returned as
     a raw vector if 'convert' is FALSE.</p>    
-<p>To hash to an integer value (for example to supply as a random seed to
-    R's pseudo RNGs), set 'size' to 32 and 'convert' to FALSE, and pass the
-    resulting raw vector to <code><a href="read_integer.html">read_integer</a></code>.</p>
+<p>To hash to an integer value, set 'size' to 32 and 'convert' to FALSE, and
+    pass the resulting raw vector to <code><a href="read_integer.html">read_integer</a></code>. This may be
+    used to generate random seeds for R's pseudo RNGs.</p>
     </div>
 
     <div id="ref-examples">
