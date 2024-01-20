@@ -38,7 +38,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers one main function `sha3()`:
+`secretbase` offers one main function: `sha3()`
 
 To use:
 
@@ -60,14 +60,29 @@ sha3("secret base", convert = FALSE)
 sha3("秘密の基地の中", size = 224)
 #> [1] "d9e291d0c9f3dc3007dc0c111aea0b6a938929c8b4766332d8ea791a"
 
-sha3("秘密の基地の中", size = 512)
-#> [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"
+sha3("", size = 512)
+#> [1] "a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26"
 ```
 
-To:
+Hash arbitrary R objects:
 
-- hash to an integer value, specify a size of ‘32’ and pass the
-  resulting raw vector to `read_integer()`.
+- done in-place, in a ‘streaming’ fashion, by R serialization but
+  without allocation of the serialized object
+- ensures portability by always using R serialization version 3, big
+  endian representation, skipping the headers
+
+``` r
+sha3(data.frame(a = 1, b = 2))
+#> [1] "05d4308e79d029b4af5604739ecc6c4efa1f602a23add0ed2d247b7407d4832f"
+
+sha3(NULL)
+#> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
+```
+
+To hash to an integer value:
+
+- specify a size of ‘32’ and pass the resulting raw vector to
+  `read_integer()`.
 
 ``` r
 hash <- sha3("秘密の基地の中", size = 32, convert = FALSE)

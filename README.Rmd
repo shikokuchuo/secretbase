@@ -44,7 +44,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers one main function `sha3()`:
+`secretbase` offers one main function: `sha3()`
 
 To use:
  
@@ -60,12 +60,23 @@ sha3("secret base", convert = FALSE)
 
 sha3("秘密の基地の中", size = 224)
 
-sha3("秘密の基地の中", size = 512)
+sha3("", size = 512)
 ```
 
-To:
+Hash arbitrary R objects:
 
- - hash to an integer value, specify a size of '32' and pass the resulting raw vector to `read_integer()`.
+ - done in-place, in a 'streaming' fashion, by R serialization but without allocation of the serialized object
+ - ensures portability by always using R serialization version 3, big endian representation, skipping the headers
+
+```{r streaming}
+sha3(data.frame(a = 1, b = 2))
+
+sha3(NULL)
+```
+
+To hash to an integer value:
+
+ - specify a size of '32' and pass the resulting raw vector to `read_integer()`.
 
 ```{r readinteger}
 hash <- sha3("秘密の基地の中", size = 32, convert = FALSE)

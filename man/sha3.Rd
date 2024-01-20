@@ -21,14 +21,18 @@ string or, if FALSE, a raw vector.}
 A raw vector or character string depending on 'convert'.
 }
 \description{
-Returns a SHA-3 hash of the supplied R object. This implementation uses code
-    from the 'Mbed TLS' library, under the Trusted Firmware Project.
+Returns a SHA-3 hash of the supplied R object. Uses the implementation by the
+    'Mbed TLS' library from the Trusted Firmware Project.
 }
 \details{
 For argument 'x', a scalar string or raw vector (with no attributes)
-    is hashed 'as is'. All other objects are hashed in-place, parsed by R
-    serialization version 3, big-endian representation, skipping the header
-    (for portability as this contains the R version number).
+    is hashed 'as is'.
+    
+    All other objects are hashed in-place, in a 'streaming' fashion by R
+    serialization but without allocation of the serialized object. To ensure
+    portability, R serialization version 3, big-endian representation is
+    always used, skipping the headers (as these contain the R version number
+    and native encoding information).
 
     The result of hashing is always a byte sequence, which is converted to a
     character string hex representation if 'convert' is TRUE, or returned as
