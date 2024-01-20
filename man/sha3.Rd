@@ -12,7 +12,7 @@ sha3(x, size = 256L, convert = TRUE)
 \item{size}{[default 256L] integer output size (bits) of the returned hash -
 uses the relevant SHA-3 algorithm if one of 224, 256, 384 or 512, or else
 the SHAKE256 algorithm as an extendable-output function (XOF) for
-arbitrary bit lengths.}
+arbitrary bit lengths. The supplied value must be between 8 and 2^24.}
 
 \item{convert}{[default TRUE] whether to output the hash as a character
 string or, if FALSE, a raw vector.}
@@ -22,7 +22,7 @@ A raw vector or character string depending on 'convert'.
 }
 \description{
 Returns a SHA-3 hash of the supplied R object. This implementation uses code
-    from the Mbed TLS library, under the Trusted Firmware Project.
+    from the 'Mbed TLS' library, under the Trusted Firmware Project.
 }
 \details{
 For argument 'x', a scalar string or raw vector (with no attributes)

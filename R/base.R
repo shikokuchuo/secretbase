@@ -39,13 +39,13 @@
 #' Cryptographic Hashing Using the SHA-3 Algorithm
 #'
 #' Returns a SHA-3 hash of the supplied R object. This implementation uses code
-#'     from the Mbed TLS library, under the Trusted Firmware Project.
+#'     from the 'Mbed TLS' library, under the Trusted Firmware Project.
 #'
 #' @param x an object.
 #' @param size [default 256L] integer output size (bits) of the returned hash -
 #'     uses the relevant SHA-3 algorithm if one of 224, 256, 384 or 512, or else
 #'     the SHAKE256 algorithm as an extendable-output function (XOF) for
-#'     arbitrary bit lengths.
+#'     arbitrary bit lengths. The supplied value must be between 8 and 2^24.
 #' @param convert [default TRUE] whether to output the hash as a character
 #'     string or, if FALSE, a raw vector.
 #'

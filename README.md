@@ -17,9 +17,9 @@ Fast, dependency-free SHA-3 cryptographic hash and SHAKE256
 extendable-output function (XOF) algorithms.
 
 The SHA-3 Secure Hash Standard was published by NIST in 2015 at
-[doi:10.6028/NIST.FIPS.202](http://dx.doi.org/10.6028/NIST.FIPS.202).
+[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
 
-Uses the implementation by the Mbed TLS library from the Trusted
+Uses the implementation by the ‘Mbed TLS’ library from the Trusted
 Firmware Project <https://www.trustedfirmware.org/projects/mbed-tls/>.
 
 ### Installation

@@ -372,8 +372,8 @@ static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
 SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
 
   const int bits = Rf_asInteger(size);
-  if (bits < 0)
-    Rf_error("'size' should not be negative");
+  if (bits < 8 || bits > (1 << 24))
+    Rf_error("'size' must be between 8 and 2^24");
   
   const size_t outlen = (size_t) (bits / 8);
   unsigned char output[outlen];
