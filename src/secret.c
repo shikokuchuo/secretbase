@@ -192,14 +192,11 @@ static int mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
   
 }
 
-static int mbedtls_sha3_update(mbedtls_sha3_context *ctx,
-                               const uint8_t *input, size_t ilen ) {
-  
-  if (ctx == NULL)
-    return -1;
+static void mbedtls_sha3_update(mbedtls_sha3_context *ctx,
+                                const uint8_t *input, size_t ilen) {
   
   if (ilen == 0 || input == NULL)
-    return 0;
+    return;
   
   while (ilen-- > 0) {
     ABSORB(ctx, ctx->index, *input++);
@@ -207,19 +204,13 @@ static int mbedtls_sha3_update(mbedtls_sha3_context *ctx,
       keccak_f1600(ctx);
   }
   
-  return 0;
+  return;
   
 }
 
 static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
                                uint8_t *output, size_t olen) {
-  
-  if (ctx == NULL)
-    return -1;
-  
-  if (olen == 0)
-    return 0;
-  
+
   if (ctx->olen > 0 && ctx->olen != olen)
     return -1;
   
@@ -238,115 +229,16 @@ static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
   
 }
 
-static int mbedtls_sha3(mbedtls_sha3_id id, const uint8_t *input,
-                        size_t ilen, uint8_t *output, size_t olen) {
-  
-  int ret = -2;
-  mbedtls_sha3_context ctx;
-  
-  if (ilen != 0 && input == NULL)
-    return -1;
-  
-  if (output == NULL)
-    return -1;
-  
-  mbedtls_sha3_init(&ctx);
-  
-  if ((ret = mbedtls_sha3_starts(&ctx, id)) != 0)
-    goto exit;
-  
-  if ((ret = mbedtls_sha3_update(&ctx, input, ilen)) != 0)
-    goto exit;
-  
-  if ((ret = mbedtls_sha3_finish(&ctx, output, olen)) != 0)
-    goto exit;
-  
-  exit:
-  mbedtls_sha3_free(&ctx);
-  
-  return ret;
-  
-}
-
 // secretbase - internal R binding functions -----------------------------------
 
-static void nano_write_char(R_outpstream_t stream, int c) {
+static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
-  nano_buf *buf = (nano_buf *) stream->data;
-  if (buf->cur >= buf->len) {
-    buf->len <<= 1;
-    buf->buf = R_Realloc(buf->buf, buf->len, unsigned char);
+  secretbase_context *sctx = (secretbase_context *) stream->data;
+  if (sctx->skip) {
+    sctx->skip--;
+  } else {
+    mbedtls_sha3_update(sctx->ctx, (const uint8_t *) src, (size_t) len);
   }
-  
-  buf->buf[buf->cur++] = (char) c;
-  
-}
-
-static void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
-  
-  nano_buf *buf = (nano_buf *) stream->data;
-  
-  size_t req = buf->cur + (size_t) len;
-  if (req > buf->len) {
-    if (req > R_XLEN_T_MAX) {
-      if (buf->len) R_Free(buf->buf);
-      Rf_error("serialization exceeds max length of raw vector");
-    }
-    do {
-      buf->len <<= 1;
-    } while (buf->len < req);
-    buf->buf = R_Realloc(buf->buf, buf->len, unsigned char);
-  }
-  
-  memcpy(buf->buf + buf->cur, src, len);
-  buf->cur += len;
-  
-}
-
-static void nano_serialize_xdr(nano_buf *buf, const SEXP object) {
-  
-  NANO_ALLOC(buf, NANO_INIT_BUFSIZE);
-  struct R_outpstream_st output_stream;
-  
-  R_InitOutPStream(
-    &output_stream,
-    (R_pstream_data_t) buf,
-    R_pstream_xdr_format,
-    NANO_SERIAL_VER,
-    nano_write_char,
-    nano_write_bytes,
-    NULL,
-    R_NilValue
-  );
-  
-  R_Serialize(object, &output_stream);
-  
-}
-
-static nano_buf nano_any_buf(const SEXP x) {
-  
-  nano_buf buf;
-  
-  switch (TYPEOF(x)) {
-  case STRSXP:
-    if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
-      const char *s = CHAR(STRING_ELT(x, 0));
-      NANO_INIT(&buf, (unsigned char *) s, strlen(s));
-      return buf;
-    }
-    break;
-  case RAWSXP:
-    if (ATTRIB(x) == R_NilValue) {
-      NANO_INIT(&buf, (unsigned char *) STDVEC_DATAPTR(x), XLENGTH(x));
-      return buf;
-    }
-  }
-  
-  nano_serialize_xdr(&buf, x);
-  buf.cur = buf.cur - NANO_SHLEN;
-  memmove(buf.buf, buf.buf + NANO_SHLEN, buf.cur);
-  
-  return buf;
   
 }
 
@@ -370,7 +262,7 @@ static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
 // secretbase - public functions -----------------------------------------------
 
 SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
-
+  
   const int bits = Rf_asInteger(size);
   if (bits < 8 || bits > (1 << 24))
     Rf_error("'size' must be between 8 and 2^24");
@@ -380,7 +272,7 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   mbedtls_sha3_id id;
   SEXP out;
   int xc;
-
+  
   switch(bits) {
   case 224:
     id = MBEDTLS_SHA3_224; break;
@@ -394,27 +286,70 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
     id = MBEDTLS_SHA3_SHAKE256; break;
   }
   
-  nano_buf xhash = nano_any_buf(x);
-  xc = mbedtls_sha3(id, xhash.buf, xhash.cur, output, outlen);
-  NANO_FREE(xhash);
+  mbedtls_sha3_context ctx;
+  mbedtls_sha3_init(&ctx);
   
-  if (xc)
-    Rf_error("bad input data");
+  if ((xc = mbedtls_sha3_starts(&ctx, id)))
+    goto exit;
+  
+  switch (TYPEOF(x)) {
+  case STRSXP:
+    if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
+      const char *s = CHAR(STRING_ELT(x, 0));
+      mbedtls_sha3_update(&ctx, (const uint8_t *) s, (size_t) strlen(s));
+      goto finish;
+    }
+    break;
+  case RAWSXP:
+    if (ATTRIB(x) == R_NilValue) {
+      mbedtls_sha3_update(&ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      goto finish;
+    }
+    break;
+  }
+  
+  secretbase_context sctx;
+  sctx.ctx = &ctx;
+  sctx.skip = SB_SERIAL_HEADER_ITEMS;
+  
+  struct R_outpstream_st output_stream;
+  R_InitOutPStream(
+    &output_stream,
+    (R_pstream_data_t) &sctx,
+    R_pstream_xdr_format,
+    SB_R_SERIAL_VER,
+    NULL,
+    hash_bytes,
+    NULL,
+    R_NilValue
+  );
+  R_Serialize(x, &output_stream);
+  
+  finish:
+    
+  if ((xc = mbedtls_sha3_finish(&ctx, output, outlen)))
+    goto exit;
 
-  if (*NANO_INTEGER(convert)) {
+  if (*READ_INTEGER(convert)) {
     out = nano_hash_char(output, outlen);
   } else {
     out = Rf_allocVector(RAWSXP, outlen);
     memcpy(STDVEC_DATAPTR(out), output, outlen);
   }
 
+  mbedtls_sha3_free(&ctx);
+  
   return out;
-
+  
+  exit:
+  mbedtls_sha3_free(&ctx);
+  Rf_error("hashing encountered error");
+  
 }
 
 SEXP secretbase_read_integer(SEXP x) {
   
-  return Rf_ScalarInteger(*NANO_INTEGER(x));
+  return Rf_ScalarInteger(*READ_INTEGER(x));
   
 }
 

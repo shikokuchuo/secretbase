@@ -26,6 +26,10 @@
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 
+#define SB_R_SERIAL_VER 3
+#define SB_SERIAL_HEADER_ITEMS 5
+#define READ_INTEGER(x) (int *) DATAPTR_RO(x)
+
 typedef enum {
   MBEDTLS_SHA3_NONE = 0,
   MBEDTLS_SHA3_224,
@@ -54,24 +58,9 @@ typedef struct mbedtls_sha3_context {
   uint16_t max_block_size;
 } mbedtls_sha3_context;
 
-typedef struct nano_buf_s {
-  unsigned char *buf;
-  size_t len;
-  size_t cur;
-} nano_buf;
-
-#define NANO_SHLEN 23
-#define NANO_INIT_BUFSIZE 8192
-#define NANO_SERIAL_VER 3
-#define NANO_ALLOC(x, sz)                                      \
-  (x)->buf = R_Calloc(sz, unsigned char);                      \
-  (x)->len = sz;                                               \
-  (x)->cur = 0
-#define NANO_INIT(x, ptr, sz)                                  \
-  (x)->buf = ptr;                                              \
-  (x)->len = 0;                                                \
-  (x)->cur = sz
-#define NANO_FREE(x) if (x.len) R_Free(x.buf)
-#define NANO_INTEGER(x) (int *) DATAPTR_RO(x)
+typedef struct secretbase_context_s {
+  mbedtls_sha3_context *ctx;
+  int skip;
+} secretbase_context;
 
 #endif
