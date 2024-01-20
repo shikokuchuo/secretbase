@@ -46,9 +46,10 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 `secretbase` offers one main function `sha3()`:
 
-To use the SHA-3 cryptographic hash algorithm, specify argument 'size' as one of '224', '256', '384' or '512'.
-
-Specify an arbitrary output size to use the SHAKE256 algorithm as an extendable-output function (XOF).
+To use:
+ 
+ - SHA-3 cryptographic hash algorithm, specify 'size' as one of '224', '256', '384' or '512'.
+ - SHAKE256 extendable-output function (XOF), specify any other arbitrary output size.
 
 ```{r secretbase}
 library(secretbase)
@@ -57,19 +58,23 @@ sha3("secret base")
 
 sha3("secret base", convert = FALSE)
 
-sha3("秘密の基地", size = 224)
+sha3("秘密の基地の中", size = 224)
 
-sha3("秘密の基地", size = 512)
+sha3("秘密の基地の中", size = 512)
 ```
 
-To hash to an integer value (for example to generate random seeds for R's pseudo RNGs), specify a size of '32' and pass the resulting raw vector to `read_integer()`.
+To:
+
+ - hash to an integer value, specify a size of '32' and pass the resulting raw vector to `read_integer()`.
 
 ```{r readinteger}
-hash <- sha3("秘密の基地", size = 32, convert = FALSE)
+hash <- sha3("秘密の基地の中", size = 32, convert = FALSE)
 hash
 
 read_integer(hash)
 ```
+
+This may be used to generate random seeds for R's pseudo RNGs.
 
 ### Links
 

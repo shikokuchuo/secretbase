@@ -34,9 +34,9 @@ For argument 'x', a scalar string or raw vector (with no attributes)
     character string hex representation if 'convert' is TRUE, or returned as
     a raw vector if 'convert' is FALSE.
     
-    To hash to an integer value (for example to supply as a random seed to
-    R's pseudo RNGs), set 'size' to 32 and 'convert' to FALSE, and pass the
-    resulting raw vector to \code{\link{read_integer}}.
+    To hash to an integer value, set 'size' to 32 and 'convert' to FALSE, and
+    pass the resulting raw vector to \code{\link{read_integer}}. This may be
+    used to generate random seeds for R's pseudo RNGs.
 }
 \examples{
 # SHA3-256 hash as character string:
