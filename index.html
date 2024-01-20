@@ -99,7 +99,7 @@
 </h3>
 <p><code>secretbase</code> offers one main function <code><a href="reference/sha3.html">sha3()</a></code>:</p>
 <p>To use the SHA-3 cryptographic hash algorithm, specify argument ‘size’ as one of ‘224’, ‘256’, ‘384’ or ‘512’.</p>
-<p>Alternatively, specify arbitrary output sizes to use the SHAKE256 algorithm as an extendable-output function (XOF).</p>
+<p>Specify an arbitrary output size to use the SHAKE256 algorithm as an extendable-output function (XOF).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/">secretbase</a></span><span class="op">)</span></span>
 <span></span>
@@ -115,14 +115,14 @@
 <span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地"</span>, size <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "d9553a1e8d9ea1cf9d053f72c499d040a11724f32be6e568aba6b078950ae2679842806450bd62f97da8eca517a68c0aa386349140724968daceeac2eaa1340a"</span></span></code></pre></div>
-<p>To hash to an integer value (for example to generate random seeds for R’s pseudo random number generators), specify a size of ‘32’ and pass the result to <code><a href="reference/read_integer.html">read_integer()</a></code>.</p>
+<p>To hash to an integer value (for example to generate random seeds for R’s pseudo RNGs), specify a size of ‘32’ and pass the resulting raw vector to <code><a href="reference/read_integer.html">read_integer()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hash</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span>, size <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">hash</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地"</span>, size <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">hash</span></span>
-<span><span class="co">#&gt; [1] 99 5e ba c1</span></span>
+<span><span class="co">#&gt; [1] 6a 92 94 19</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/read_integer.html">read_integer</a></span><span class="op">(</span><span class="va">hash</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] -1044750695</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 429167210</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
@@ -179,8 +179,8 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=secretbase" class="external-link"><img src="https://www.r-pkg.org/badges/version/secretbase?color=42147b" alt="CRAN status"></a></li>
-<li><a href="https://shikokuchuo.r-universe.dev/secretbase" class="external-link"><img src="https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a" alt="nanonext status badge"></a></li>
-<li><a href="https://github.com/shikokuchuo/nanonext/actions" class="external-link"><img src="https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://shikokuchuo.r-universe.dev/secretbase" class="external-link"><img src="https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a" alt="secretbase status badge"></a></li>
+<li><a href="https://github.com/shikokuchuo/secretbase/actions" class="external-link"><img src="https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/shikokuchuo/secretbase" class="external-link"><img src="https://codecov.io/gh/shikokuchuo/secretbase/branch/main/graph/badge.svg" alt="codecov"></a></li>
 </ul>
 </div>

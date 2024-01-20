@@ -74,7 +74,7 @@
 <dd><p>[default 256L] integer output size (bits) of the returned hash -
 uses the relevant SHA-3 algorithm if one of 224, 256, 384 or 512, or else
 the SHAKE256 algorithm as an extendable-output function (XOF) for
-arbitrary bit lengths. The supplied value must be at least 8.</p></dd>
+arbitrary bit lengths.</p></dd>
 
 
 <dt>convert</dt>
@@ -99,8 +99,8 @@ string or, if FALSE, a raw vector.</p></dd>
     character string hex representation if 'convert' is TRUE, or returned as
     a raw vector if 'convert' is FALSE.</p>    
 <p>To hash to an integer value (for example to supply as a random seed to
-    R's pseudo random number generators), set 'size' to 32 and 'convert' to
-    FALSE, and pass the resulting output to <code><a href="read_integer.html">read_integer</a></code>.</p>
+    R's pseudo RNGs), set 'size' to 32 and 'convert' to FALSE, and pass the
+    resulting raw vector to <code><a href="read_integer.html">read_integer</a></code>.</p>
     </div>
 
     <div id="ref-examples">
