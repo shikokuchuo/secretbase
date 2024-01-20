@@ -45,7 +45,7 @@
 #' @param size [default 256L] integer output size (bits) of the returned hash -
 #'     uses the relevant SHA-3 algorithm if one of 224, 256, 384 or 512, or else
 #'     the SHAKE256 algorithm as an extendable-output function (XOF) for
-#'     arbitrary bit lengths. The supplied value must be at least 8.
+#'     arbitrary bit lengths.
 #' @param convert [default TRUE] whether to output the hash as a character
 #'     string or, if FALSE, a raw vector.
 #'
@@ -62,8 +62,8 @@
 #'     a raw vector if 'convert' is FALSE.
 #'     
 #'     To hash to an integer value (for example to supply as a random seed to
-#'     R's pseudo random number generators), set 'size' to 32 and 'convert' to
-#'     FALSE, and pass the resulting output to \code{\link{read_integer}}.
+#'     R's pseudo RNGs), set 'size' to 32 and 'convert' to FALSE, and pass the
+#'     resulting raw vector to \code{\link{read_integer}}.
 #'
 #' @examples
 #' # SHA3-256 hash as character string:

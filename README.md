@@ -7,9 +7,9 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/secretbase?color=42147b)](https://CRAN.R-project.org/package=secretbase)
-[![nanonext status
+[![secretbase status
 badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https://shikokuchuo.r-universe.dev/secretbase)
-[![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/nanonext/actions)
+[![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/secretbase/actions)
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/branch/main/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 <!-- badges: end -->
 
@@ -43,8 +43,8 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 To use the SHA-3 cryptographic hash algorithm, specify argument ‘size’
 as one of ‘224’, ‘256’, ‘384’ or ‘512’.
 
-Alternatively, specify arbitrary output sizes to use the SHAKE256
-algorithm as an extendable-output function (XOF).
+Specify an arbitrary output size to use the SHAKE256 algorithm as an
+extendable-output function (XOF).
 
 ``` r
 library(secretbase)
@@ -64,16 +64,16 @@ sha3("秘密の基地", size = 512)
 ```
 
 To hash to an integer value (for example to generate random seeds for
-R’s pseudo random number generators), specify a size of ‘32’ and pass
-the result to `read_integer()`.
+R’s pseudo RNGs), specify a size of ‘32’ and pass the resulting raw
+vector to `read_integer()`.
 
 ``` r
-hash <- sha3("secret base", size = 32, convert = FALSE)
+hash <- sha3("秘密の基地", size = 32, convert = FALSE)
 hash
-#> [1] 99 5e ba c1
+#> [1] 6a 92 94 19
 
 read_integer(hash)
-#> [1] -1044750695
+#> [1] 429167210
 ```
 
 ### Links

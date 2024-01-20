@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License along with
 // secretbase. If not, see <https://www.gnu.org/licenses/>.
 
-// secretbase - includes -------------------------------------------------------
+// secretbase ------------------------------------------------------------------
 
 #include "secret.h"
 
@@ -63,9 +63,9 @@ static const uint8_t pi[24] = {
 };
 
 #define ROT64( x , y ) ( ( ( x ) << ( y ) ) | ( ( x ) >> ( 64U - ( y ) ) ) )
-#define ABSORB( ctx, idx, v ) do { ctx->state[( idx ) >> 3] ^= ( ( uint64_t ) ( v ) ) << ( ( ( idx ) & 0x7 ) << 3 ); } while( 0 )
+#define ABSORB( ctx, idx, v ) do { ctx->state[( idx ) >> 3] ^= ( ( uint64_t ) ( v ) ) << ( ( ( idx ) & 0x7 ) << 3 ); } while ( 0 )
 #define SQUEEZE( ctx, idx ) ( ( uint8_t )( ctx->state[( idx ) >> 3] >> ( ( ( idx ) & 0x7 ) << 3 ) ) )
-#define SWAP( x, y ) do { uint64_t tmp = ( x ); ( x ) = ( y ); ( y ) = tmp; } while( 0 )
+#define SWAP( x, y ) do { uint64_t tmp = ( x ); ( x ) = ( y ); ( y ) = tmp; } while ( 0 )
 
 static void keccak_f1600(mbedtls_sha3_context *ctx) {
   
@@ -73,8 +73,8 @@ static void keccak_f1600(mbedtls_sha3_context *ctx) {
   uint64_t *s = ctx->state;
   int i;
   
-  for( int round = 0; round < 24; round++ )
-  {
+  for (int round = 0; round < 24; round++) {
+    
     uint64_t t;
     
     /* Theta */
@@ -100,13 +100,13 @@ static void keccak_f1600(mbedtls_sha3_context *ctx) {
     s[4] ^= t; s[9] ^= t; s[14] ^= t; s[19] ^= t; s[24] ^= t;
     
     /* Rho */
-    for( i = 1; i < 25; i++ )
-      s[i] = ROT64( s[i], rho[i-1] );
+    for ( i = 1; i < 25; i++ )
+      s[i] = ROT64(s[i], rho[i-1]);
     
     /* Pi */
     t = s[1];
-    for( i = 0; i < 24; i++ )
-      SWAP( s[pi[i]], t );
+    for (i = 0; i < 24; i++)
+      SWAP(s[pi[i]], t);
     
     /* Chi */
     lane[0] = s[0]; lane[1] = s[1]; lane[2] = s[2]; lane[3] = s[3]; lane[4] = s[4];
@@ -147,6 +147,7 @@ static void keccak_f1600(mbedtls_sha3_context *ctx) {
     /* Iota */
     s[0] ^= rc[round];
   }
+  
 }
 
 static void mbedtls_sha3_init(mbedtls_sha3_context *ctx) {
@@ -167,14 +168,13 @@ static void mbedtls_sha3_free(mbedtls_sha3_context *ctx) {
     
 }
 
-static int mbedtls_sha3_starts( mbedtls_sha3_context *ctx, mbedtls_sha3_id id ) {
+static int mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
   
   mbedtls_sha3_family_functions *p = NULL;
   if (ctx == NULL)
     return -1;
   
-  for (p = sha3_families; p->id != MBEDTLS_SHA3_NONE; p++)
-  {
+  for (p = sha3_families; p->id != MBEDTLS_SHA3_NONE; p++) {
     if (p->id == id)
       break;
   }
@@ -192,9 +192,8 @@ static int mbedtls_sha3_starts( mbedtls_sha3_context *ctx, mbedtls_sha3_id id ) 
   
 }
 
-static int mbedtls_sha3_update( mbedtls_sha3_context *ctx,
-                         const uint8_t *input,
-                         size_t ilen ) {
+static int mbedtls_sha3_update(mbedtls_sha3_context *ctx,
+                               const uint8_t *input, size_t ilen ) {
   
   if (ctx == NULL)
     return -1;
@@ -202,18 +201,18 @@ static int mbedtls_sha3_update( mbedtls_sha3_context *ctx,
   if (ilen == 0 || input == NULL)
     return 0;
   
-  while (ilen-- > 0)
-  {
+  while (ilen-- > 0) {
     ABSORB(ctx, ctx->index, *input++);
-    if((ctx->index = (ctx->index + 1) % ctx->max_block_size) == 0)
+    if ((ctx->index = (ctx->index + 1) % ctx->max_block_size) == 0)
       keccak_f1600(ctx);
   }
   
   return 0;
+  
 }
 
-static int mbedtls_sha3_finish( mbedtls_sha3_context *ctx,
-                         uint8_t *output, size_t olen ) {
+static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
+                               uint8_t *output, size_t olen) {
   
   if (ctx == NULL)
     return -1;
@@ -229,19 +228,18 @@ static int mbedtls_sha3_finish( mbedtls_sha3_context *ctx,
   keccak_f1600(ctx);
   ctx->index = 0;
   
-  while(olen-- > 0)
-  {
+  while (olen-- > 0) {
     *output++ = SQUEEZE(ctx, ctx->index);
-    
     if((ctx->index = (ctx->index + 1) % ctx->max_block_size) == 0)
       keccak_f1600(ctx);
   }
   
   return 0;
+  
 }
 
-static int mbedtls_sha3( mbedtls_sha3_id id, const uint8_t *input,
-                  size_t ilen, uint8_t *output, size_t olen ) {
+static int mbedtls_sha3(mbedtls_sha3_id id, const uint8_t *input,
+                        size_t ilen, uint8_t *output, size_t olen) {
   
   int ret = -2;
   mbedtls_sha3_context ctx;
@@ -254,13 +252,13 @@ static int mbedtls_sha3( mbedtls_sha3_id id, const uint8_t *input,
   
   mbedtls_sha3_init(&ctx);
   
-  if((ret = mbedtls_sha3_starts(&ctx, id)) != 0)
+  if ((ret = mbedtls_sha3_starts(&ctx, id)) != 0)
     goto exit;
   
-  if((ret = mbedtls_sha3_update(&ctx, input, ilen)) != 0)
+  if ((ret = mbedtls_sha3_update(&ctx, input, ilen)) != 0)
     goto exit;
   
-  if((ret = mbedtls_sha3_finish(&ctx, output, olen)) != 0)
+  if ((ret = mbedtls_sha3_finish(&ctx, output, olen)) != 0)
     goto exit;
   
   exit:
@@ -269,7 +267,6 @@ static int mbedtls_sha3( mbedtls_sha3_id id, const uint8_t *input,
   return ret;
   
 }
-
 
 // secretbase - internal R binding functions -----------------------------------
 
@@ -308,14 +305,14 @@ static void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
 
 static void nano_serialize_xdr(nano_buf *buf, const SEXP object) {
   
-  NANO_ALLOC(buf, NANONEXT_INIT_BUFSIZE);
+  NANO_ALLOC(buf, NANO_INIT_BUFSIZE);
   struct R_outpstream_st output_stream;
   
   R_InitOutPStream(
     &output_stream,
     (R_pstream_data_t) buf,
     R_pstream_xdr_format,
-    NANONEXT_SERIAL_VER,
+    NANO_SERIAL_VER,
     nano_write_char,
     nano_write_bytes,
     NULL,
@@ -375,12 +372,15 @@ static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
 SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
 
   const int bits = Rf_asInteger(size);
+  if (bits < 0)
+    Rf_error("'size' should not be negative");
+  
   const size_t outlen = (size_t) (bits / 8);
   unsigned char output[outlen];
+  mbedtls_sha3_id id;
   SEXP out;
   int xc;
 
-  mbedtls_sha3_id id;
   switch(bits) {
   case 224:
     id = MBEDTLS_SHA3_224; break;
@@ -391,21 +391,15 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   case 512:
     id = MBEDTLS_SHA3_512; break;
   default:
-    if (bits >= 8) {
-      id = MBEDTLS_SHA3_SHAKE256; break;
-    } else {
-      xc = 1; goto resume;
-    }
+    id = MBEDTLS_SHA3_SHAKE256; break;
   }
   
   nano_buf xhash = nano_any_buf(x);
   xc = mbedtls_sha3(id, xhash.buf, xhash.cur, output, outlen);
   NANO_FREE(xhash);
   
-  resume:
-
   if (xc)
-    Rf_error(xc < 0 ? "bad input data" : "'size' should be at least 8");
+    Rf_error("bad input data");
 
   if (*NANO_INTEGER(convert)) {
     out = nano_hash_char(output, outlen);
