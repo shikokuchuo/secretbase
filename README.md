@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/secretbase?color=42147b)](https://C
 [![secretbase status
 badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https://shikokuchuo.r-universe.dev/secretbase)
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/secretbase/actions)
-[![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://codecov.io/gh/shikokuchuo/secretbase)
+[![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 <!-- badges: end -->
 
 Fast, dependency-free SHA-3 cryptographic hash and SHAKE256

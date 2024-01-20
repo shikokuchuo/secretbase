@@ -27,7 +27,7 @@
 #include <R_ext/Visibility.h>
 
 #define SB_R_SERIAL_VER 3
-#define SB_SERIAL_HEADER_ITEMS 5
+#define SB_SERIAL_HEADERS 6
 #define READ_INTEGER(x) (int *) DATAPTR_RO(x)
 
 typedef enum {

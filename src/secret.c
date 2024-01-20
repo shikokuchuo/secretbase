@@ -310,7 +310,7 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   
   secretbase_context sctx;
   sctx.ctx = &ctx;
-  sctx.skip = SB_SERIAL_HEADER_ITEMS;
+  sctx.skip = SB_SERIAL_HEADERS;
   
   struct R_outpstream_st output_stream;
   R_InitOutPStream(
