@@ -61,7 +61,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sha3</span><span class="op">(</span><span class="va">x</span>, size <span class="op">=</span> <span class="fl">256L</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sha3</span><span class="op">(</span><span class="va">x</span>, bits <span class="op">=</span> <span class="fl">256L</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -70,8 +70,8 @@
 <dd><p>an object.</p></dd>
 
 
-<dt>size</dt>
-<dd><p>[default 256L] output size (bits) of the returned hash - uses the
+<dt>bits</dt>
+<dd><p>[default 256L] output size of the returned hash - uses the
 relevant SHA-3 hash function if one of 224, 256, 384 or 512, or
 else the SHAKE256 extendable-output function (XOF) for arbitrary values.
 The supplied value must be between 8 and 2^24, and is automatically
@@ -103,7 +103,7 @@ vector, or if NA, a vector of (32-bit) integer values.</p></dd>
     character string hex representation if 'convert' is TRUE, or returned as
     a raw vector if 'convert' is FALSE.</p>    
 <p>To hash to integer values, set convert to NA. For a single integer value
-    set size to '32'. These values may be supplied as random seeds for R's
+    set 'bits' to 32. These values may be supplied as random seeds for R's
     pseudo random number generators (RNGs).</p>
     </div>
 
@@ -119,19 +119,19 @@ vector, or if NA, a vector of (32-bit) integer values.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [26] ab 9d bb 4a 79 55 20</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHA3-224 hash as character string:</span></span></span>
-<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, size <span class="op">=</span> <span class="fl">224</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">224</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "5511b3469d3f1a87b62ce8f0d2dc9510ec5e4547579b8afb32052f99"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHA3-384 hash as character string:</span></span></span>
-<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, size <span class="op">=</span> <span class="fl">384</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">384</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "79e54f865df004dde10dc2f61baf47eb4637c68d87a2baeb7fe6bc0ac983c2154835ec7deb49b16c246c0dc1d43e32f9"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHA3-512 hash as character string:</span></span></span>
-<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, size <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "31076b4690961320a761be0951eeaa9efd0c75c37137a2a50877cbebb8afcc6d7927c41a120ae8fa73fdce8fff726fcbc51d448d020240bc7455963a16e639b1"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHAKE256 hash to integer:</span></span></span>
-<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, size <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sha3</span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1044750695</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
