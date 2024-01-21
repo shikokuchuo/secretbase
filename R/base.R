@@ -48,7 +48,7 @@
 #'     by the the 'Mbed TLS' library under the Trusted Firmware Project.
 #'
 #' @param x an object.
-#' @param size [default 256L] output size (bits) of the returned hash - uses the
+#' @param bits [default 256L] output size of the returned hash - uses the
 #'     relevant SHA-3 hash function if one of 224, 256, 384 or 512, or
 #'     else the SHAKE256 extendable-output function (XOF) for arbitrary values.
 #'     The supplied value must be between 8 and 2^24, and is automatically
@@ -73,7 +73,7 @@
 #'     a raw vector if 'convert' is FALSE.
 #'     
 #'     To hash to integer values, set convert to NA. For a single integer value
-#'     set size to '32'. These values may be supplied as random seeds for R's
+#'     set 'bits' to 32. These values may be supplied as random seeds for R's
 #'     pseudo random number generators (RNGs).
 #'
 #' @examples
@@ -84,17 +84,17 @@
 #' sha3("secret base", convert = FALSE)
 #' 
 #' # SHA3-224 hash as character string:
-#' sha3("secret base", size = 224)
+#' sha3("secret base", bits = 224)
 #' 
 #' # SHA3-384 hash as character string:
-#' sha3("secret base", size = 384)
+#' sha3("secret base", bits = 384)
 #' 
 #' # SHA3-512 hash as character string:
-#' sha3("secret base", size = 512)
+#' sha3("secret base", bits = 512)
 #' 
 #' # SHAKE256 hash to integer:
-#' sha3("secret base", size = 32L, convert = NA)
+#' sha3("secret base", bits = 32L, convert = NA)
 #'
 #' @export
 #'
-sha3 <- function(x, size = 256L, convert = TRUE) .Call(secretbase_sha3, x, size, convert)
+sha3 <- function(x, bits = 256L, convert = TRUE) .Call(secretbase_sha3, x, bits, convert)

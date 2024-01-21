@@ -48,8 +48,8 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 To use:
  
- - SHA-3 cryptographic hash algorithm, specify 'size' as one of `224`, `256`, `384` or `512`
- - SHAKE256 extendable-output function (XOF), specify any other arbitrary output size
+ - SHA-3 cryptographic hash algorithm, specify 'bits' as one of `224`, `256`, `384` or `512`
+ - SHAKE256 extendable-output function (XOF), specify any other arbitrary bit length
 
 ```{r secretbase}
 library(secretbase)
@@ -58,9 +58,9 @@ sha3("secret base")
 
 sha3("secret base", convert = FALSE)
 
-sha3("秘密の基地の中", size = 224)
+sha3("秘密の基地の中", bits = 224)
 
-sha3("", size = 512)
+sha3("", bits = 512)
 ```
 
 Hash arbitrary R objects:
@@ -69,25 +69,25 @@ Hash arbitrary R objects:
  - ensures portability by always using R serialization version 3, big endian representation, skipping the headers
 
 ```{r streaming}
-sha3(data.frame(a = 1, b = 2), size = 160)
+sha3(data.frame(a = 1, b = 2), bits = 160)
 
 sha3(NULL)
 ```
 
 To hash to integer:
 
- - specify convert as `NA`
- - specify size of `32` for a single integer value
+ - specify 'convert' as `NA`
+ - specify 'bits' as `32` for a single integer value
 
 ```{r readinteger}
 sha3("秘密の基地の中", convert = NA)
 
-sha3("秘密の基地の中", size = 32, convert = NA)
+sha3("秘密の基地の中", bits = 32, convert = NA)
 ```
 
 These values may be supplied as deterministic (but indistinguishable from random) seeds for R's pseudo random number generators (RNGs).
 
-For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This is particularly useful when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup>
+For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup>
 
 ### References
 

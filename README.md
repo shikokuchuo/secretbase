@@ -43,10 +43,10 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 To use:
 
-- SHA-3 cryptographic hash algorithm, specify ‘size’ as one of `224`,
+- SHA-3 cryptographic hash algorithm, specify ‘bits’ as one of `224`,
   `256`, `384` or `512`
 - SHAKE256 extendable-output function (XOF), specify any other arbitrary
-  output size
+  bit length
 
 ``` r
 library(secretbase)
@@ -58,10 +58,10 @@ sha3("secret base", convert = FALSE)
 #>  [1] a7 21 d5 75 70 e7 ce 36 6a de e2 fc cb e9 77 07 23 c6 e3 62 25 49 c3 1c 7c
 #> [26] ab 9d bb 4a 79 55 20
 
-sha3("秘密の基地の中", size = 224)
+sha3("秘密の基地の中", bits = 224)
 #> [1] "d9e291d0c9f3dc3007dc0c111aea0b6a938929c8b4766332d8ea791a"
 
-sha3("", size = 512)
+sha3("", bits = 512)
 #> [1] "a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26"
 ```
 
@@ -73,7 +73,7 @@ Hash arbitrary R objects:
   endian representation, skipping the headers
 
 ``` r
-sha3(data.frame(a = 1, b = 2), size = 160)
+sha3(data.frame(a = 1, b = 2), bits = 160)
 #> [1] "bc5a411f87ef083296c60d6557f189b62ff9e7e6"
 
 sha3(NULL)
@@ -82,15 +82,15 @@ sha3(NULL)
 
 To hash to integer:
 
-- specify convert as `NA`
-- specify size of `32` for a single integer value
+- specify ‘convert’ as `NA`
+- specify ‘bits’ as `32` for a single integer value
 
 ``` r
 sha3("秘密の基地の中", convert = NA)
 #> [1]  1706118765  1394124073 -1208837861  -385136950  -692327823  -291994555
 #> [7]   528021721  -384171368
 
-sha3("秘密の基地の中", size = 32, convert = NA)
+sha3("秘密の基地の中", bits = 32, convert = NA)
 #> [1] 2000208511
 ```
 
@@ -98,10 +98,10 @@ These values may be supplied as deterministic (but indistinguishable
 from random) seeds for R’s pseudo random number generators (RNGs).
 
 For use in parallel computing, this is a valid method for reducing to a
-negligible probability that RNGs in each process may overlap. This is
-particularly useful when first-best alternatives such as using recursive
-streams are too expensive or unable to preserve reproducibility.
-<sup>\[1\]</sup>
+negligible probability that RNGs in each process may overlap. This may
+be especially suitable when first-best alternatives such as using
+recursive streams are too expensive or unable to preserve
+reproducibility. <sup>\[1\]</sup>
 
 ### References
 
