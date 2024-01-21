@@ -2,11 +2,12 @@ Package: secretbase
 Type: Package
 Title: Cryptographic Hash and Extendable-Output Functions
 Version: 0.0.5
-Description: Fast, dependency-free SHA-3 cryptographic hash and SHAKE256
-    extendable-output function (XOF) algorithms. The SHA-3 Secure Hash Standard
-    was published by NIST in 2015 at <doi:10.6028/NIST.FIPS.202>. Uses the
-    implementation by the 'Mbed TLS' library from the Trusted Firmware Project
-    <https://www.trustedfirmware.org/projects/mbed-tls/>.
+Description: SHA-3 cryptographic hash and SHAKE256 extendable-output functions
+    (XOF). The SHA-3 Secure Hash Standard was published by the National
+    Institute of Standards and Technology (NIST) in 2015 at
+    <doi:10.6028/NIST.FIPS.202>. Fast and memory-efficient implementation using
+    the core algorithm from the 'Mbed TLS' library under the Trusted Firmware
+    Project <https://www.trustedfirmware.org/projects/mbed-tls/>.
 Authors@R: 
     c(person(given = "Charlie",
              family = "Gao",
@@ -17,7 +18,8 @@ Authors@R:
              role = "cph"))
 License: GPL (>= 3)
 BugReports: https://github.com/shikokuchuo/secretbase/issues
-URL: https://shikokuchuo.net/secretbase/, https://github.com/shikokuchuo/secretbase/
+URL: https://shikokuchuo.net/secretbase/,
+     https://github.com/shikokuchuo/secretbase/
 Encoding: UTF-8
 Depends: 
     R (>= 3.5)

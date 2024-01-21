@@ -221,7 +221,7 @@ static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
   
   while (olen-- > 0) {
     *output++ = SQUEEZE(ctx, ctx->index);
-    if((ctx->index = (ctx->index + 1) % ctx->max_block_size) == 0)
+    if ((ctx->index = (ctx->index + 1) % ctx->max_block_size) == 0)
       keccak_f1600(ctx);
   }
   
@@ -263,6 +263,7 @@ static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
 
 SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   
+  const int conv = LOGICAL(convert)[0];
   const int bits = Rf_asInteger(size);
   if (bits < 8 || bits > (1 << 24))
     Rf_error("'size' must be between 8 and 2^24");
@@ -273,7 +274,7 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   SEXP out;
   int xc;
   
-  switch(bits) {
+  switch (bits) {
   case 224:
     id = MBEDTLS_SHA3_224; break;
   case 256:
@@ -330,10 +331,16 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   if ((xc = mbedtls_sha3_finish(&ctx, output, outlen)))
     goto exit;
 
-  if (*READ_INTEGER(convert)) {
-    out = nano_hash_char(output, outlen);
-  } else {
+  switch (conv) {
+  case 0:
     out = Rf_allocVector(RAWSXP, outlen);
+    memcpy(STDVEC_DATAPTR(out), output, outlen);
+    break;
+  case 1:
+    out = nano_hash_char(output, outlen);
+    break;
+  default:
+    out = Rf_allocVector(INTSXP, outlen / sizeof(int));
     memcpy(STDVEC_DATAPTR(out), output, outlen);
   }
 
@@ -347,16 +354,9 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   
 }
 
-SEXP secretbase_read_integer(SEXP x) {
-  
-  return Rf_ScalarInteger(*READ_INTEGER(x));
-  
-}
-
 // secretbase - package level registrations ------------------------------------
 
 static const R_CallMethodDef callMethods[] = {
-  {"secretbase_read_integer", (DL_FUNC) &secretbase_read_integer, 1},
   {"secretbase_sha3", (DL_FUNC) &secretbase_sha3, 3},
   {NULL, NULL, 0}
 };

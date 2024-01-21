@@ -13,14 +13,15 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 <!-- badges: end -->
 
-Fast, dependency-free SHA-3 cryptographic hash and SHAKE256
-extendable-output function (XOF) algorithms.
+SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF).
 
-The SHA-3 Secure Hash Standard was published by NIST in 2015 at
+The SHA-3 Secure Hash Standard was published by the National Institute
+of Standards and Technology (NIST) in 2015 at
 [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
 
-Uses the implementation by the ‘Mbed TLS’ library from the Trusted
-Firmware Project <https://www.trustedfirmware.org/projects/mbed-tls/>.
+Fast and memory-efficient implementation using the core algorithm from
+the ‘Mbed TLS’ library under the Trusted Firmware Project
+<https://www.trustedfirmware.org/projects/mbed-tls/>.
 
 ### Installation
 
@@ -42,10 +43,10 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 To use:
 
-- SHA-3 cryptographic hash algorithm, specify ‘size’ as one of ‘224’,
-  ‘256’, ‘384’ or ‘512’.
+- SHA-3 cryptographic hash algorithm, specify ‘size’ as one of `224`,
+  `256`, `384` or `512`
 - SHAKE256 extendable-output function (XOF), specify any other arbitrary
-  output size.
+  output size
 
 ``` r
 library(secretbase)
@@ -72,28 +73,43 @@ Hash arbitrary R objects:
   endian representation, skipping the headers
 
 ``` r
-sha3(data.frame(a = 1, b = 2))
-#> [1] "05d4308e79d029b4af5604739ecc6c4efa1f602a23add0ed2d247b7407d4832f"
+sha3(data.frame(a = 1, b = 2), size = 160)
+#> [1] "bc5a411f87ef083296c60d6557f189b62ff9e7e6"
 
 sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
 ```
 
-To hash to an integer value:
+To hash to integer:
 
-- specify a size of ‘32’ and pass the resulting raw vector to
-  `read_integer()`.
+- specify convert as `NA`
+- specify size of `32` for a single integer value
 
 ``` r
-hash <- sha3("秘密の基地の中", size = 32, convert = FALSE)
-hash
-#> [1] 7f c2 38 77
+sha3("秘密の基地の中", convert = NA)
+#> [1]  1706118765  1394124073 -1208837861  -385136950  -692327823  -291994555
+#> [7]   528021721  -384171368
 
-read_integer(hash)
+sha3("秘密の基地の中", size = 32, convert = NA)
 #> [1] 2000208511
 ```
 
-This may be used to generate random seeds for R’s pseudo RNGs.
+These values may be supplied as deterministic (but indistinguishable
+from random) seeds for R’s pseudo random number generators (RNGs).
+
+For use in parallel computing, this is a valid method for reducing to a
+negligible probability that RNGs in each process may overlap. This is
+particularly useful when first-best alternatives such as using recursive
+streams are too expensive or unable to preserve reproducibility.
+<sup>\[1\]</sup>
+
+### References
+
+\[1\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
+(2017), *“Random numbers for parallel computers: Requirements and
+methods, with emphasis on GPUs”*, Mathematics and Computers in
+Simulation, Vol. 135, May 2017, pp. 3-17
+[doi:10.1016/j.matcom.2016.05.00](https://doi.org/10.1016/j.matcom.2016.05.005).
 
 ### Links
 

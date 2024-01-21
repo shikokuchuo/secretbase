@@ -28,7 +28,6 @@
 
 #define SB_R_SERIAL_VER 3
 #define SB_SERIAL_HEADERS 6
-#define READ_INTEGER(x) (int *) DATAPTR_RO(x)
 
 typedef enum {
   MBEDTLS_SHA3_NONE = 0,

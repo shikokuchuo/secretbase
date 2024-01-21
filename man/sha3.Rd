@@ -9,26 +9,28 @@ sha3(x, size = 256L, convert = TRUE)
 \arguments{
 \item{x}{an object.}
 
-\item{size}{[default 256L] integer output size (bits) of the returned hash -
-uses the relevant SHA-3 algorithm if one of 224, 256, 384 or 512, or else
-the SHAKE256 algorithm as an extendable-output function (XOF) for
-arbitrary bit lengths. The supplied value must be between 8 and 2^24.}
+\item{size}{[default 256L] output size (bits) of the returned hash - uses the
+relevant SHA-3 hash function if one of 224, 256, 384 or 512, or
+else the SHAKE256 extendable-output function (XOF) for arbitrary values.
+The supplied value must be between 8 and 2^24, and is automatically
+coerced to integer.}
 
-\item{convert}{[default TRUE] whether to output the hash as a character
-string or, if FALSE, a raw vector.}
+\item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
+representation as a character string, if FALSE, output directly as a raw
+vector, or if NA, a vector of (32-bit) integer values.}
 }
 \value{
-A raw vector or character string depending on 'convert'.
+A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SHA-3 hash of the supplied R object. Uses the implementation by the
-    'Mbed TLS' library from the Trusted Firmware Project.
+Returns a SHA-3 hash of the supplied R object. Implementated from code used
+    by the the 'Mbed TLS' library under the Trusted Firmware Project.
 }
 \details{
-For argument 'x', a scalar string or raw vector (with no attributes)
-    is hashed 'as is'.
+For argument 'x', a character string or raw vector (with no
+    attributes) is hashed 'as is'.
     
-    All other objects are hashed in-place, in a 'streaming' fashion by R
+    All other objects are hashed in-place, in a 'streaming' fashion, by R
     serialization but without allocation of the serialized object. To ensure
     portability, R serialization version 3, big-endian representation is
     always used, skipping the headers (as these contain the R version number
@@ -38,9 +40,9 @@ For argument 'x', a scalar string or raw vector (with no attributes)
     character string hex representation if 'convert' is TRUE, or returned as
     a raw vector if 'convert' is FALSE.
     
-    To hash to an integer value, set 'size' to 32 and 'convert' to FALSE, and
-    pass the resulting raw vector to \code{\link{read_integer}}. This may be
-    used to generate random seeds for R's pseudo RNGs.
+    To hash to integer values, set convert to NA. For a single integer value
+    set size to '32'. These values may be supplied as random seeds for R's
+    pseudo random number generators (RNGs).
 }
 \examples{
 # SHA3-256 hash as character string:
@@ -59,8 +61,6 @@ sha3("secret base", size = 384)
 sha3("secret base", size = 512)
 
 # SHAKE256 hash to integer:
-hash <- sha3("secret base", size = 32L, convert = FALSE)
-hash
-read_integer(hash)
+sha3("secret base", size = 32L, convert = NA)
 
 }
