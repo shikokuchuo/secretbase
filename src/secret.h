@@ -62,4 +62,6 @@ typedef struct secretbase_context_s {
   int skip;
 } secretbase_context;
 
+SEXP secretbase_sha3(SEXP, SEXP, SEXP);
+
 #endif

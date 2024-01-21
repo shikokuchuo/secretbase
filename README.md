@@ -20,7 +20,7 @@ of Standards and Technology (NIST) in 2015 at
 [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
 
 Fast and memory-efficient implementation using the core algorithm from
-the ‘Mbed TLS’ library under the Trusted Firmware Project
+‘Mbed TLS’ under the Trusted Firmware Project
 <https://www.trustedfirmware.org/projects/mbed-tls/>.
 
 ### Installation

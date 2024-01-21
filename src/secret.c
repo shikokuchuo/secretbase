@@ -229,7 +229,7 @@ static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
   
 }
 
-// secretbase - internal R binding functions -----------------------------------
+// secretbase - internal auxiliary functions -----------------------------------
 
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
@@ -259,7 +259,7 @@ static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
   
 }
 
-// secretbase - public functions -----------------------------------------------
+// secretbase - exported functions ---------------------------------------------
 
 SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   
@@ -352,17 +352,4 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   mbedtls_sha3_free(&ctx);
   Rf_error("hashing encountered error");
   
-}
-
-// secretbase - package level registrations ------------------------------------
-
-static const R_CallMethodDef callMethods[] = {
-  {"secretbase_sha3", (DL_FUNC) &secretbase_sha3, 3},
-  {NULL, NULL, 0}
-};
-
-void attribute_visible R_init_secretbase(DllInfo* dll) {
-  R_registerRoutines(dll, NULL, callMethods, NULL, NULL);
-  R_useDynamicSymbols(dll, FALSE);
-  R_forceSymbols(dll, TRUE);
 }

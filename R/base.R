@@ -19,8 +19,8 @@
 #' secretbase: Cryptographic Hash and Extendable-Output Functions
 #'
 #' SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF). Fast
-#'     and memory-efficient implementation using the core algorithm from the
-#'     'Mbed TLS' library under the Trusted Firmware Project
+#'     and memory-efficient implementation using the core algorithm from 'Mbed
+#'     TLS' under the Trusted Firmware Project
 #'     <https://www.trustedfirmware.org/projects/mbed-tls/>. The SHA-3
 #'     cryptographic hash functions are SHA3-224, SHA3-256, SHA3-384 and
 #'     SHA3-512, each an instance of the Keccak algorithm. SHAKE256 is one of
