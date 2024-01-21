@@ -23,11 +23,12 @@ test_equal(sha3(sha3("secret base", size = 32, convert = FALSE), size = 32), "4d
 test_that(sha3(rnorm(1e5), size = 8196), is.character)
 test_equal(sha3("secret base", size = 32, convert = NA), -1044750695L)
 
-# SHA-3 streaming serialization tests:
+# Streaming serialization tests:
 test_equal(sha3(data.frame(a = 1, b = 2)), "05d4308e79d029b4af5604739ecc6c4efa1f602a23add0ed2d247b7407d4832f")
 test_equal(sha3(c("secret", "base")), "d906024c71828a10e28865a80f5e81d2cb5cd74067d44852d7039813ba62b0b6")
 test_equal(sha3(NULL), "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee")
 test_equal(sha3(substitute()), "9d31eb41cfb721b8040c52d574df1aacfc381d371c2b933f90792beba5160a57")
+test_equal(sha3(`class<-`(sha3(character(), size = 192, convert = FALSE), "hash"), size = "32", convert = NA), -111175135L)
 
 # Error handling tests:
 test_error(sha3("secret base", size = 0), "'size' must be between 8 and 2^24")

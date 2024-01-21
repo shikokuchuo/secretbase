@@ -151,44 +151,25 @@ static void keccak_f1600(mbedtls_sha3_context *ctx) {
 }
 
 static void mbedtls_sha3_init(mbedtls_sha3_context *ctx) {
-  
-  if (ctx == NULL)
-    return;
-  
+
   memset(ctx, 0, sizeof(mbedtls_sha3_context));
   
 }
 
-static void mbedtls_sha3_free(mbedtls_sha3_context *ctx) {
+static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
   
-  if (ctx == NULL)
-      return;
+  mbedtls_sha3_family_functions *p;
 
-  memset(ctx, 0, sizeof(mbedtls_sha3_context));
-    
-}
-
-static int mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
-  
-  mbedtls_sha3_family_functions *p = NULL;
-  if (ctx == NULL)
-    return -1;
-  
   for (p = sha3_families; p->id != MBEDTLS_SHA3_NONE; p++) {
     if (p->id == id)
       break;
   }
-  
-  if (p == NULL)
-    return -1;
   
   ctx->id = id;
   ctx->r = p->r;
   ctx->olen = p->olen / 8;
   ctx->xor_byte = p->xor_byte;
   ctx->max_block_size = ctx->r / 8;
-  
-  return 0;
   
 }
 
@@ -204,16 +185,11 @@ static void mbedtls_sha3_update(mbedtls_sha3_context *ctx,
       keccak_f1600(ctx);
   }
   
-  return;
-  
 }
 
-static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
-                               uint8_t *output, size_t olen) {
+static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
+                                uint8_t *output, size_t olen) {
 
-  if (ctx->olen > 0 && ctx->olen != olen)
-    return -1;
-  
   ABSORB(ctx, ctx->index, ctx->xor_byte);
   ABSORB(ctx, ctx->max_block_size - 1, 0x80);
   keccak_f1600(ctx);
@@ -224,8 +200,6 @@ static int mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
     if ((ctx->index = (ctx->index + 1) % ctx->max_block_size) == 0)
       keccak_f1600(ctx);
   }
-  
-  return 0;
   
 }
 
@@ -272,7 +246,6 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   unsigned char output[outlen];
   mbedtls_sha3_id id;
   SEXP out;
-  int xc;
   
   switch (bits) {
   case 224:
@@ -289,9 +262,7 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   
   mbedtls_sha3_context ctx;
   mbedtls_sha3_init(&ctx);
-  
-  if ((xc = mbedtls_sha3_starts(&ctx, id)))
-    goto exit;
+  mbedtls_sha3_starts(&ctx, id);
   
   switch (TYPEOF(x)) {
   case STRSXP:
@@ -328,8 +299,7 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
   
   finish:
     
-  if ((xc = mbedtls_sha3_finish(&ctx, output, outlen)))
-    goto exit;
+  mbedtls_sha3_finish(&ctx, output, outlen);
 
   switch (conv) {
   case 0:
@@ -343,13 +313,7 @@ SEXP secretbase_sha3(SEXP x, SEXP size, SEXP convert) {
     out = Rf_allocVector(INTSXP, outlen / sizeof(int));
     memcpy(STDVEC_DATAPTR(out), output, outlen);
   }
-
-  mbedtls_sha3_free(&ctx);
   
   return out;
-  
-  exit:
-  mbedtls_sha3_free(&ctx);
-  Rf_error("hashing encountered error");
   
 }
