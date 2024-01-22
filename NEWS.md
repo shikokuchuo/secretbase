@@ -1,6 +1,6 @@
-# secretbase 0.0.5
+# secretbase 0.1.0
 
-* Update to use efficient in-place hashing for all R objects.
+* Initial CRAN release.
 
 # secretbase 0.0.1
 
