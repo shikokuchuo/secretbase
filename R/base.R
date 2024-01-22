@@ -44,8 +44,7 @@
 
 #' Cryptographic Hashing Using the SHA-3 Algorithm
 #'
-#' Returns a SHA-3 hash of the supplied R object. Implementated from code used
-#'     by the the 'Mbed TLS' library under the Trusted Firmware Project.
+#' Returns a SHA-3 hash of the supplied R object.
 #'
 #' @param x an object.
 #' @param bits [default 256L] output size of the returned hash - uses the
@@ -59,8 +58,8 @@
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
 #'
-#' @details For argument 'x', a character string or raw vector (with no
-#'     attributes) is hashed 'as is'.
+#' @details A character string or raw vector (with no attributes) is hashed 'as
+#'     is'.
 #'     
 #'     All other objects are hashed in-place, in a 'streaming' fashion, by R
 #'     serialization but without allocation of the serialized object. To ensure

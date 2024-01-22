@@ -3,4 +3,4 @@ bibentry(bibtype = "Manual",
          author = person("Charlie", "Gao"),
          year = 2024,
          note = sprintf("R package version %s", meta$Version),
-         url = "https://shikokuchuo.net/secretbase/")
+         url = "https://doi.org/10.5281/zenodo.10553139")
