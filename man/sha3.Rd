@@ -9,11 +9,10 @@ sha3(x, bits = 256L, convert = TRUE)
 \arguments{
 \item{x}{an object.}
 
-\item{bits}{[default 256L] output size of the returned hash - uses the
-relevant SHA-3 hash function if one of 224, 256, 384 or 512, or
-else the SHAKE256 extendable-output function (XOF) for arbitrary values.
-The supplied value must be between 8 and 2^24, and is automatically
-coerced to integer.}
+\item{bits}{[default 256L] output size of the returned hash. If one of 224,
+256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
+other values, uses the SHAKE256 extendable-output function (XOF). The
+supplied value must be between 8 and 2^24, and is coerced to integer.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw

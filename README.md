@@ -71,7 +71,8 @@ Hash arbitrary R objects:
 - done in-place, in a ‘streaming’ fashion, by R serialization but
   without allocation of the serialized object
 - ensures portability by always using R serialization version 3, big
-  endian representation, skipping the headers
+  endian representation, skipping the headers (which contain R version
+  and native encoding information)
 
 ``` r
 sha3(data.frame(a = 1, b = 2), bits = 160)

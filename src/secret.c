@@ -241,26 +241,31 @@ SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   const int size = Rf_asInteger(bits);
   if (size < 8 || size > (1 << 24))
     Rf_error("'bits' must be between 8 and 2^24");
-  
   const size_t outlen = (size_t) (size / 8);
   unsigned char output[outlen];
+  
   mbedtls_sha3_id id;
+  mbedtls_sha3_context ctx;
   SEXP out;
   
   switch (size) {
   case 224:
-    id = MBEDTLS_SHA3_224; break;
+    id = MBEDTLS_SHA3_224;
+    break;
   case 256:
-    id = MBEDTLS_SHA3_256; break;
+    id = MBEDTLS_SHA3_256;
+    break;
   case 384:
-    id = MBEDTLS_SHA3_384; break;
+    id = MBEDTLS_SHA3_384;
+    break;
   case 512:
-    id = MBEDTLS_SHA3_512; break;
+    id = MBEDTLS_SHA3_512;
+    break;
   default:
-    id = MBEDTLS_SHA3_SHAKE256; break;
+    id = MBEDTLS_SHA3_SHAKE256;
+    break;
   }
   
-  mbedtls_sha3_context ctx;
   mbedtls_sha3_init(&ctx);
   mbedtls_sha3_starts(&ctx, id);
   
@@ -268,7 +273,7 @@ SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
       const char *s = CHAR(STRING_ELT(x, 0));
-      mbedtls_sha3_update(&ctx, (const uint8_t *) s, (size_t) strlen(s));
+      mbedtls_sha3_update(&ctx, (const uint8_t *) s, strlen(s));
       goto finish;
     }
     break;
@@ -300,7 +305,7 @@ SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   finish:
     
   mbedtls_sha3_finish(&ctx, output, outlen);
-
+  
   switch (conv) {
   case 0:
     out = Rf_allocVector(RAWSXP, outlen);
@@ -312,8 +317,8 @@ SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   default:
     out = Rf_allocVector(INTSXP, outlen / sizeof(int));
     memcpy(STDVEC_DATAPTR(out), output, outlen);
+    break;
   }
-  
   return out;
   
 }
