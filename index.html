@@ -123,7 +123,7 @@
 <p>Hash arbitrary R objects:</p>
 <ul>
 <li>done in-place, in a ‘streaming’ fashion, by R serialization but without allocation of the serialized object</li>
-<li>ensures portability by always using R serialization version 3, big endian representation, skipping the headers</li>
+<li>ensures portability by always using R serialization version 3, big endian representation, skipping the headers (which contain R version and native encoding information)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, bits <span class="op">=</span> <span class="fl">160</span><span class="op">)</span></span>

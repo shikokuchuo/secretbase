@@ -69,11 +69,10 @@
 
 
 <dt>bits</dt>
-<dd><p>[default 256L] output size of the returned hash - uses the
-relevant SHA-3 hash function if one of 224, 256, 384 or 512, or
-else the SHAKE256 extendable-output function (XOF) for arbitrary values.
-The supplied value must be between 8 and 2^24, and is automatically
-coerced to integer.</p></dd>
+<dd><p>[default 256L] output size of the returned hash. If one of 224,
+256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
+other values, uses the SHAKE256 extendable-output function (XOF). The
+supplied value must be between 8 and 2^24, and is coerced to integer.</p></dd>
 
 
 <dt>convert</dt>
