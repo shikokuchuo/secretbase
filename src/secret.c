@@ -347,7 +347,7 @@ SEXP secretbase_sha3_file(SEXP x, SEXP bits, SEXP convert) {
   const int size = validate_bitlength(bits);
   const size_t outlen = (size_t) (size / 8);
   unsigned char output[outlen];
-  unsigned char buf[4096];
+  unsigned char buf[SB_BUF_SIZE];
   size_t cur;
   
   mbedtls_sha3_id id = id_from_size(size);
@@ -355,13 +355,13 @@ SEXP secretbase_sha3_file(SEXP x, SEXP bits, SEXP convert) {
   mbedtls_sha3_init(&ctx);
   mbedtls_sha3_starts(&ctx, id);
   
-  FILE *f = fopen(file, "rb");
-  if (f == NULL)
-    Rf_error("file not found");
-  while ((cur = fread(buf, 1, sizeof(buf), f))) {
+  FILE *fp = fopen(file, "rb");
+  if (fp == NULL)
+    Rf_error("file not found or accessible");
+  while ((cur = fread(buf, 1, sizeof(buf), fp))) {
     mbedtls_sha3_update(&ctx, buf, cur);
   }
-  fclose(f);
+  fclose(fp);
     
   mbedtls_sha3_finish(&ctx, output, outlen);
   
