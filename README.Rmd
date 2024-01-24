@@ -45,7 +45,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers one main function: `sha3()`
+`secretbase` offers the functions: `sha3()` for objects and `sha3sum()` for files.
 
 To use:
  
@@ -62,12 +62,13 @@ sha3("secret base", convert = FALSE)
 sha3("秘密の基地の中", bits = 224)
 
 sha3("", bits = 512)
+
 ```
 
 Hash arbitrary R objects:
 
- - done in-place, in a 'streaming' fashion, by R serialization but without allocation of the serialized object
- - ensures portability by always using R serialization version 3, big endian representation, skipping the headers (which contain R version and native encoding information)
+ - done in-place using R serialization but without allocation of the serialized object (memory-efficient)
+ - ensures portability by always using serialization v3 XDR, skipping the headers (which contain R version and encoding information)
 
 ```{r streaming}
 sha3(data.frame(a = 1, b = 2), bits = 160)
@@ -75,12 +76,24 @@ sha3(data.frame(a = 1, b = 2), bits = 160)
 sha3(NULL)
 ```
 
-To hash to integer:
+Hash files:
+
+ - files are read in a streaming fashion and do not need to fit in memory.
+
+```{r files}
+file <- tempfile(); cat("secret base", file = file)
+sha3sum(file)
+```
+```{r unlink, echo=FALSE}
+unlink(file)
+```
+
+Hash to integer:
 
  - specify 'convert' as `NA`
  - specify 'bits' as `32` for a single integer value
 
-```{r readinteger}
+```{r integer}
 sha3("秘密の基地の中", convert = NA)
 
 sha3("秘密の基地の中", bits = 32, convert = NA)

@@ -63,5 +63,6 @@ typedef struct secretbase_context_s {
 } secretbase_context;
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
+SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 
 #endif

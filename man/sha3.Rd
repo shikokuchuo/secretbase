@@ -2,41 +2,43 @@
 % Please edit documentation in R/base.R
 \name{sha3}
 \alias{sha3}
+\alias{sha3sum}
 \title{Cryptographic Hashing Using the SHA-3 Algorithm}
 \usage{
 sha3(x, bits = 256L, convert = TRUE)
+
+sha3sum(file, bits = 256L, convert = TRUE)
 }
 \arguments{
-\item{x}{an object.}
+\item{x}{an object. Character strings and raw vectors (with no attributes)
+are hashed 'as is'. All other objects are hashed in-place using R
+serialization but without allocation of the serialized object
+(memory-efficient). For portability, serialization v3 XDR is always used
+with headers skipped (as these contain R version and encoding
+information).}
 
 \item{bits}{[default 256L] output size of the returned hash. If one of 224,
 256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
-other values, uses the SHAKE256 extendable-output function (XOF). The
-supplied value must be between 8 and 2^24, and is coerced to integer.}
+all other values, uses the SHAKE256 extendable-output function (XOF).
+Must be between 8 and 2^24 and coercible to integer.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
+
+\item{file}{character file name / path. The file is read in a streaming
+fashion and does not need to fit in memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SHA-3 hash of the supplied R object.
+Returns a SHA-3 hash of the supplied R object or file.
 }
 \details{
-A character string or raw vector (with no attributes) is hashed 'as
-    is'.
-    
-    All other objects are hashed in-place, in a 'streaming' fashion, by R
-    serialization but without allocation of the serialized object. To ensure
-    portability, R serialization version 3, big-endian representation is
-    always used, skipping the headers (as these contain the R version number
-    and native encoding information).
-
-    The result of hashing is always a byte sequence, which is converted to a
-    character string hex representation if 'convert' is TRUE, or returned as
-    a raw vector if 'convert' is FALSE.
+The result of hashing is always a byte sequence, which is converted
+    to a character string hex representation if 'convert' is TRUE, or
+    returned as a raw vector if 'convert' is FALSE.
     
     To hash to integer values, set convert to NA. For a single integer value
     set 'bits' to 32. These values may be supplied as random seeds for R's
@@ -61,4 +63,9 @@ sha3("secret base", bits = 512)
 # SHAKE256 hash to integer:
 sha3("secret base", bits = 32L, convert = NA)
 
+# SHA3-256 hash a file:
+file <- tempfile(); cat("secret base", file = file)
+sha3sum(file)
+unlink(file)
+    
 }

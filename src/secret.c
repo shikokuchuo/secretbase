@@ -205,6 +205,39 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
 
 // secretbase - internal auxiliary functions -----------------------------------
 
+static int validate_bitlength(const SEXP bits) {
+  
+  const int size = Rf_asInteger(bits);
+  if (size < 8 || size > (1 << 24))
+    Rf_error("'bits' must be between 8 and 2^24");
+  return size;
+  
+}
+
+static mbedtls_sha3_id id_from_size(size_t size) {
+  
+  mbedtls_sha3_id id;
+  switch (size) {
+  case 224:
+    id = MBEDTLS_SHA3_224;
+    break;
+  case 256:
+    id = MBEDTLS_SHA3_256;
+    break;
+  case 384:
+    id = MBEDTLS_SHA3_384;
+    break;
+  case 512:
+    id = MBEDTLS_SHA3_512;
+    break;
+  default:
+    id = MBEDTLS_SHA3_SHAKE256;
+  break;
+  }
+  return id;
+  
+}
+
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_context *sctx = (secretbase_context *) stream->data;
@@ -216,7 +249,7 @@ static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
 }
 
-static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
+static SEXP hash_to_char(unsigned char *buf, const size_t sz) {
   
   SEXP out;
   char cbuf[sz + sz + 1];
@@ -233,39 +266,37 @@ static SEXP nano_hash_char(unsigned char *buf, const size_t sz) {
   
 }
 
+static SEXP create_object(const int type, unsigned char *buf, const size_t sz) {
+  
+  SEXP out;
+  switch (type) {
+  case 0:
+    out = Rf_allocVector(RAWSXP, sz);
+    memcpy(STDVEC_DATAPTR(out), buf, sz);
+    break;
+  case 1:
+    out = hash_to_char(buf, sz);
+    break;
+  default:
+    out = Rf_allocVector(INTSXP, sz / sizeof(int));
+    memcpy(STDVEC_DATAPTR(out), buf, sz);
+    break;
+  }
+  return out;
+  
+}
+
 // secretbase - exported functions ---------------------------------------------
 
 SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   
   const int conv = LOGICAL(convert)[0];
-  const int size = Rf_asInteger(bits);
-  if (size < 8 || size > (1 << 24))
-    Rf_error("'bits' must be between 8 and 2^24");
+  const int size = validate_bitlength(bits);
   const size_t outlen = (size_t) (size / 8);
   unsigned char output[outlen];
   
-  mbedtls_sha3_id id;
+  mbedtls_sha3_id id = id_from_size(size);
   mbedtls_sha3_context ctx;
-  SEXP out;
-  
-  switch (size) {
-  case 224:
-    id = MBEDTLS_SHA3_224;
-    break;
-  case 256:
-    id = MBEDTLS_SHA3_256;
-    break;
-  case 384:
-    id = MBEDTLS_SHA3_384;
-    break;
-  case 512:
-    id = MBEDTLS_SHA3_512;
-    break;
-  default:
-    id = MBEDTLS_SHA3_SHAKE256;
-    break;
-  }
-  
   mbedtls_sha3_init(&ctx);
   mbedtls_sha3_starts(&ctx, id);
   
@@ -303,22 +334,37 @@ SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   R_Serialize(x, &output_stream);
   
   finish:
+  mbedtls_sha3_finish(&ctx, output, outlen);
+  
+  return create_object(conv, output, outlen);
+  
+}
+
+SEXP secretbase_sha3_file(SEXP x, SEXP bits, SEXP convert) {
+  
+  const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
+  const int conv = LOGICAL(convert)[0];
+  const int size = validate_bitlength(bits);
+  const size_t outlen = (size_t) (size / 8);
+  unsigned char output[outlen];
+  unsigned char buf[4096];
+  size_t cur;
+  
+  mbedtls_sha3_id id = id_from_size(size);
+  mbedtls_sha3_context ctx;
+  mbedtls_sha3_init(&ctx);
+  mbedtls_sha3_starts(&ctx, id);
+  
+  FILE *f = fopen(file, "rb");
+  if (f == NULL)
+    Rf_error("file not found");
+  while ((cur = fread(buf, 1, sizeof(buf), f))) {
+    mbedtls_sha3_update(&ctx, buf, cur);
+  }
+  fclose(f);
     
   mbedtls_sha3_finish(&ctx, output, outlen);
   
-  switch (conv) {
-  case 0:
-    out = Rf_allocVector(RAWSXP, outlen);
-    memcpy(STDVEC_DATAPTR(out), output, outlen);
-    break;
-  case 1:
-    out = nano_hash_char(output, outlen);
-    break;
-  default:
-    out = Rf_allocVector(INTSXP, outlen / sizeof(int));
-    memcpy(STDVEC_DATAPTR(out), output, outlen);
-    break;
-  }
-  return out;
+  return create_object(conv, output, outlen);
   
 }
