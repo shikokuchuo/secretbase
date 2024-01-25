@@ -37,4 +37,4 @@ hash_func <- function(file, string) {
   sha3file(file)
 }
 test_equal(hash_func(tempfile(), "secret base"), "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520")
-test_error(hash_func("", ""), "file not found or accessible")
+test_error(hash_func("", ""), "file not found or no read permission")

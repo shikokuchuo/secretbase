@@ -59,8 +59,8 @@ typedef struct mbedtls_sha3_context {
 } mbedtls_sha3_context;
 
 typedef struct secretbase_context_s {
-  mbedtls_sha3_context *ctx;
   int skip;
+  mbedtls_sha3_context *ctx;
 } secretbase_context;
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
