@@ -270,13 +270,17 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
     
     const char *filepath = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
     unsigned char buf[SB_BUF_SIZE];
+    FILE *fp;
     size_t cur;
     
-    FILE *fp = fopen(filepath, "rb");
-    if (fp == NULL)
+    if ((fp = fopen(filepath, "rb")) == NULL)
       Rf_error("file not found or no read permission");
     while ((cur = fread(buf, 1, sizeof(buf), fp))) {
       mbedtls_sha3_update(&ctx, buf, cur);
+    }
+    if (ferror(fp)) {
+      fclose(fp);
+      Rf_error("file read error");
     }
     fclose(fp);
     
