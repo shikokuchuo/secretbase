@@ -98,11 +98,11 @@ sha3 <- function(x, bits = 256L, convert = TRUE)
 #' @examples
 #' # SHA3-256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
-#' sha3sum(file)
+#' sha3file(file)
 #' unlink(file)
 #'     
 #' @rdname sha3
 #' @export
 #'
-sha3sum <- function(file, bits = 256L, convert = TRUE)
+sha3file <- function(file, bits = 256L, convert = TRUE)
   .Call(secretbase_sha3_file, file, bits, convert)

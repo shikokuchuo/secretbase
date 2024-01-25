@@ -40,7 +40,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers the functions: `sha3()` for objects and `sha3sum()`
+`secretbase` offers the functions: `sha3()` for objects and `sha3file()`
 for files.
 
 To use:
@@ -84,12 +84,11 @@ sha3(NULL)
 
 Hash files:
 
-- files are read in a streaming fashion and do not need to fit in
-  memory.
+- read in a streaming fashion so can be larger than memory
 
 ``` r
 file <- tempfile(); cat("secret base", file = file)
-sha3sum(file)
+sha3file(file)
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
 ```
 

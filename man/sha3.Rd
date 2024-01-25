@@ -2,12 +2,12 @@
 % Please edit documentation in R/base.R
 \name{sha3}
 \alias{sha3}
-\alias{sha3sum}
+\alias{sha3file}
 \title{Cryptographic Hashing Using the SHA-3 Algorithm}
 \usage{
 sha3(x, bits = 256L, convert = TRUE)
 
-sha3sum(file, bits = 256L, convert = TRUE)
+sha3file(file, bits = 256L, convert = TRUE)
 }
 \arguments{
 \item{x}{an object. Character strings and raw vectors (with no attributes)
@@ -65,7 +65,7 @@ sha3("secret base", bits = 32L, convert = NA)
 
 # SHA3-256 hash a file:
 file <- tempfile(); cat("secret base", file = file)
-sha3sum(file)
+sha3file(file)
 unlink(file)
     
 }

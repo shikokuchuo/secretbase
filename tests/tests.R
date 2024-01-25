@@ -34,7 +34,7 @@ test_error(sha3("secret base", bits = 2^24 + 1), "'bits' must be between 8 and 2
 hash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)
-  sha3sum(file)
+  sha3file(file)
 }
 test_equal(hash_func(tempfile(), "secret base"), "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520")
 test_error(hash_func("", ""), "file not found or accessible")
