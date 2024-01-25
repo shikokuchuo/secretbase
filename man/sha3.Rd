@@ -10,12 +10,12 @@ sha3(x, bits = 256L, convert = TRUE)
 sha3file(file, bits = 256L, convert = TRUE)
 }
 \arguments{
-\item{x}{an object. Character strings and raw vectors (with no attributes)
-are hashed 'as is'. All other objects are hashed in-place using R
-serialization but without allocation of the serialized object
-(memory-efficient). For portability, serialization v3 XDR is always used
-with headers skipped (as these contain R version and encoding
-information).}
+\item{x}{R object to hash. A character string or raw vector (without
+attributes) is hashed 'as is'. All other objects are hashed using R
+serialization in a memory-efficient 'streaming' manner, without
+allocation of the serialized object. To ensure portability, serialization
+v3 XDR is always used with headers skipped (as these contain R version
+and encoding information).}
 
 \item{bits}{[default 256L] output size of the returned hash. If one of 224,
 256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
@@ -26,7 +26,7 @@ Must be between 8 and 2^24 and coercible to integer.}
 representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
-\item{file}{character file name / path. The file is read in a streaming
+\item{file}{character file name / path. The file is hashed in a streaming
 fashion and does not need to fit in memory.}
 }
 \value{
@@ -40,7 +40,7 @@ The result of hashing is always a byte sequence, which is converted
     to a character string hex representation if 'convert' is TRUE, or
     returned as a raw vector if 'convert' is FALSE.
     
-    To hash to integer values, set convert to NA. For a single integer value
+    To hash to integer values, set convert to NA. For a single integer value,
     set 'bits' to 32. These values may be supplied as random seeds for R's
     pseudo random number generators (RNGs).
 }

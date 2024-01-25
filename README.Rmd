@@ -67,7 +67,7 @@ sha3("", bits = 512)
 
 Hash arbitrary R objects:
 
- - done in-place using R serialization but without allocation of the serialized object (memory-efficient)
+ - using R serialization in a memory-efficient 'streaming' manner without allocation of the serialized object
  - ensures portability by always using serialization v3 XDR, skipping the headers (which contain R version and encoding information)
 
 ```{r streaming}

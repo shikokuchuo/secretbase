@@ -44,12 +44,12 @@
 #'
 #' Returns a SHA-3 hash of the supplied R object or file.
 #'
-#' @param x an object. Character strings and raw vectors (with no attributes)
-#'     are hashed 'as is'. All other objects are hashed in-place using R
-#'     serialization but without allocation of the serialized object
-#'     (memory-efficient). For portability, serialization v3 XDR is always used
-#'     with headers skipped (as these contain R version and encoding
-#'     information).
+#' @param x R object to hash. A character string or raw vector (without
+#'     attributes) is hashed 'as is'. All other objects are hashed using R
+#'     serialization in a memory-efficient 'streaming' manner, without
+#'     allocation of the serialized object. To ensure portability, serialization
+#'     v3 XDR is always used with headers skipped (as these contain R version
+#'     and encoding information).
 #' @param bits [default 256L] output size of the returned hash. If one of 224,
 #'     256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
 #'     all other values, uses the SHAKE256 extendable-output function (XOF).
@@ -64,7 +64,7 @@
 #'     to a character string hex representation if 'convert' is TRUE, or
 #'     returned as a raw vector if 'convert' is FALSE.
 #'     
-#'     To hash to integer values, set convert to NA. For a single integer value
+#'     To hash to integer values, set convert to NA. For a single integer value,
 #'     set 'bits' to 32. These values may be supplied as random seeds for R's
 #'     pseudo random number generators (RNGs).
 #'
@@ -92,7 +92,7 @@
 sha3 <- function(x, bits = 256L, convert = TRUE)
   .Call(secretbase_sha3, x, bits, convert)
 
-#' @param file character file name / path. The file is read in a streaming
+#' @param file character file name / path. The file is hashed in a streaming
 #'     fashion and does not need to fit in memory.
 #' 
 #' @examples
