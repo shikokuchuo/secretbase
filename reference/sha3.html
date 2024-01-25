@@ -101,12 +101,9 @@ fashion and does not need to fit in memory.</p></dd>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>The result of hashing is always a byte sequence, which is converted
-    to a character string hex representation if 'convert' is TRUE, or
-    returned as a raw vector if 'convert' is FALSE.</p>    
-<p>To hash to integer values, set convert to NA. For a single integer value,
-    set 'bits' to 32. These values may be supplied as random seeds for R's
-    pseudo random number generators (RNGs).</p>
+    <p>To produce single integer values suitable for use as random seeds
+    for R's pseudo random number generators (RNGs), set 'bits' to 32 and
+    'convert' to NA.</p>
     </div>
 
     <div id="ref-examples">
