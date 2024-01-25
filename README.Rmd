@@ -94,7 +94,7 @@ Hash to integer:
  - specify 'bits' as `32` for a single integer value
 
 ```{r integer}
-sha3("秘密の基地の中", convert = NA)
+sha3("秘密の基地の中", bits = 384, convert = NA)
 
 sha3("秘密の基地の中", bits = 32, convert = NA)
 ```

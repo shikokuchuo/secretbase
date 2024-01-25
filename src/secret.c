@@ -33,13 +33,11 @@
  */
 
 static mbedtls_sha3_family_functions sha3_families[] = {
-  { MBEDTLS_SHA3_SHAKE128, 1344,   0, 0x1F },
   { MBEDTLS_SHA3_SHAKE256, 1088,   0, 0x1F },
   { MBEDTLS_SHA3_224,      1152, 224, 0x06 },
   { MBEDTLS_SHA3_256,      1088, 256, 0x06 },
   { MBEDTLS_SHA3_384,       832, 384, 0x06 },
-  { MBEDTLS_SHA3_512,       576, 512, 0x06 },
-  { MBEDTLS_SHA3_NONE, 0, 0, 0 }
+  { MBEDTLS_SHA3_512,       576, 512, 0x06 }
 };
 
 static const uint64_t rc[24] = {
@@ -158,23 +156,17 @@ static void mbedtls_sha3_init(mbedtls_sha3_context *ctx) {
 
 static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
   
-  mbedtls_sha3_family_functions *p;
-
-  for (p = sha3_families; p->id != MBEDTLS_SHA3_NONE; p++) {
-    if (p->id == id)
-      break;
-  }
+  mbedtls_sha3_family_functions p = sha3_families[id];
   
   ctx->id = id;
-  ctx->r = p->r;
-  ctx->olen = p->olen / 8;
-  ctx->xor_byte = p->xor_byte;
+  ctx->r = p.r;
+  ctx->olen = p.olen / 8;
+  ctx->xor_byte = p.xor_byte;
   ctx->max_block_size = ctx->r / 8;
   
 }
 
-static void mbedtls_sha3_update(mbedtls_sha3_context *ctx,
-                                const uint8_t *input, size_t ilen) {
+static void mbedtls_sha3_update(mbedtls_sha3_context *ctx, const uint8_t *input, size_t ilen) {
   
   if (ilen == 0 || input == NULL)
     return;
@@ -187,8 +179,7 @@ static void mbedtls_sha3_update(mbedtls_sha3_context *ctx,
   
 }
 
-static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx,
-                                uint8_t *output, size_t olen) {
+static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size_t olen) {
 
   ABSORB(ctx, ctx->index, ctx->xor_byte);
   ABSORB(ctx, ctx->max_block_size - 1, 0x80);
@@ -216,7 +207,7 @@ static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
 }
 
-static SEXP hash_to_char(unsigned char *buf, const size_t sz) {
+static SEXP hash_to_char(const unsigned char *buf, const size_t sz) {
   
   SEXP out;
   char cbuf[sz + sz + 1];
@@ -239,7 +230,7 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
   const int conv = LOGICAL(convert)[0];
   const int size = Rf_asInteger(bits);
   if (size < 8 || size > (1 << 24))
-    Rf_error("'bits' must be between 8 and 2^24");
+    Rf_error("'bits' outside valid range of 8 to 2^24");
   const size_t outlen = (size_t) (size / 8);
   unsigned char output[outlen];
   SEXP out;
@@ -248,20 +239,15 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
   mbedtls_sha3_id id;
   switch (size) {
   case 224:
-    id = MBEDTLS_SHA3_224;
-    break;
+    id = MBEDTLS_SHA3_224; break;
   case 256:
-    id = MBEDTLS_SHA3_256;
-    break;
+    id = MBEDTLS_SHA3_256; break;
   case 384:
-    id = MBEDTLS_SHA3_384;
-    break;
+    id = MBEDTLS_SHA3_384; break;
   case 512:
-    id = MBEDTLS_SHA3_512;
-    break;
+    id = MBEDTLS_SHA3_512; break;
   default:
-    id = MBEDTLS_SHA3_SHAKE256;
-  break;
+    id = MBEDTLS_SHA3_SHAKE256; break;
   }
   mbedtls_sha3_init(&ctx);
   mbedtls_sha3_starts(&ctx, id);
@@ -274,13 +260,13 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
     size_t cur;
     
     if ((fp = fopen(filepath, "rb")) == NULL)
-      Rf_error("file not found or no read permission");
+      Rf_error("file not found or no read permission at '%s'", filepath);
     while ((cur = fread(buf, 1, sizeof(buf), fp))) {
       mbedtls_sha3_update(&ctx, buf, cur);
     }
     if (ferror(fp)) {
       fclose(fp);
-      Rf_error("file read error");
+      Rf_error("file read error at '%s'", filepath);
     }
     fclose(fp);
     

@@ -27,9 +27,9 @@ test_equal(sha3(NULL), "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de9
 test_equal(sha3(substitute()), "9d31eb41cfb721b8040c52d574df1aacfc381d371c2b933f90792beba5160a57")
 test_equal(sha3(`class<-`(sha3(character(), bits = 192, convert = FALSE), "hash"), bits = "32", convert = NA), -111175135L)
 # Error handling tests:
-test_error(sha3("secret base", bits = 0), "'bits' must be between 8 and 2^24")
-test_error(sha3("secret base", bits = -1), "'bits' must be between 8 and 2^24")
-test_error(sha3("secret base", bits = 2^24 + 1), "'bits' must be between 8 and 2^24")
+test_error(sha3("secret base", bits = 0), "'bits' outside valid range of 8 to 2^24")
+test_error(sha3("secret base", bits = -1), "'bits' outside valid range of 8 to 2^24")
+test_error(sha3("secret base", bits = 2^24 + 1), "'bits' outside valid range of 8 to 2^24")
 # File interface tests:
 hash_func <- function(file, string) {
   on.exit(unlink(file))

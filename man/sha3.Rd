@@ -36,13 +36,9 @@ A character string, raw or integer vector depending on 'convert'.
 Returns a SHA-3 hash of the supplied R object or file.
 }
 \details{
-The result of hashing is always a byte sequence, which is converted
-    to a character string hex representation if 'convert' is TRUE, or
-    returned as a raw vector if 'convert' is FALSE.
-    
-    To hash to integer values, set convert to NA. For a single integer value,
-    set 'bits' to 32. These values may be supplied as random seeds for R's
-    pseudo random number generators (RNGs).
+To produce single integer values suitable for use as random seeds
+    for R's pseudo random number generators (RNGs), set 'bits' to 32 and
+    'convert' to NA.
 }
 \examples{
 # SHA3-256 hash as character string:

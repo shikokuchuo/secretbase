@@ -31,13 +31,11 @@
 #define SB_BUF_SIZE 4096
 
 typedef enum {
-  MBEDTLS_SHA3_NONE = 0,
+  MBEDTLS_SHA3_SHAKE256 = 0,
   MBEDTLS_SHA3_224,
   MBEDTLS_SHA3_256,
   MBEDTLS_SHA3_384,
-  MBEDTLS_SHA3_512,
-  MBEDTLS_SHA3_SHAKE128,
-  MBEDTLS_SHA3_SHAKE256,
+  MBEDTLS_SHA3_512
 } mbedtls_sha3_id;
 
 typedef struct mbedtls_sha3_family_functions {
