@@ -67,12 +67,12 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>an object. Character strings and raw vectors (with no attributes)
-are hashed 'as is'. All other objects are hashed in-place using R
-serialization but without allocation of the serialized object
-(memory-efficient). For portability, serialization v3 XDR is always used
-with headers skipped (as these contain R version and encoding
-information).</p></dd>
+<dd><p>R object to hash. A character string or raw vector (without
+attributes) is hashed 'as is'. All other objects are hashed using R
+serialization in a memory-efficient 'streaming' manner, without
+allocation of the serialized object. To ensure portability, serialization
+v3 XDR is always used with headers skipped (as these contain R version
+and encoding information).</p></dd>
 
 
 <dt>bits</dt>
@@ -89,7 +89,7 @@ vector, or if NA, a vector of (32-bit) integer values.</p></dd>
 
 
 <dt>file</dt>
-<dd><p>character file name / path. The file is read in a streaming
+<dd><p>character file name / path. The file is hashed in a streaming
 fashion and does not need to fit in memory.</p></dd>
 
 </dl></div>
@@ -104,7 +104,7 @@ fashion and does not need to fit in memory.</p></dd>
     <p>The result of hashing is always a byte sequence, which is converted
     to a character string hex representation if 'convert' is TRUE, or
     returned as a raw vector if 'convert' is FALSE.</p>    
-<p>To hash to integer values, set convert to NA. For a single integer value
+<p>To hash to integer values, set convert to NA. For a single integer value,
     set 'bits' to 32. These values may be supplied as random seeds for R's
     pseudo random number generators (RNGs).</p>
     </div>
