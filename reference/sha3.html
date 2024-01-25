@@ -61,7 +61,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sha3</span><span class="op">(</span><span class="va">x</span>, bits <span class="op">=</span> <span class="fl">256L</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">sha3sum</span><span class="op">(</span><span class="va">file</span>, bits <span class="op">=</span> <span class="fl">256L</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">sha3file</span><span class="op">(</span><span class="va">file</span>, bits <span class="op">=</span> <span class="fl">256L</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -138,7 +138,7 @@ fashion and does not need to fit in memory.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHA3-256 hash a file:</span></span></span>
 <span class="r-in"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"secret base"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">sha3sum</span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">sha3file</span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    </span></span>

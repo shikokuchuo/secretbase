@@ -98,7 +98,7 @@
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p><code>secretbase</code> offers the functions: <code><a href="reference/sha3.html">sha3()</a></code> for objects and <code><a href="reference/sha3.html">sha3sum()</a></code> for files.</p>
+<p><code>secretbase</code> offers the functions: <code><a href="reference/sha3.html">sha3()</a></code> for objects and <code><a href="reference/sha3.html">sha3file()</a></code> for files.</p>
 <p>To use:</p>
 <ul>
 <li>SHA-3 cryptographic hash algorithm, specify ‘bits’ as one of <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
@@ -133,11 +133,11 @@
 <span><span class="co">#&gt; [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"</span></span></code></pre></div>
 <p>Hash files:</p>
 <ul>
-<li>files are read in a streaming fashion and do not need to fit in memory.</li>
+<li>read in a streaming fashion so can be larger than memory</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"secret base"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3sum</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/sha3.html">sha3file</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span></code></pre></div>
 <p>Hash to integer:</p>
 <ul>
