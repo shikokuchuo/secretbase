@@ -264,6 +264,8 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
     while ((cur = fread(buf, 1, sizeof(buf), fp))) {
       mbedtls_sha3_update(&ctx, buf, cur);
     }
+    memset(&buf, 0, SB_BUF_SIZE);
+    CHECK_MEMORY_INTEGRITY(&buf);
     if (ferror(fp)) {
       fclose(fp);
       Rf_error("file read error at '%s'", filepath);
@@ -309,6 +311,8 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
   
   finish:
   mbedtls_sha3_finish(&ctx, output, outlen);
+  memset(&ctx, 0, sizeof(mbedtls_sha3_context));
+  CHECK_MEMORY_INTEGRITY(&ctx);
   
   switch (conv) {
   case 0:
