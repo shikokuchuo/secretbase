@@ -224,6 +224,13 @@ static SEXP hash_to_char(const unsigned char *buf, const size_t sz) {
   
 }
 
+static void clear_buffer(void *buf, size_t sz) {
+  
+  void *(*volatile secure_memset)(void *, int, size_t) = memset;
+  secure_memset(buf, 0, sz);
+    
+}
+
 static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
                                  const SEXP convert, const int file) {
   
@@ -261,11 +268,10 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
     
     if ((fp = fopen(filepath, "rb")) == NULL)
       Rf_error("file not found or no read permission at '%s'", filepath);
-    while ((cur = fread(buf, 1, sizeof(buf), fp))) {
+    while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, fp))) {
       mbedtls_sha3_update(&ctx, buf, cur);
     }
-    memset(&buf, 0, SB_BUF_SIZE);
-    CHECK_MEMORY_INTEGRITY(&buf);
+    clear_buffer(&buf, SB_BUF_SIZE);
     if (ferror(fp)) {
       fclose(fp);
       Rf_error("file read error at '%s'", filepath);
@@ -311,8 +317,7 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
   
   finish:
   mbedtls_sha3_finish(&ctx, output, outlen);
-  memset(&ctx, 0, sizeof(mbedtls_sha3_context));
-  CHECK_MEMORY_INTEGRITY(&ctx);
+  clear_buffer(&ctx, sizeof(mbedtls_sha3_context));
   
   switch (conv) {
   case 0:

@@ -29,7 +29,6 @@
 #define SB_R_SERIAL_VER 3
 #define SB_SERIAL_HEADERS 6
 #define SB_BUF_SIZE 4096
-#define CHECK_MEMORY_INTEGRITY(x) if (*(int *) x) Rf_error("memory corruption")
 
 typedef enum {
   MBEDTLS_SHA3_SHAKE256 = 0,
