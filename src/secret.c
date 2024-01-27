@@ -154,11 +154,23 @@ static void mbedtls_sha3_init(mbedtls_sha3_context *ctx) {
   
 }
 
-static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
+static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, const int bits) {
   
+  mbedtls_sha3_id id;
+  switch (bits) {
+  case 224:
+    id = MBEDTLS_SHA3_224; break;
+  case 256:
+    id = MBEDTLS_SHA3_256; break;
+  case 384:
+    id = MBEDTLS_SHA3_384; break;
+  case 512:
+    id = MBEDTLS_SHA3_512; break;
+  default:
+    id = MBEDTLS_SHA3_SHAKE256; break;
+  }
   mbedtls_sha3_family_functions p = sha3_families[id];
   
-  ctx->id = id;
   ctx->r = p.r;
   ctx->olen = p.olen / 8;
   ctx->xor_byte = p.xor_byte;
@@ -196,6 +208,13 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 // secretbase - internals ------------------------------------------------------
 
+static void clear_buffer(void *buf, size_t sz) {
+  
+  void * (*volatile secure_memset) (void *, int, size_t) = memset;
+  secure_memset(buf, 0, sz);
+  
+}
+
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_context *sctx = (secretbase_context *) stream->data;
@@ -207,97 +226,38 @@ static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
 }
 
-static SEXP hash_to_char(const unsigned char *buf, const size_t sz) {
+static void hash_file(mbedtls_sha3_context *ctx, const char * file) {
   
-  SEXP out;
-  char cbuf[sz + sz + 1];
-  char *cptr = cbuf;
+  unsigned char buf[SB_BUF_SIZE];
+  FILE *fp;
+  size_t cur;
   
-  for (size_t i = 0; i < sz; i++)
-    cptr += snprintf(cptr, 3, "%.2x", buf[i]);
-  
-  PROTECT(out = Rf_allocVector(STRSXP, 1));
-  SET_STRING_ELT(out, 0, Rf_mkCharLenCE(cbuf, (int) (sz + sz), CE_NATIVE));
-  
-  UNPROTECT(1);
-  return out;
-  
-}
-
-static void clear_buffer(void *buf, size_t sz) {
-  
-  void *(*volatile secure_memset)(void *, int, size_t) = memset;
-  secure_memset(buf, 0, sz);
-    
-}
-
-static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
-                                 const SEXP convert, const int file) {
-  
-  const int conv = LOGICAL(convert)[0];
-  const int size = Rf_asInteger(bits);
-  if (size < 8 || size > (1 << 24))
-    Rf_error("'bits' outside valid range of 8 to 2^24");
-  const size_t outlen = (size_t) (size / 8);
-  unsigned char output[outlen];
-  SEXP out;
-  
-  mbedtls_sha3_context ctx;
-  mbedtls_sha3_id id;
-  switch (size) {
-  case 224:
-    id = MBEDTLS_SHA3_224; break;
-  case 256:
-    id = MBEDTLS_SHA3_256; break;
-  case 384:
-    id = MBEDTLS_SHA3_384; break;
-  case 512:
-    id = MBEDTLS_SHA3_512; break;
-  default:
-    id = MBEDTLS_SHA3_SHAKE256; break;
+  if ((fp = fopen(file, "rb")) == NULL)
+    Rf_error("file not found or no read permission at '%s'", file);
+  while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, fp))) {
+    mbedtls_sha3_update(ctx, buf, cur);
   }
-  mbedtls_sha3_init(&ctx);
-  mbedtls_sha3_starts(&ctx, id);
   
-  if (file) {
-    
-    const char *filepath = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
-    unsigned char buf[SB_BUF_SIZE];
-    FILE *fp;
-    size_t cur;
-    
-    if ((fp = fopen(filepath, "rb")) == NULL)
-      Rf_error("file not found or no read permission at '%s'", filepath);
-    while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, fp))) {
-      mbedtls_sha3_update(&ctx, buf, cur);
-    }
-    clear_buffer(&buf, SB_BUF_SIZE);
-    if (ferror(fp)) {
-      fclose(fp);
-      Rf_error("file read error at '%s'", filepath);
-    }
+  clear_buffer(&buf, SB_BUF_SIZE);
+  if (ferror(fp)) {
     fclose(fp);
-    
+    Rf_error("file read error at '%s'", file);
+  }
+  fclose(fp);
+  
+}
+
+static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
+  
+  SEXPTYPE typ = TYPEOF(x);
+  if (typ == STRSXP && XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
+    const char *s = CHAR(STRING_ELT(x, 0));
+    mbedtls_sha3_update(ctx, (const uint8_t *) s, strlen(s));
+  } else if (typ == RAWSXP && ATTRIB(x) == R_NilValue) {
+    mbedtls_sha3_update(ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
   } else {
-    
-    switch (TYPEOF(x)) {
-    case STRSXP:
-      if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
-        const char *s = CHAR(STRING_ELT(x, 0));
-        mbedtls_sha3_update(&ctx, (const uint8_t *) s, strlen(s));
-        goto finish;
-      }
-      break;
-    case RAWSXP:
-      if (ATTRIB(x) == R_NilValue) {
-        mbedtls_sha3_update(&ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
-        goto finish;
-      }
-      break;
-    }
-    
     secretbase_context sctx;
-    sctx.ctx = &ctx;
+    sctx.ctx = ctx;
     sctx.skip = SB_SERIAL_HEADERS;
     
     struct R_outpstream_st output_stream;
@@ -312,25 +272,44 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
       R_NilValue
     );
     R_Serialize(x, &output_stream);
-    
   }
   
-  finish:
+}
+
+static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
+                                 const SEXP convert, const int file) {
+  
+  const int conv = LOGICAL(convert)[0];
+  const int size = Rf_asInteger(bits);
+  if (size < 8 || size > (1 << 24))
+    Rf_error("'bits' outside valid range of 8 to 2^24");
+  const size_t outlen = (size_t) (size / 8);
+  unsigned char output[outlen];
+  SEXP out;
+  
+  mbedtls_sha3_context ctx;
+  mbedtls_sha3_init(&ctx);
+  mbedtls_sha3_starts(&ctx, size);
+  
+  file ? hash_file(&ctx, R_ExpandFileName(CHAR(STRING_ELT(x, 0)))) : hash_object(&ctx, x);
+  
   mbedtls_sha3_finish(&ctx, output, outlen);
   clear_buffer(&ctx, sizeof(mbedtls_sha3_context));
   
-  switch (conv) {
-  case 0:
+  if (conv == 0) {
     out = Rf_allocVector(RAWSXP, outlen);
     memcpy(STDVEC_DATAPTR(out), output, outlen);
-    break;
-  case 1:
-    out = hash_to_char(output, outlen);
-    break;
-  default:
+  } else if (conv == 1) {
+    char cbuf[outlen + outlen + 1];
+    char *cptr = cbuf;
+    for (size_t i = 0; i < outlen; i++)
+      cptr += snprintf(cptr, 3, "%.2x", output[i]);
+    PROTECT(out = Rf_allocVector(STRSXP, 1));
+    SET_STRING_ELT(out, 0, Rf_mkCharLenCE(cbuf, (int) (outlen + outlen), CE_NATIVE));
+    UNPROTECT(1);
+  } else {
     out = Rf_allocVector(INTSXP, outlen / sizeof(int));
     memcpy(STDVEC_DATAPTR(out), output, outlen);
-    break;
   }
   
   return out;

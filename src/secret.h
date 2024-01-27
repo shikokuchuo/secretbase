@@ -49,7 +49,6 @@ typedef struct mbedtls_sha3_context {
   uint64_t state[25];
   uint8_t index;
   uint8_t id;
-  
   uint16_t r;
   uint16_t olen;
   uint8_t xor_byte;
