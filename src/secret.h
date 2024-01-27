@@ -55,7 +55,7 @@ typedef struct mbedtls_sha3_context {
   uint16_t max_block_size;
 } mbedtls_sha3_context;
 
-typedef struct secretbase_context_s {
+typedef struct secretbase_context {
   int skip;
   mbedtls_sha3_context *ctx;
 } secretbase_context;

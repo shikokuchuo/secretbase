@@ -210,7 +210,7 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 static void clear_buffer(void *buf, size_t sz) {
   
-  void * (*volatile secure_memset) (void *, int, size_t) = memset;
+  void * (*volatile secure_memset)(void *, int, size_t) = memset;
   secure_memset(buf, 0, sz);
   
 }
@@ -226,8 +226,9 @@ static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
 }
 
-static void hash_file(mbedtls_sha3_context *ctx, const char * file) {
+static void hash_file(mbedtls_sha3_context *ctx, const SEXP x) {
   
+  const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
   unsigned char buf[SB_BUF_SIZE];
   FILE *fp;
   size_t cur;
@@ -249,67 +250,73 @@ static void hash_file(mbedtls_sha3_context *ctx, const char * file) {
 
 static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
   
-  SEXPTYPE typ = TYPEOF(x);
-  if (typ == STRSXP && XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
-    const char *s = CHAR(STRING_ELT(x, 0));
-    mbedtls_sha3_update(ctx, (const uint8_t *) s, strlen(s));
-  } else if (typ == RAWSXP && ATTRIB(x) == R_NilValue) {
-    mbedtls_sha3_update(ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
-  } else {
-    secretbase_context sctx;
-    sctx.ctx = ctx;
-    sctx.skip = SB_SERIAL_HEADERS;
-    
-    struct R_outpstream_st output_stream;
-    R_InitOutPStream(
-      &output_stream,
-      (R_pstream_data_t) &sctx,
-      R_pstream_xdr_format,
-      SB_R_SERIAL_VER,
-      NULL,
-      hash_bytes,
-      NULL,
-      R_NilValue
-    );
-    R_Serialize(x, &output_stream);
+  switch (TYPEOF(x)) {
+  case STRSXP:
+    if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
+      const char *s = CHAR(STRING_ELT(x, 0));
+      mbedtls_sha3_update(ctx, (const uint8_t *) s, strlen(s));
+      return;
+    }
+    break;
+  case RAWSXP:
+    if (ATTRIB(x) == R_NilValue) {
+      mbedtls_sha3_update(ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      return;
+    }
+    break;
   }
+  
+  secretbase_context sctx;
+  sctx.ctx = ctx;
+  sctx.skip = SB_SERIAL_HEADERS;
+  
+  struct R_outpstream_st output_stream;
+  R_InitOutPStream(
+    &output_stream,
+    (R_pstream_data_t) &sctx,
+    R_pstream_xdr_format,
+    SB_R_SERIAL_VER,
+    NULL,
+    hash_bytes,
+    NULL,
+    R_NilValue
+  );
+  R_Serialize(x, &output_stream);
   
 }
 
-static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
-                                 const SEXP convert, const int file) {
+static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP convert,
+                                 void (*hash_func)(mbedtls_sha3_context *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
-  const int size = Rf_asInteger(bits);
-  if (size < 8 || size > (1 << 24))
+  const int bitlen = Rf_asInteger(bits);
+  if (bitlen < 8 || bitlen > (1 << 24))
     Rf_error("'bits' outside valid range of 8 to 2^24");
-  const size_t outlen = (size_t) (size / 8);
-  unsigned char output[outlen];
+  const size_t sz = (size_t) (bitlen / 8);
+  unsigned char buf[sz];
   SEXP out;
   
   mbedtls_sha3_context ctx;
   mbedtls_sha3_init(&ctx);
-  mbedtls_sha3_starts(&ctx, size);
-  
-  file ? hash_file(&ctx, R_ExpandFileName(CHAR(STRING_ELT(x, 0)))) : hash_object(&ctx, x);
-  
-  mbedtls_sha3_finish(&ctx, output, outlen);
+  mbedtls_sha3_starts(&ctx, bitlen);
+  hash_func(&ctx, x);
+  mbedtls_sha3_finish(&ctx, buf, sz);
   clear_buffer(&ctx, sizeof(mbedtls_sha3_context));
   
   if (conv == 0) {
-    out = Rf_allocVector(RAWSXP, outlen);
-    memcpy(STDVEC_DATAPTR(out), output, outlen);
+    out = Rf_allocVector(RAWSXP, sz);
+    memcpy(STDVEC_DATAPTR(out), buf, sz);
   } else if (conv == 1) {
-    char cbuf[outlen + outlen + 1];
+    char cbuf[sz + sz + 1];
     char *cptr = cbuf;
-    for (size_t i = 0; i < outlen; i++)
-      cptr += snprintf(cptr, 3, "%.2x", output[i]);
+    for (size_t i = 0; i < sz; i++)
+      cptr += snprintf(cptr, 3, "%.2x", buf[i]);
     PROTECT(out = Rf_allocVector(STRSXP, 1));
-    SET_STRING_ELT(out, 0, Rf_mkCharLenCE(cbuf, (int) (outlen + outlen), CE_NATIVE));
+    SET_STRING_ELT(out, 0, Rf_mkCharLenCE(cbuf, (int) (sz + sz), CE_NATIVE));
     UNPROTECT(1);
   } else {
-    out = Rf_allocVector(INTSXP, outlen / sizeof(int));
-    memcpy(STDVEC_DATAPTR(out), output, outlen);
+    out = Rf_allocVector(INTSXP, sz / sizeof(int));
+    memcpy(STDVEC_DATAPTR(out), buf, sz);
   }
   
   return out;
@@ -320,12 +327,12 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits,
 
 SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   
-  return secretbase_sha3_impl(x, bits, convert, 0);
+  return secretbase_sha3_impl(x, bits, convert, hash_object);
   
 }
 
 SEXP secretbase_sha3_file(SEXP x, SEXP bits, SEXP convert) {
   
-  return secretbase_sha3_impl(x, bits, convert, 1);
+  return secretbase_sha3_impl(x, bits, convert, hash_file);
   
 }
