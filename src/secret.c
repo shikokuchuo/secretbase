@@ -154,7 +154,7 @@ static void mbedtls_sha3_init(mbedtls_sha3_context *ctx) {
   
 }
 
-static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, const int bits) {
+static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, int bits) {
   
   mbedtls_sha3_id id;
   switch (bits) {
@@ -210,7 +210,7 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 static void clear_buffer(void *buf, size_t sz) {
   
-  void * (*volatile secure_memset)(void *, int, size_t) = memset;
+  void * (*const volatile secure_memset)(void *, int, size_t) = memset;
   secure_memset(buf, 0, sz);
   
 }
@@ -218,7 +218,7 @@ static void clear_buffer(void *buf, size_t sz) {
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_context *sctx = (secretbase_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : mbedtls_sha3_update(sctx->ctx, (const uint8_t *) src, (size_t) len);
+  sctx->skip ? (void) sctx->skip-- : mbedtls_sha3_update(sctx->ctx, (uint8_t *) src, (size_t) len);
 
 }
 
@@ -250,13 +250,13 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
       const char *s = CHAR(STRING_ELT(x, 0));
-      mbedtls_sha3_update(ctx, (const uint8_t *) s, strlen(s));
+      mbedtls_sha3_update(ctx, (uint8_t *) s, strlen(s));
       return;
     }
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      mbedtls_sha3_update(ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      mbedtls_sha3_update(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
       return;
     }
     break;
@@ -282,7 +282,7 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
 }
 
 static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP convert,
-                                 void (*hash_func)(mbedtls_sha3_context *, SEXP)) {
+                                 void (*const hash_func)(mbedtls_sha3_context *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
   const int bitlen = Rf_asInteger(bits);
