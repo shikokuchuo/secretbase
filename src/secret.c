@@ -218,12 +218,8 @@ static void clear_buffer(void *buf, size_t sz) {
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_context *sctx = (secretbase_context *) stream->data;
-  if (sctx->skip) {
-    sctx->skip--;
-  } else {
-    mbedtls_sha3_update(sctx->ctx, (const uint8_t *) src, (size_t) len);
-  }
-  
+  sctx->skip ? (void) sctx->skip-- : mbedtls_sha3_update(sctx->ctx, (const uint8_t *) src, (size_t) len);
+
 }
 
 static void hash_file(mbedtls_sha3_context *ctx, const SEXP x) {
