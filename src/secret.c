@@ -154,21 +154,8 @@ static void mbedtls_sha3_init(mbedtls_sha3_context *ctx) {
   
 }
 
-static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, int bits) {
+static void mbedtls_sha3_starts(mbedtls_sha3_context *ctx, mbedtls_sha3_id id) {
   
-  mbedtls_sha3_id id;
-  switch (bits) {
-  case 224:
-    id = MBEDTLS_SHA3_224; break;
-  case 256:
-    id = MBEDTLS_SHA3_256; break;
-  case 384:
-    id = MBEDTLS_SHA3_384; break;
-  case 512:
-    id = MBEDTLS_SHA3_512; break;
-  default:
-    id = MBEDTLS_SHA3_SHAKE256; break;
-  }
   mbedtls_sha3_family_functions p = sha3_families[id];
   
   ctx->r = p.r;
@@ -285,16 +272,22 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
                                  void (*const hash_func)(mbedtls_sha3_context *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
-  const int bitlen = Rf_asInteger(bits);
-  if (bitlen < 8 || bitlen > (1 << 24))
+  const int bt = Rf_asInteger(bits);
+  if (bt < 8 || bt > (1 << 24))
     Rf_error("'bits' outside valid range of 8 to 2^24");
-  const size_t sz = (size_t) (bitlen / 8);
+  const size_t sz = (size_t) (bt / 8);
   unsigned char buf[sz];
   SEXP out;
   
+  mbedtls_sha3_id id = bt == 256 ? MBEDTLS_SHA3_256 :
+                       bt == 512 ? MBEDTLS_SHA3_512 :
+                       bt == 224 ? MBEDTLS_SHA3_224 :
+                       bt == 384 ? MBEDTLS_SHA3_384 :
+                       MBEDTLS_SHA3_SHAKE256;
+  
   mbedtls_sha3_context ctx;
   mbedtls_sha3_init(&ctx);
-  mbedtls_sha3_starts(&ctx, bitlen);
+  mbedtls_sha3_starts(&ctx, id);
   hash_func(&ctx, x);
   mbedtls_sha3_finish(&ctx, buf, sz);
   clear_buffer(&ctx, sizeof(mbedtls_sha3_context));
