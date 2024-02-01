@@ -1,4 +1,4 @@
-# secretbase 0.1.0.9000 (development)
+# secretbase 0.2.0
 
 * Adds file hashing interface.
 
