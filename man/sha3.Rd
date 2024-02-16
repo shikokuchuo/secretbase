@@ -3,7 +3,7 @@
 \name{sha3}
 \alias{sha3}
 \alias{sha3file}
-\title{Cryptographic Hashing Using the SHA-3 Algorithm}
+\title{Cryptographic Hashing Using the SHA-3 Algorithms}
 \usage{
 sha3(x, bits = 256L, convert = TRUE)
 
@@ -27,7 +27,7 @@ representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
 \item{file}{character file name / path. The file is hashed in a streaming
-fashion and does not need to fit in memory.}
+fashion and may be larger than memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.

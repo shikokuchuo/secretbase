@@ -40,7 +40,7 @@
 
 # secretbase - Main Functions --------------------------------------------------
 
-#' Cryptographic Hashing Using the SHA-3 Algorithm
+#' Cryptographic Hashing Using the SHA-3 Algorithms
 #'
 #' Returns a SHA-3 hash of the supplied R object or file.
 #'
@@ -89,7 +89,7 @@ sha3 <- function(x, bits = 256L, convert = TRUE)
   .Call(secretbase_sha3, x, bits, convert)
 
 #' @param file character file name / path. The file is hashed in a streaming
-#'     fashion and does not need to fit in memory.
+#'     fashion and may be larger than memory.
 #' 
 #' @examples
 #' # SHA3-256 hash a file:
@@ -102,3 +102,39 @@ sha3 <- function(x, bits = 256L, convert = TRUE)
 #'
 sha3file <- function(file, bits = 256L, convert = TRUE)
   .Call(secretbase_sha3_file, file, bits, convert)
+
+#' Fast Non-Cryptographic Hashing Using xxHash64
+#'
+#' Returns the 'xxHash64' of the supplied R object or file. This is an extremely
+#'     fast hash, processing at RAM speed limits.
+#' 
+#' @inheritParams sha3
+#' 
+#' @return A character string, raw or integer vector depending on 'convert'.
+#' 
+#' @details This implementation uses the algorithm released by Yann Collet at
+#'     \url{https://xxhash.com/}.
+#'     
+#' @examples
+#' # xxHash64 as character string:
+#' xxh64("secret base")
+#'
+#' # xxHash64 as raw vector:
+#' xxh64("secret base", convert = FALSE)
+#' 
+#' @export
+#'
+xxh64 <- function(x, convert = TRUE)
+  .Call(secretbase_xxhash, x, convert)
+
+#' @examples
+#' # xxHash64 a file:
+#' file <- tempfile(); cat("secret base", file = file)
+#' xxh64file(file)
+#' unlink(file)
+#' 
+#' @rdname xxh64
+#' @export
+#'
+xxh64file <- function(file, convert = TRUE)
+  .Call(secretbase_xxhash_file, file, convert)

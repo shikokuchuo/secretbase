@@ -39,3 +39,16 @@ hash_func <- function(file, string) {
 test_equal(hash_func(tempfile(), "secret base"), "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520")
 test_error(hash_func("", ""), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(sha3file("~/"), "file read error")
+# xxHash tests:
+test_equal(xxh64("secret base"), "ac1f7520cd9f49e9")
+test_equal(xxh64("secret base", convert = NA)[1L], 544546732L)
+test_that(xxh64("secret base", convert = FALSE), is.raw)
+test_equal(xxh64(data.frame(a = 1, b = 2)), "cbc8601c2c4a3c16")
+xhash_func <- function(file, string) {
+  on.exit(unlink(file))
+  cat(string, file = file)
+  xxh64file(file)
+}
+test_equal(xhash_func(tempfile(), "secret base"), "ac1f7520cd9f49e9")
+test_error(xhash_func("", ""), "file not found or no read permission")
+if (.Platform[["OS.type"]] == "unix") test_error(xxh64file("~/"), "file read error")

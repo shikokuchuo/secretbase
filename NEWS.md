@@ -1,3 +1,7 @@
+# secretbase 0.2.0.9000 (development)
+
+* Adds fast non-cryptographic 'xxHash64'.
+
 # secretbase 0.2.0
 
 * Adds file hashing interface.

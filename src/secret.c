@@ -205,53 +205,32 @@ static void clear_buffer(void *buf, size_t sz) {
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_context *sctx = (secretbase_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : mbedtls_sha3_update(sctx->ctx, (uint8_t *) src, (size_t) len);
+  sctx->skip ? (void) sctx->skip-- : sctx->func(sctx->ctx, (uint8_t *) src, (size_t) len);
 
 }
 
-static void hash_file(mbedtls_sha3_context *ctx, const SEXP x) {
-  
-  const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
-  unsigned char buf[SB_BUF_SIZE];
-  FILE *fp;
-  size_t cur;
-  
-  if ((fp = fopen(file, "rb")) == NULL)
-    Rf_error("file not found or no read permission at '%s'", file);
-  while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, fp))) {
-    mbedtls_sha3_update(ctx, buf, cur);
-  }
-  
-  clear_buffer(&buf, SB_BUF_SIZE);
-  if (ferror(fp)) {
-    fclose(fp);
-    Rf_error("file read error at '%s'", file);
-  }
-  fclose(fp);
-  
-}
-
-static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
+void hash_object(update_func update, void *ctx, const SEXP x) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
       const char *s = CHAR(STRING_ELT(x, 0));
-      mbedtls_sha3_update(ctx, (uint8_t *) s, strlen(s));
+      update(ctx, (const uint8_t *) s, strlen(s));
       return;
     }
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      mbedtls_sha3_update(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      update(ctx, (const uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
       return;
     }
     break;
   }
   
   secretbase_context sctx;
-  sctx.ctx = ctx;
   sctx.skip = SB_SERIAL_HEADERS;
+  sctx.ctx = ctx;
+  sctx.func = update;
   
   struct R_outpstream_st output_stream;
   R_InitOutPStream(
@@ -268,30 +247,9 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
   
 }
 
-static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP convert,
-                                 void (*const hash_func)(mbedtls_sha3_context *, SEXP)) {
+SEXP hash_to_sexp(unsigned char *buf, size_t sz, int conv) {
   
-  const int conv = LOGICAL(convert)[0];
-  const int bt = Rf_asInteger(bits);
-  if (bt < 8 || bt > (1 << 24))
-    Rf_error("'bits' outside valid range of 8 to 2^24");
-  const size_t sz = (size_t) (bt / 8);
-  unsigned char buf[sz];
   SEXP out;
-  
-  mbedtls_sha3_id id = bt == 256 ? MBEDTLS_SHA3_256 :
-                       bt == 512 ? MBEDTLS_SHA3_512 :
-                       bt == 224 ? MBEDTLS_SHA3_224 :
-                       bt == 384 ? MBEDTLS_SHA3_384 :
-                       MBEDTLS_SHA3_SHAKE256;
-  
-  mbedtls_sha3_context ctx;
-  mbedtls_sha3_init(&ctx);
-  mbedtls_sha3_starts(&ctx, id);
-  hash_func(&ctx, x);
-  mbedtls_sha3_finish(&ctx, buf, sz);
-  clear_buffer(&ctx, sizeof(mbedtls_sha3_context));
-  
   if (conv == 0) {
     out = Rf_allocVector(RAWSXP, sz);
     memcpy(STDVEC_DATAPTR(out), buf, sz);
@@ -309,6 +267,32 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
   }
   
   return out;
+  
+}
+
+static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP convert, hash_func func) {
+  
+  const int conv = LOGICAL(convert)[0];
+  const int bt = Rf_asInteger(bits);
+  if (bt < 8 || bt > (1 << 24))
+    Rf_error("'bits' outside valid range of 8 to 2^24");
+  const size_t sz = (size_t) (bt / 8);
+  unsigned char buf[sz];
+  
+  mbedtls_sha3_id id = bt == 256 ? MBEDTLS_SHA3_256 :
+                       bt == 512 ? MBEDTLS_SHA3_512 :
+                       bt == 224 ? MBEDTLS_SHA3_224 :
+                       bt == 384 ? MBEDTLS_SHA3_384 :
+                       MBEDTLS_SHA3_SHAKE256;
+  
+  mbedtls_sha3_context ctx;
+  mbedtls_sha3_init(&ctx);
+  mbedtls_sha3_starts(&ctx, id);
+  func((update_func) mbedtls_sha3_update, &ctx, x);
+  mbedtls_sha3_finish(&ctx, buf, sz);
+  clear_buffer(&ctx, sizeof(mbedtls_sha3_context));
+  
+  return hash_to_sexp(buf, sz, conv);
   
 }
 

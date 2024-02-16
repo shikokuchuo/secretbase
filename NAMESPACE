@@ -2,4 +2,6 @@
 
 export(sha3)
 export(sha3file)
+export(xxh64)
+export(xxh64file)
 useDynLib(secretbase, .registration = TRUE)
