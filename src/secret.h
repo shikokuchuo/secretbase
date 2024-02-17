@@ -55,17 +55,17 @@ typedef struct mbedtls_sha3_context {
   uint16_t max_block_size;
 } mbedtls_sha3_context;
 
+typedef void (*update_func)(void *, const uint8_t *, size_t);
+typedef void (*hash_func)(const update_func, void *, SEXP);
+
 typedef struct secretbase_context {
   int skip;
   void *ctx;
-  void (*func)(void *, const uint8_t *, size_t);
+  update_func update;
 } secretbase_context;
 
-typedef void (*const update_func)(void *, const uint8_t *, size_t);
-typedef void (*const hash_func)(update_func, void *, SEXP);
-
-void hash_object(update_func, void *, const SEXP);
-void hash_file(update_func, void *, const SEXP);
+void hash_object(const update_func, void *, const SEXP);
+void hash_file(const update_func, void *, const SEXP);
 SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);

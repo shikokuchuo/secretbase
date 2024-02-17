@@ -46,17 +46,10 @@
 #if defined (__GNUC__)
 # define XXH_CONSTF  __attribute__((const))
 # define XXH_PUREF   __attribute__((pure))
-# define XXH_MALLOCF __attribute__((malloc))
 #else
 # define XXH_CONSTF  /* disable */
 # define XXH_PUREF
-# define XXH_MALLOCF
 #endif
-
-typedef enum {
-    XXH_OK = 0, /*!< OK */
-    XXH_ERROR   /*!< Error */
-} XXH_errorcode;
 
 #ifdef __has_attribute
 # define XXH_HAS_ATTRIBUTE(x) __has_attribute(x)
@@ -103,10 +96,6 @@ typedef struct XXH64_state_s XXH64_state_t;   /* incomplete type */
 #if defined(__GNUC__) && !(defined(__ARM_ARCH) && __ARM_ARCH < 7 && defined(__ARM_FEATURE_UNALIGNED))
 #  define XXH_FORCE_MEMORY_ACCESS 1
 #endif
-
-static XXH_MALLOCF void* XXH_malloc(size_t s) { return malloc(s); }
-
-static void XXH_free(void* p) { free(p); }
 
 static void* XXH_memcpy(void* dest, const void* src, size_t size)
 {
@@ -317,18 +306,7 @@ XXH64_finalize(xxh_u64 hash, const xxh_u8* ptr, size_t len)
     return  XXH64_avalanche(hash);
 }
 
-XXH64_state_t* XXH64_createState(void)
-{
-    return (XXH64_state_t*)XXH_malloc(sizeof(XXH64_state_t));
-}
-
-XXH_errorcode XXH64_freeState(XXH64_state_t* statePtr)
-{
-    XXH_free(statePtr);
-    return XXH_OK;
-}
-
-XXH_errorcode XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr, XXH64_hash_t seed)
+void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr, XXH64_hash_t seed)
 {
     XXH_ASSERT(statePtr != NULL);
     memset(statePtr, 0, sizeof(*statePtr));
@@ -336,7 +314,6 @@ XXH_errorcode XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr, XXH64_hash_t see
     statePtr->v[1] = seed + XXH_PRIME64_2;
     statePtr->v[2] = seed + 0;
     statePtr->v[3] = seed - XXH_PRIME64_1;
-    return XXH_OK;
 }
 
 void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* input, size_t len)
@@ -414,43 +391,19 @@ void XXH64_canonicalFromHash(XXH_NOESCAPE unsigned char* dst, XXH64_hash_t hash)
 
 // secretbase - internals ------------------------------------------------------
 
-void hash_file(update_func update, void *ctx, const SEXP x) {
-  
-  const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
-  unsigned char buf[SB_BUF_SIZE];
-  FILE *fp;
-  size_t cur;
-  
-  if ((fp = fopen(file, "rb")) == NULL) {
-    if (update == (update_func) XXH64_update) XXH64_freeState(ctx);
-    Rf_error("file not found or no read permission at '%s'", file);
-  }
-  while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, fp))) {
-    update(ctx, buf, cur);
-  }
-  
-  if (ferror(fp)) {
-    fclose(fp);
-    if (update == (update_func) XXH64_update) XXH64_freeState(ctx);
-    Rf_error("file read error at '%s'", file);
-  }
-  fclose(fp);
-  
-}
-
-SEXP secretbase_xxhash_impl(SEXP x, SEXP convert, hash_func func) {
+SEXP secretbase_xxhash_impl(const SEXP x, const SEXP convert,
+                            const hash_func hfunc) {
   
   const int conv = LOGICAL(convert)[0];
   const size_t sz = 8;
   unsigned char buf[sz];
+  struct XXH64_state_s state;
   XXH64_hash_t hash;
   
-  XXH64_state_t *state = XXH64_createState();
-  XXH64_reset(state, 0);
-  func((update_func) XXH64_update, state, x);
-  hash = XXH64_digest(state);
+  XXH64_reset(&state, 0);
+  hfunc((update_func) XXH64_update, &state, x);
+  hash = XXH64_digest(&state);
   XXH64_canonicalFromHash(buf, hash);
-  XXH64_freeState(state);
   
   return hash_to_sexp(buf, sz, conv);
   
