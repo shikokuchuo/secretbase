@@ -55,6 +55,15 @@ typedef struct mbedtls_sha3_context {
   uint16_t max_block_size;
 } mbedtls_sha3_context;
 
+typedef struct XXH64_state_s {
+  uint64_t total_len;
+  uint64_t v[4];
+  uint64_t mem64[4];
+  uint32_t memsize;
+  uint32_t reserved32;
+  uint64_t reserved64;
+} XXH64_state_t;
+
 typedef void (*update_func)(void *, const uint8_t *, size_t);
 typedef void (*hash_func)(const update_func, void *, SEXP);
 

@@ -1,3 +1,25 @@
+// Copyright (C) 2024 Hibiki AI Limited <info@hibiki-ai.com>
+//
+// This file is part of secretbase.
+//
+// secretbase is free software: you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free Software
+// Foundation, either version 3 of the License, or (at your option) any later
+// version.
+//
+// secretbase is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// secretbase. If not, see <https://www.gnu.org/licenses/>.
+
+// secretbase ------------------------------------------------------------------
+
+#include "secret.h"
+
+// secretbase - xxHash64 implementation ----------------------------------------
+
 /*
  * xxHash - Extremely Fast Hash algorithm
  * Header File
@@ -35,8 +57,6 @@
 
 // XXH_VERSION_MAJOR    0  XXH_VERSION_MINOR    8  XXH_VERSION_RELEASE  2
 
-#include "secret.h"
-
 #ifdef WORDS_BIGENDIAN
 #    define XXH_CPU_LITTLE_ENDIAN 0
 #else
@@ -44,10 +64,8 @@
 #endif
 
 #if defined (__GNUC__)
-# define XXH_CONSTF  __attribute__((const))
 # define XXH_PUREF   __attribute__((pure))
 #else
-# define XXH_CONSTF  /* disable */
 # define XXH_PUREF
 #endif
 
@@ -76,22 +94,6 @@
 #else
 # define XXH_NOESCAPE
 #endif
-
-typedef uint64_t XXH64_hash_t;
-typedef uint8_t xxh_u8;
-typedef uint32_t XXH32_hash_t;
-typedef XXH32_hash_t xxh_u32;
-
-struct XXH64_state_s {
-  XXH64_hash_t total_len;    /*!< Total length hashed. This is always 64-bit. */
-  XXH64_hash_t v[4];         /*!< Accumulator lanes */
-  XXH64_hash_t mem64[4];     /*!< Internal buffer for partial reads. Treated as unsigned char[32]. */
-  XXH32_hash_t memsize;      /*!< Amount of data in @ref mem64 */
-  XXH32_hash_t reserved32;   /*!< Reserved field, needed for padding anyways*/
-  XXH64_hash_t reserved64;   /*!< Reserved field. Do not read or write to it. */
-};   /* typedef'd to XXH64_state_t */
-
-typedef struct XXH64_state_s XXH64_state_t;   /* incomplete type */
 
 #if defined(__GNUC__) && !(defined(__ARM_ARCH) && __ARM_ARCH < 7 && defined(__ARM_FEATURE_UNALIGNED))
 #  define XXH_FORCE_MEMORY_ACCESS 1
@@ -127,25 +129,6 @@ static void* XXH_memcpy(void* dest, const void* src, size_t size)
 
 #define XXH_STATIC_ASSERT(c) XXH_STATIC_ASSERT_WITH_MESSAGE((c),#c)
 
-#if (defined(XXH_FORCE_MEMORY_ACCESS))
-
-static xxh_u32 XXH_read32(const void* ptr)
-{
-    typedef __attribute__((aligned(1))) xxh_u32 xxh_unalign32;
-    return *((const xxh_unalign32*)ptr);
-}
-
-#else
-
-static xxh_u32 XXH_read32(const void* memPtr)
-{
-    xxh_u32 val;
-    XXH_memcpy(&val, memPtr, sizeof(val));
-    return val;
-}
-
-#endif   /* XXH_FORCE_DIRECT_MEMORY_ACCESS */
-
 #define XXH_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
 
 #ifdef __has_builtin
@@ -167,6 +150,38 @@ static xxh_u32 XXH_read32(const void* memPtr)
 #  define XXH_ASSUME(c) if (!(c)) { XXH_UNREACHABLE(); }
 #endif
 
+#if (defined(XXH_FORCE_MEMORY_ACCESS))
+
+static uint32_t XXH_read32(const void* ptr)
+{
+  typedef __attribute__((aligned(1))) uint32_t xxh_unalign32;
+  return *((const xxh_unalign32*)ptr);
+}
+
+static uint64_t XXH_read64(const void* ptr)
+{
+  typedef __attribute__((aligned(1))) uint64_t xxh_unalign64;
+  return *((const xxh_unalign64*)ptr);
+}
+
+#else
+
+static uint32_t XXH_read32(const void* memPtr)
+{
+  uint32_t val;
+  XXH_memcpy(&val, memPtr, sizeof(val));
+  return val;
+}
+
+static uint64_t XXH_read64(const void* memPtr)
+{
+  uint64_t val;
+  XXH_memcpy(&val, memPtr, sizeof(val));
+  return val;
+}
+
+#endif   /* XXH_FORCE_DIRECT_MEMORY_ACCESS */
+
 #if !defined(NO_CLANG_BUILTIN) && XXH_HAS_BUILTIN(__builtin_rotateleft32) \
                                && XXH_HAS_BUILTIN(__builtin_rotateleft64)
 #  define XXH_rotl32 __builtin_rotateleft32
@@ -179,73 +194,47 @@ static xxh_u32 XXH_read32(const void* memPtr)
 
 #if XXH_GCC_VERSION >= 403
 #  define XXH_swap32 __builtin_bswap32
+#  define XXH_swap64 __builtin_bswap64
 #else
-static xxh_u32 XXH_swap32 (xxh_u32 x)
+static uint32_t XXH_swap32 (uint32_t x)
 {
     return  ((x << 24) & 0xff000000 ) |
             ((x <<  8) & 0x00ff0000 ) |
             ((x >>  8) & 0x0000ff00 ) |
             ((x >> 24) & 0x000000ff );
 }
+
+static uint64_t XXH_swap64(uint64_t x)
+{
+  return  ((x << 56) & 0xff00000000000000ULL) |
+    ((x << 40) & 0x00ff000000000000ULL) |
+    ((x << 24) & 0x0000ff0000000000ULL) |
+    ((x << 8)  & 0x000000ff00000000ULL) |
+    ((x >> 8)  & 0x00000000ff000000ULL) |
+    ((x >> 24) & 0x0000000000ff0000ULL) |
+    ((x >> 40) & 0x000000000000ff00ULL) |
+    ((x >> 56) & 0x00000000000000ffULL);
+}
 #endif
 
-XXH_FORCE_INLINE xxh_u32 XXH_readLE32(const void* ptr)
+XXH_FORCE_INLINE uint32_t XXH_readLE32(const void* ptr)
 {
     return XXH_CPU_LITTLE_ENDIAN ? XXH_read32(ptr) : XXH_swap32(XXH_read32(ptr));
 }
 
-XXH_FORCE_INLINE xxh_u32
-XXH_get32bits(const void* ptr)
+XXH_FORCE_INLINE uint32_t XXH_get32bits(const void* ptr)
 {
-    return XXH_CPU_LITTLE_ENDIAN ? *(const xxh_u32*)ptr : XXH_swap32(*(const xxh_u32*)ptr);
+    return XXH_CPU_LITTLE_ENDIAN ? *(const uint32_t*)ptr : XXH_swap32(*(const uint32_t*)ptr);
 }
 
-typedef XXH64_hash_t xxh_u64;
-
-#if (defined(XXH_FORCE_MEMORY_ACCESS))
-
-static xxh_u64 XXH_read64(const void* ptr)
-{
-    typedef __attribute__((aligned(1))) xxh_u64 xxh_unalign64;
-    return *((const xxh_unalign64*)ptr);
-}
-
-#else
-
-static xxh_u64 XXH_read64(const void* memPtr)
-{
-    xxh_u64 val;
-    XXH_memcpy(&val, memPtr, sizeof(val));
-    return val;
-}
-
-#endif   /* XXH_FORCE_DIRECT_MEMORY_ACCESS */
-
-#if XXH_GCC_VERSION >= 403
-#  define XXH_swap64 __builtin_bswap64
-#else
-static xxh_u64 XXH_swap64(xxh_u64 x)
-{
-    return  ((x << 56) & 0xff00000000000000ULL) |
-            ((x << 40) & 0x00ff000000000000ULL) |
-            ((x << 24) & 0x0000ff0000000000ULL) |
-            ((x << 8)  & 0x000000ff00000000ULL) |
-            ((x >> 8)  & 0x00000000ff000000ULL) |
-            ((x >> 24) & 0x0000000000ff0000ULL) |
-            ((x >> 40) & 0x000000000000ff00ULL) |
-            ((x >> 56) & 0x00000000000000ffULL);
-}
-#endif
-
-XXH_FORCE_INLINE xxh_u64 XXH_readLE64(const void* ptr)
+XXH_FORCE_INLINE uint64_t XXH_readLE64(const void* ptr)
 {
     return XXH_CPU_LITTLE_ENDIAN ? XXH_read64(ptr) : XXH_swap64(XXH_read64(ptr));
 }
 
-XXH_FORCE_INLINE xxh_u64
-XXH_get64bits(const void* ptr)
+XXH_FORCE_INLINE uint64_t XXH_get64bits(const void* ptr)
 {
-    return XXH_CPU_LITTLE_ENDIAN ? *(const xxh_u64*)ptr : XXH_swap64(*(const xxh_u64*)ptr);
+    return XXH_CPU_LITTLE_ENDIAN ? *(const uint64_t*)ptr : XXH_swap64(*(const uint64_t*)ptr);
 }
 
 #define XXH_PRIME64_1  0x9E3779B185EBCA87ULL
@@ -254,7 +243,7 @@ XXH_get64bits(const void* ptr)
 #define XXH_PRIME64_4  0x85EBCA77C2B2AE63ULL
 #define XXH_PRIME64_5  0x27D4EB2F165667C5ULL
 
-static xxh_u64 XXH64_round(xxh_u64 acc, xxh_u64 input)
+static uint64_t XXH64_round(uint64_t acc, uint64_t input)
 {
     acc += input * XXH_PRIME64_2;
     acc  = XXH_rotl64(acc, 31);
@@ -262,7 +251,7 @@ static xxh_u64 XXH64_round(xxh_u64 acc, xxh_u64 input)
     return acc;
 }
 
-static xxh_u64 XXH64_mergeRound(xxh_u64 acc, xxh_u64 val)
+static uint64_t XXH64_mergeRound(uint64_t acc, uint64_t val)
 {
     val  = XXH64_round(0, val);
     acc ^= val;
@@ -270,7 +259,7 @@ static xxh_u64 XXH64_mergeRound(xxh_u64 acc, xxh_u64 val)
     return acc;
 }
 
-static xxh_u64 XXH64_avalanche(xxh_u64 hash)
+static uint64_t XXH64_avalanche(uint64_t hash)
 {
     hash ^= hash >> 33;
     hash *= XXH_PRIME64_2;
@@ -280,20 +269,20 @@ static xxh_u64 XXH64_avalanche(xxh_u64 hash)
     return hash;
 }
 
-static XXH_PUREF xxh_u64
-XXH64_finalize(xxh_u64 hash, const xxh_u8* ptr, size_t len)
+static XXH_PUREF uint64_t
+XXH64_finalize(uint64_t hash, const uint8_t* ptr, size_t len)
 {
     if (ptr==NULL) XXH_ASSERT(len == 0);
     len &= 31;
     while (len >= 8) {
-        xxh_u64 const k1 = XXH64_round(0, XXH_get64bits(ptr));
+        uint64_t const k1 = XXH64_round(0, XXH_get64bits(ptr));
         ptr += 8;
         hash ^= k1;
         hash  = XXH_rotl64(hash,27) * XXH_PRIME64_1 + XXH_PRIME64_4;
         len -= 8;
     }
     if (len >= 4) {
-        hash ^= (xxh_u64)(XXH_get32bits(ptr)) * XXH_PRIME64_1;
+        hash ^= (uint64_t)(XXH_get32bits(ptr)) * XXH_PRIME64_1;
         ptr += 4;
         hash = XXH_rotl64(hash, 23) * XXH_PRIME64_2 + XXH_PRIME64_3;
         len -= 4;
@@ -306,14 +295,14 @@ XXH64_finalize(xxh_u64 hash, const xxh_u8* ptr, size_t len)
     return  XXH64_avalanche(hash);
 }
 
-void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr, XXH64_hash_t seed)
+void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr)
 {
     XXH_ASSERT(statePtr != NULL);
     memset(statePtr, 0, sizeof(*statePtr));
-    statePtr->v[0] = seed + XXH_PRIME64_1 + XXH_PRIME64_2;
-    statePtr->v[1] = seed + XXH_PRIME64_2;
-    statePtr->v[2] = seed + 0;
-    statePtr->v[3] = seed - XXH_PRIME64_1;
+    statePtr->v[0] = XXH_PRIME64_1 + XXH_PRIME64_2;
+    statePtr->v[1] = XXH_PRIME64_2;
+    statePtr->v[2] = 0;
+    statePtr->v[3] = -XXH_PRIME64_1;
 }
 
 void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* input, size_t len)
@@ -323,19 +312,19 @@ void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* i
         return;
     }
 
-    {   const xxh_u8* p = (const xxh_u8*)input;
-        const xxh_u8* const bEnd = p + len;
+    {   const uint8_t* p = (const uint8_t*)input;
+        const uint8_t* const bEnd = p + len;
 
         state->total_len += len;
 
         if (state->memsize + len < 32) {  /* fill in tmp buffer */
-            XXH_memcpy(((xxh_u8*)state->mem64) + state->memsize, input, len);
-            state->memsize += (xxh_u32)len;
+            XXH_memcpy(((uint8_t*)state->mem64) + state->memsize, input, len);
+            state->memsize += (uint32_t)len;
             return;
         }
 
         if (state->memsize) {   /* tmp buffer is full */
-            XXH_memcpy(((xxh_u8*)state->mem64) + state->memsize, input, 32-state->memsize);
+            XXH_memcpy(((uint8_t*)state->mem64) + state->memsize, input, 32-state->memsize);
             state->v[0] = XXH64_round(state->v[0], XXH_readLE64(state->mem64+0));
             state->v[1] = XXH64_round(state->v[1], XXH_readLE64(state->mem64+1));
             state->v[2] = XXH64_round(state->v[2], XXH_readLE64(state->mem64+2));
@@ -345,7 +334,7 @@ void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* i
         }
 
         if (p+32 <= bEnd) {
-            const xxh_u8* const limit = bEnd - 32;
+            const uint8_t* const limit = bEnd - 32;
 
             do {
                 state->v[0] = XXH64_round(state->v[0], XXH_readLE64(p)); p+=8;
@@ -364,9 +353,9 @@ void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* i
 
 }
 
-XXH64_hash_t XXH64_digest(XXH_NOESCAPE const XXH64_state_t* state)
+uint64_t XXH64_digest(XXH_NOESCAPE const XXH64_state_t* state)
 {
-    xxh_u64 h64;
+    uint64_t h64;
 
     if (state->total_len >= 32) {
         h64 = XXH_rotl64(state->v[0], 1) + XXH_rotl64(state->v[1], 7) + XXH_rotl64(state->v[2], 12) + XXH_rotl64(state->v[3], 18);
@@ -378,15 +367,15 @@ XXH64_hash_t XXH64_digest(XXH_NOESCAPE const XXH64_state_t* state)
         h64  = state->v[2] /*seed*/ + XXH_PRIME64_5;
     }
 
-    h64 += (xxh_u64) state->total_len;
+    h64 += (uint64_t) state->total_len;
 
-    return XXH64_finalize(h64, (const xxh_u8*)state->mem64, (size_t)state->total_len);
+    return XXH64_finalize(h64, (const uint8_t*)state->mem64, (size_t)state->total_len);
 }
 
-void XXH64_canonicalFromHash(XXH_NOESCAPE unsigned char* dst, XXH64_hash_t hash)
+void XXH64_canonicalFromHash(XXH_NOESCAPE unsigned char* dst, uint64_t hash)
 {
     if (XXH_CPU_LITTLE_ENDIAN) hash = XXH_swap64(hash);
-    XXH_memcpy(dst, &hash, sizeof(XXH64_hash_t));
+    XXH_memcpy(dst, &hash, sizeof(uint64_t));
 }
 
 // secretbase - internals ------------------------------------------------------
@@ -398,9 +387,9 @@ SEXP secretbase_xxhash_impl(const SEXP x, const SEXP convert,
   const size_t sz = 8;
   unsigned char buf[sz];
   struct XXH64_state_s state;
-  XXH64_hash_t hash;
+  uint64_t hash;
   
-  XXH64_reset(&state, 0);
+  XXH64_reset(&state);
   hfunc((update_func) XXH64_update, &state, x);
   hash = XXH64_digest(&state);
   XXH64_canonicalFromHash(buf, hash);
