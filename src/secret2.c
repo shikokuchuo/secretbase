@@ -57,12 +57,6 @@
 
 // XXH_VERSION_MAJOR    0  XXH_VERSION_MINOR    8  XXH_VERSION_RELEASE  2
 
-#ifdef WORDS_BIGENDIAN
-#    define XXH_CPU_LITTLE_ENDIAN 0
-#else
-#    define XXH_CPU_LITTLE_ENDIAN 1
-#endif
-
 #if defined (__GNUC__)
 # define XXH_PUREF   __attribute__((pure))
 #else
@@ -295,7 +289,7 @@ XXH64_finalize(uint64_t hash, const uint8_t* ptr, size_t len)
     return  XXH64_avalanche(hash);
 }
 
-void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr)
+static void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr)
 {
     XXH_ASSERT(statePtr != NULL);
     memset(statePtr, 0, sizeof(*statePtr));
@@ -305,7 +299,8 @@ void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr)
     statePtr->v[3] = -XXH_PRIME64_1;
 }
 
-void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* input, size_t len)
+static void XXH64_update (XXH_NOESCAPE XXH64_state_t* state,
+                          XXH_NOESCAPE const void* input, size_t len)
 {
     if (input==NULL) {
         XXH_ASSERT(len == 0);
@@ -353,7 +348,7 @@ void XXH64_update (XXH_NOESCAPE XXH64_state_t* state, XXH_NOESCAPE const void* i
 
 }
 
-uint64_t XXH64_digest(XXH_NOESCAPE const XXH64_state_t* state)
+static uint64_t XXH64_digest(XXH_NOESCAPE const XXH64_state_t* state)
 {
     uint64_t h64;
 
@@ -372,7 +367,7 @@ uint64_t XXH64_digest(XXH_NOESCAPE const XXH64_state_t* state)
     return XXH64_finalize(h64, (const uint8_t*)state->mem64, (size_t)state->total_len);
 }
 
-void XXH64_canonicalFromHash(XXH_NOESCAPE unsigned char* dst, uint64_t hash)
+static void XXH64_canonicalFromHash(XXH_NOESCAPE unsigned char* dst, uint64_t hash)
 {
     if (XXH_CPU_LITTLE_ENDIAN) hash = XXH_swap64(hash);
     XXH_memcpy(dst, &hash, sizeof(uint64_t));

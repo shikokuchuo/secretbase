@@ -29,6 +29,9 @@
 #' @references The SHA-3 Secure Hash Standard was published by the National
 #'     Institute of Standards and Technology (NIST) in 2015 at
 #'     \doi{doi:10.6028/NIST.FIPS.202}.
+#'     
+#'     The SHA-256 Secure Hash Standard was published by NIST in 2002 at
+#'     \url{http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
 #'
 #' @encoding UTF-8
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
@@ -102,6 +105,38 @@ sha3 <- function(x, bits = 256L, convert = TRUE)
 #'
 sha3file <- function(file, bits = 256L, convert = TRUE)
   .Call(secretbase_sha3_file, file, bits, convert)
+
+#' Cryptographic Hashing Using the SHA-256 Algorithm
+#'
+#' Returns a SHA-256 hash of the supplied R object or file.
+#'
+#' @inheritParams sha3
+#'
+#' @return A character string, raw or integer vector depending on 'convert'.
+#'
+#' @examples
+#' # SHA-256 hash as character string:
+#' sha256("secret base")
+#'
+#' # SHA-256 hash as raw vector:
+#' sha256("secret base", convert = FALSE)
+#'
+#' @export
+#'
+sha256 <- function(x, convert = TRUE)
+  .Call(secretbase_sha256, x, convert)
+
+#' @examples
+#' # SHA-256 hash a file:
+#' file <- tempfile(); cat("secret base", file = file)
+#' sha256file(file)
+#' unlink(file)
+#'     
+#' @rdname sha256
+#' @export
+#'
+sha256file <- function(file, convert = TRUE)
+  .Call(secretbase_sha256_file, file, convert)
 
 #' Fast Non-Cryptographic Hashing Using xxHash64
 #'
