@@ -535,9 +535,10 @@ static void mbedtls_sha256_finish(mbedtls_sha256_context *ctx,
 
 // secretbase - internals ------------------------------------------------------
 
+static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
+
 static void clear_buffer(void *buf, size_t sz) {
   
-  void * (*const volatile secure_memset)(void *, int, size_t) = memset;
   secure_memset(buf, 0, sz);
   
 }
@@ -553,21 +554,23 @@ void hash_file(const update_func update, void *ctx, const SEXP x) {
   
   const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
   unsigned char buf[SB_BUF_SIZE];
-  FILE *fp;
+  FILE *f;
   size_t cur;
   
-  if ((fp = fopen(file, "rb")) == NULL)
+  if ((f = fopen(file, "rb")) == NULL)
     Rf_error("file not found or no read permission at '%s'", file);
   
-  while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, fp))) {
+  setbuf(f, NULL);
+  
+  while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, f))) {
     update(ctx, buf, cur);
   }
   
-  if (ferror(fp)) {
-    fclose(fp);
+  if (ferror(f)) {
+    fclose(f);
     Rf_error("file read error at '%s'", file);
   }
-  fclose(fp);
+  fclose(f);
   
 }
 
