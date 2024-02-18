@@ -2,12 +2,9 @@
 % Please edit documentation in R/base.R
 \name{sha256}
 \alias{sha256}
-\alias{sha256file}
 \title{Cryptographic Hashing Using the SHA-256 Algorithm}
 \usage{
-sha256(x, convert = TRUE)
-
-sha256file(file, convert = TRUE)
+sha256(x, convert = TRUE, file)
 }
 \arguments{
 \item{x}{R object to hash. A character string or raw vector (without
@@ -21,8 +18,8 @@ and encoding information).}
 representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
-\item{file}{character file name / path. The file is hashed in a streaming
-fashion and may be larger than memory.}
+\item{file}{character file name / path. If specified, 'x' is ignored. The
+file is hashed in a streaming fashion and may be larger than memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.
@@ -39,7 +36,7 @@ sha256("secret base", convert = FALSE)
 
 # SHA-256 hash a file:
 file <- tempfile(); cat("secret base", file = file)
-sha256file(file)
+sha256(file = file)
 unlink(file)
-    
+
 }

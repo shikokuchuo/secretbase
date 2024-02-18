@@ -146,12 +146,6 @@ static void* XXH_memcpy(void* dest, const void* src, size_t size)
 
 #if (defined(XXH_FORCE_MEMORY_ACCESS))
 
-static uint32_t XXH_read32(const void* ptr)
-{
-  typedef __attribute__((aligned(1))) uint32_t xxh_unalign32;
-  return *((const xxh_unalign32*)ptr);
-}
-
 static uint64_t XXH_read64(const void* ptr)
 {
   typedef __attribute__((aligned(1))) uint64_t xxh_unalign64;
@@ -159,13 +153,6 @@ static uint64_t XXH_read64(const void* ptr)
 }
 
 #else
-
-static uint32_t XXH_read32(const void* memPtr)
-{
-  uint32_t val;
-  XXH_memcpy(&val, memPtr, sizeof(val));
-  return val;
-}
 
 static uint64_t XXH_read64(const void* memPtr)
 {
@@ -210,11 +197,6 @@ static uint64_t XXH_swap64(uint64_t x)
     ((x >> 56) & 0x00000000000000ffULL);
 }
 #endif
-
-XXH_FORCE_INLINE uint32_t XXH_readLE32(const void* ptr)
-{
-    return XXH_CPU_LITTLE_ENDIAN ? XXH_read32(ptr) : XXH_swap32(XXH_read32(ptr));
-}
 
 XXH_FORCE_INLINE uint32_t XXH_get32bits(const void* ptr)
 {
@@ -302,49 +284,44 @@ static void XXH64_reset(XXH_NOESCAPE XXH64_state_t* statePtr)
 static void XXH64_update (XXH_NOESCAPE XXH64_state_t* state,
                           XXH_NOESCAPE const void* input, size_t len)
 {
-    if (input==NULL) {
-        XXH_ASSERT(len == 0);
+
+    const uint8_t* p = (const uint8_t*)input;
+    const uint8_t* const bEnd = p + len;
+
+    state->total_len += len;
+
+    if (state->memsize + len < 32) {  /* fill in tmp buffer */
+        XXH_memcpy(((uint8_t*)state->mem64) + state->memsize, input, len);
+        state->memsize += (uint32_t)len;
         return;
     }
 
-    {   const uint8_t* p = (const uint8_t*)input;
-        const uint8_t* const bEnd = p + len;
-
-        state->total_len += len;
-
-        if (state->memsize + len < 32) {  /* fill in tmp buffer */
-            XXH_memcpy(((uint8_t*)state->mem64) + state->memsize, input, len);
-            state->memsize += (uint32_t)len;
-            return;
-        }
-
-        if (state->memsize) {   /* tmp buffer is full */
-            XXH_memcpy(((uint8_t*)state->mem64) + state->memsize, input, 32-state->memsize);
-            state->v[0] = XXH64_round(state->v[0], XXH_readLE64(state->mem64+0));
-            state->v[1] = XXH64_round(state->v[1], XXH_readLE64(state->mem64+1));
-            state->v[2] = XXH64_round(state->v[2], XXH_readLE64(state->mem64+2));
-            state->v[3] = XXH64_round(state->v[3], XXH_readLE64(state->mem64+3));
-            p += 32 - state->memsize;
-            state->memsize = 0;
-        }
-
-        if (p+32 <= bEnd) {
-            const uint8_t* const limit = bEnd - 32;
-
-            do {
-                state->v[0] = XXH64_round(state->v[0], XXH_readLE64(p)); p+=8;
-                state->v[1] = XXH64_round(state->v[1], XXH_readLE64(p)); p+=8;
-                state->v[2] = XXH64_round(state->v[2], XXH_readLE64(p)); p+=8;
-                state->v[3] = XXH64_round(state->v[3], XXH_readLE64(p)); p+=8;
-            } while (p<=limit);
-
-        }
-
-        if (p < bEnd) {
-            XXH_memcpy(state->mem64, p, (size_t)(bEnd-p));
-            state->memsize = (unsigned)(bEnd-p);
-        }
+    if (state->memsize) {   /* tmp buffer is full */
+        XXH_memcpy(((uint8_t*)state->mem64) + state->memsize, input, 32-state->memsize);
+        state->v[0] = XXH64_round(state->v[0], XXH_readLE64(state->mem64+0));
+        state->v[1] = XXH64_round(state->v[1], XXH_readLE64(state->mem64+1));
+        state->v[2] = XXH64_round(state->v[2], XXH_readLE64(state->mem64+2));
+        state->v[3] = XXH64_round(state->v[3], XXH_readLE64(state->mem64+3));
+        p += 32 - state->memsize;
+        state->memsize = 0;
     }
+
+    if (p+32 <= bEnd) {
+        const uint8_t* const limit = bEnd - 32;
+
+        do {
+            state->v[0] = XXH64_round(state->v[0], XXH_readLE64(p)); p+=8;
+            state->v[1] = XXH64_round(state->v[1], XXH_readLE64(p)); p+=8;
+            state->v[2] = XXH64_round(state->v[2], XXH_readLE64(p)); p+=8;
+            state->v[3] = XXH64_round(state->v[3], XXH_readLE64(p)); p+=8;
+        } while (p<=limit);
+
+    }
+
+    if (p < bEnd) {
+        XXH_memcpy(state->mem64, p, (size_t)(bEnd-p));
+        state->memsize = (unsigned)(bEnd-p);
+    }    
 
 }
 

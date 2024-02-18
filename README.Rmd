@@ -45,7 +45,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers the functions: `sha3()` for objects and `sha3file()` for files.
+`secretbase` offers the main function: `sha3()`.
 
 To use:
  
@@ -82,7 +82,7 @@ Hash files:
 
 ```{r files}
 file <- tempfile(); cat("secret base", file = file)
-sha3file(file)
+sha3(file = file)
 ```
 ```{r unlink, echo=FALSE}
 unlink(file)
@@ -102,6 +102,8 @@ sha3("秘密の基地の中", bits = 32, convert = NA)
 These values may be supplied as deterministic (but indistinguishable from random) seeds for R's pseudo random number generators (RNGs).
 
 For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup>
+
+Other functions include the cryptographic hash algorithm `sha256()` and a fast non-algorithmic hash `xxh64()`.
 
 ### References
 

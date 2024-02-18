@@ -552,6 +552,8 @@ static void hash_bytes(R_outpstream_t stream, void *src, int len) {
 
 void hash_file(const update_func update, void *ctx, const SEXP x) {
   
+  if (TYPEOF(x) != STRSXP)
+    Rf_error("'file' must be specified as a character string");
   const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
   unsigned char buf[SB_BUF_SIZE];
   FILE *f;

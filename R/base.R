@@ -60,6 +60,8 @@
 #' @param convert [default TRUE] if TRUE, the hash is converted to its hex
 #'     representation as a character string, if FALSE, output directly as a raw
 #'     vector, or if NA, a vector of (32-bit) integer values.
+#' @param file character file name / path. If specified, 'x' is ignored. The
+#'     file is hashed in a streaming fashion and may be larger than memory.
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
 #'
@@ -86,25 +88,16 @@
 #' # SHAKE256 hash to integer:
 #' sha3("secret base", bits = 32L, convert = NA)
 #'
-#' @export
-#'
-sha3 <- function(x, bits = 256L, convert = TRUE)
-  .Call(secretbase_sha3, x, bits, convert)
-
-#' @param file character file name / path. The file is hashed in a streaming
-#'     fashion and may be larger than memory.
-#' 
-#' @examples
 #' # SHA3-256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
-#' sha3file(file)
+#' sha3(file = file)
 #' unlink(file)
-#'     
-#' @rdname sha3
+#'
 #' @export
 #'
-sha3file <- function(file, bits = 256L, convert = TRUE)
-  .Call(secretbase_sha3_file, file, bits, convert)
+sha3 <- function(x, bits = 256L, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_sha3, x, bits, convert) else
+    .Call(secretbase_sha3_file, file, bits, convert)
 
 #' Cryptographic Hashing Using the SHA-256 Algorithm
 #'
@@ -120,23 +113,17 @@ sha3file <- function(file, bits = 256L, convert = TRUE)
 #'
 #' # SHA-256 hash as raw vector:
 #' sha256("secret base", convert = FALSE)
-#'
-#' @export
-#'
-sha256 <- function(x, convert = TRUE)
-  .Call(secretbase_sha256, x, convert)
-
-#' @examples
+#' 
 #' # SHA-256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
-#' sha256file(file)
+#' sha256(file = file)
 #' unlink(file)
-#'     
-#' @rdname sha256
+#'
 #' @export
 #'
-sha256file <- function(file, convert = TRUE)
-  .Call(secretbase_sha256_file, file, convert)
+sha256 <- function(x, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_sha256, x, convert) else
+    .Call(secretbase_sha256_file, file, convert)
 
 #' Fast Non-Cryptographic Hashing Using xxHash64
 #'
@@ -157,19 +144,13 @@ sha256file <- function(file, convert = TRUE)
 #' # xxHash64 as raw vector:
 #' xxh64("secret base", convert = FALSE)
 #' 
-#' @export
-#'
-xxh64 <- function(x, convert = TRUE)
-  .Call(secretbase_xxhash, x, convert)
-
-#' @examples
 #' # xxHash64 a file:
 #' file <- tempfile(); cat("secret base", file = file)
-#' xxh64file(file)
+#' xxh64(file = file)
 #' unlink(file)
 #' 
-#' @rdname xxh64
 #' @export
 #'
-xxh64file <- function(file, convert = TRUE)
-  .Call(secretbase_xxhash_file, file, convert)
+xxh64 <- function(x, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_xxhash, x, convert) else
+    .Call(secretbase_xxhash_file, file, convert)

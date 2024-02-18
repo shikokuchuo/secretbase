@@ -40,8 +40,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers the functions: `sha3()` for objects and `sha3file()`
-for files.
+`secretbase` offers the main function: `sha3()`.
 
 To use:
 
@@ -88,7 +87,7 @@ Hash files:
 
 ``` r
 file <- tempfile(); cat("secret base", file = file)
-sha3file(file)
+sha3(file = file)
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
 ```
 
@@ -114,6 +113,9 @@ negligible probability that RNGs in each process may overlap. This may
 be especially suitable when first-best alternatives such as using
 recursive streams are too expensive or unable to preserve
 reproducibility. <sup>\[1\]</sup>
+
+Other functions include the cryptographic hash algorithm `sha256()` and
+a fast non-algorithmic hash `xxh64()`.
 
 ### References
 

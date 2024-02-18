@@ -2,12 +2,9 @@
 % Please edit documentation in R/base.R
 \name{xxh64}
 \alias{xxh64}
-\alias{xxh64file}
 \title{Fast Non-Cryptographic Hashing Using xxHash64}
 \usage{
-xxh64(x, convert = TRUE)
-
-xxh64file(file, convert = TRUE)
+xxh64(x, convert = TRUE, file)
 }
 \arguments{
 \item{x}{R object to hash. A character string or raw vector (without
@@ -21,8 +18,8 @@ and encoding information).}
 representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
-\item{file}{character file name / path. The file is hashed in a streaming
-fashion and may be larger than memory.}
+\item{file}{character file name / path. If specified, 'x' is ignored. The
+file is hashed in a streaming fashion and may be larger than memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.
@@ -44,7 +41,7 @@ xxh64("secret base", convert = FALSE)
 
 # xxHash64 a file:
 file <- tempfile(); cat("secret base", file = file)
-xxh64file(file)
+xxh64(file = file)
 unlink(file)
 
 }

@@ -24,6 +24,7 @@ test_equal(sha3("secret base", bits = 32, convert = NA), -1044750695L)
 # Streaming serialization tests:
 test_equal(sha3(data.frame(a = 1, b = 2)), "05d4308e79d029b4af5604739ecc6c4efa1f602a23add0ed2d247b7407d4832f")
 test_equal(sha3(c("secret", "base")), "d906024c71828a10e28865a80f5e81d2cb5cd74067d44852d7039813ba62b0b6")
+test_equal(sha3(`attr<-`("base", "secret", "base")), "eac181cb1c64e7196c458d40cebfb8bbd6d34a1d728936a2e689465879240e2a")
 test_equal(sha3(NULL), "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee")
 test_equal(sha3(substitute()), "9d31eb41cfb721b8040c52d574df1aacfc381d371c2b933f90792beba5160a57")
 test_equal(sha3(`class<-`(sha3(character(), bits = 192, convert = FALSE), "hash"), bits = "32", convert = NA), -111175135L)
@@ -31,15 +32,16 @@ test_equal(sha3(`class<-`(sha3(character(), bits = 192, convert = FALSE), "hash"
 test_error(sha3("secret base", bits = 0), "'bits' outside valid range of 8 to 2^24")
 test_error(sha3("secret base", bits = -1), "'bits' outside valid range of 8 to 2^24")
 test_error(sha3("secret base", bits = 2^24 + 1), "'bits' outside valid range of 8 to 2^24")
+test_error(sha3(file = NULL), "'file' must be specified as a character string")
 # File interface tests:
 hash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)
-  sha3file(file)
+  sha3(file = file)
 }
 test_equal(hash_func(tempfile(), "secret base"), "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520")
 test_error(hash_func("", ""), "file not found or no read permission")
-if (.Platform[["OS.type"]] == "unix") test_error(sha3file("~/"), "file read error")
+if (.Platform[["OS.type"]] == "unix") test_error(sha3(file = "~/"), "file read error")
 # xxHash tests:
 test_equal(xxh64("secret base"), "ac1f7520cd9f49e9")
 test_equal(xxh64("secret base", convert = NA)[1L], 544546732L)
@@ -48,11 +50,14 @@ test_equal(xxh64(data.frame(a = 1, b = 2)), "cbc8601c2c4a3c16")
 xhash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)
-  xxh64file(file)
+  xxh64(file = file)
 }
 test_equal(xhash_func(tempfile(), "secret base"), "ac1f7520cd9f49e9")
 test_error(xhash_func("", ""), "file not found or no read permission")
-if (.Platform[["OS.type"]] == "unix") test_error(xxh64file("~/"), "file read error")
+if (.Platform[["OS.type"]] == "unix") test_error(xxh64(file = "~/"), "file read error")
+test_equal(xxh64(paste(1:888, collapse = "")), "faf5050519852b31")
+test_equal(xxh64(NULL), "c85d88fc56f4e042")
+test_equal(xxh64(c("secret base", "")), "de232a89d184aac9")
 # SHA-256 tests:
 test_equal(sha256("secret base"), "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe")
 test_equal(sha256("secret base", convert = NA)[2L], 1592348733L)
@@ -61,8 +66,10 @@ test_equal(sha256(data.frame(a = 1, b = 2)), "189874c3ac59edecb4eab95a2d7c1bbb29
 hash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)
-  sha256file(file)
+  sha256(file = file)
 }
 test_equal(hash_func(tempfile(), "secret base"), "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe")
 test_error(hash_func("", ""), "file not found or no read permission")
-if (.Platform[["OS.type"]] == "unix") test_error(sha256file("~/"), "file read error")
+if (.Platform[["OS.type"]] == "unix") test_error(sha256(file = "~/"), "file read error")
+test_equal(sha256(paste(1:888, collapse = "")), "ec5df945d0ff0c927812ec503fe9ffd5cbdf7cf79b5391ad5002b3a80760183b")
+test_equal(sha256(NULL), "71557d1c8bac9bbe3cbec8d00bb223a2f372279827064095447e569fbf5a760a")
