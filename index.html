@@ -13,11 +13,11 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Cryptographic Hash and Extendable-Output Functions">
-<meta property="og:description" content="SHA-3 cryptographic hash and SHAKE256 extendable-output functions
-    (XOF). The SHA-3 Secure Hash Standard was published by the National
-    Institute of Standards and Technology (NIST) in 2015 at
+<meta property="og:description" content="SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output
+    functions (XOF). The SHA-3 Secure Hash Standard was published by the
+    National Institute of Standards and Technology (NIST) in 2015 at
     &lt;doi:10.6028/NIST.FIPS.202&gt;. Fast and memory-efficient implementation using
-    the core algorithm from Mbed TLS under the Trusted Firmware Project
+    the core algorithms from Mbed TLS under the Trusted Firmware Project
     &lt;https://www.trustedfirmware.org/projects/mbed-tls/&gt;.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">secretbase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0.9000</span>
       </span>
     </div>
 
@@ -82,9 +82,9 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF).</p>
+<p>SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF).</p>
 <p>The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at <a href="https://dx.doi.org/10.6028/NIST.FIPS.202" class="external-link">doi:10.6028/NIST.FIPS.202</a>.</p>
-<p>Fast and memory-efficient implementation using the core algorithm from ‘Mbed TLS’ under the Trusted Firmware Project <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls/</a>.</p>
+<p>Fast and memory-efficient implementation using the core algorithms from ‘Mbed TLS’ under the Trusted Firmware Project <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls/</a>.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
@@ -98,12 +98,12 @@
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p><code>secretbase</code> offers the functions: <code><a href="reference/sha3.html">sha3()</a></code> for objects and <code><a href="reference/sha3.html">sha3file()</a></code> for files.</p>
-<p>To use:</p>
+<p><code>secretbase</code> offers the functions: <code><a href="reference/sha3.html">sha3()</a></code> and <code><a href="reference/sha256.html">sha256()</a></code>.</p>
+<p>For <code><a href="reference/sha3.html">sha3()</a></code>, to use:</p>
 <ul>
-<li>SHA-3 cryptographic hash algorithm, specify ‘bits’ as one of <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
+<li>SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
 </li>
-<li>SHAKE256 extendable-output function (XOF), specify any other arbitrary bit length</li>
+<li>SHAKE256 extendable-output function (XOF), specify any other bit length</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/">secretbase</a></span><span class="op">)</span></span>
@@ -115,15 +115,12 @@
 <span><span class="co">#&gt;  [1] a7 21 d5 75 70 e7 ce 36 6a de e2 fc cb e9 77 07 23 c6 e3 62 25 49 c3 1c 7c</span></span>
 <span><span class="co">#&gt; [26] ab 9d bb 4a 79 55 20</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">224</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "d9e291d0c9f3dc3007dc0c111aea0b6a938929c8b4766332d8ea791a"</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">""</span>, bits <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26"</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"</span></span></code></pre></div>
 <p>Hash arbitrary R objects:</p>
 <ul>
-<li>using R serialization in a memory-efficient ‘streaming’ manner without allocation of the serialized object</li>
-<li>ensures portability by always using serialization v3 XDR, skipping the headers (which contain R version and encoding information)</li>
+<li>uses memory-efficient ‘streaming’ serialization (no allocation of serialized object)</li>
+<li>portable as always uses R serialization v3 XDR, skipping headers (containing R version and encoding information)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, bits <span class="op">=</span> <span class="fl">160</span><span class="op">)</span></span>
@@ -133,17 +130,16 @@
 <span><span class="co">#&gt; [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"</span></span></code></pre></div>
 <p>Hash files:</p>
 <ul>
-<li>read in a streaming fashion so can be larger than memory</li>
+<li>in a streaming fashion, accepting files larger than memory</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"secret base"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3file</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span></code></pre></div>
 <p>Hash to integer:</p>
 <ul>
-<li>specify ‘convert’ as <code>NA</code>
-</li>
-<li>specify ‘bits’ as <code>32</code> for a single integer value</li>
+<li>specify ‘convert’ as <code>NA</code> (and ‘bits’ as <code>32</code> for a single integer value)</li>
+<li>may be supplied as deterministic random seeds for R’s pseudo random number generators (RNGs)</li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">384</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
@@ -152,7 +148,6 @@
 <span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
-<p>These values may be supplied as deterministic (but indistinguishable from random) seeds for R’s pseudo random number generators (RNGs).</p>
 <p>For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup></p>
 </div>
 <div class="section level3">
