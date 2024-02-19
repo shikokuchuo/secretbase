@@ -20,6 +20,8 @@ functions (XOF).
 The SHA-3 Secure Hash Standard was published by the National Institute
 of Standards and Technology (NIST) in 2015 at
 [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
+The SHA-256 Secure Hash Standard was published by NIST in 2002 at
+<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
 
 Fast and memory-efficient implementation using the core algorithms from
 ‘Mbed TLS’ under the Trusted Firmware Project
