@@ -2,12 +2,9 @@
 % Please edit documentation in R/base.R
 \name{sha3}
 \alias{sha3}
-\alias{sha3file}
-\title{Cryptographic Hashing Using the SHA-3 Algorithm}
+\title{Cryptographic Hashing Using the SHA-3 Algorithms}
 \usage{
-sha3(x, bits = 256L, convert = TRUE)
-
-sha3file(file, bits = 256L, convert = TRUE)
+sha3(x, bits = 256L, convert = TRUE, file)
 }
 \arguments{
 \item{x}{R object to hash. A character string or raw vector (without
@@ -26,8 +23,8 @@ Must be between 8 and 2^24 and coercible to integer.}
 representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
-\item{file}{character file name / path. The file is hashed in a streaming
-fashion and does not need to fit in memory.}
+\item{file}{character file name / path. If specified, 'x' is ignored. The
+file is hashed in a streaming fashion and may be larger than memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.
@@ -61,7 +58,7 @@ sha3("secret base", bits = 32L, convert = NA)
 
 # SHA3-256 hash a file:
 file <- tempfile(); cat("secret base", file = file)
-sha3file(file)
+sha3(file = file)
 unlink(file)
-    
+
 }

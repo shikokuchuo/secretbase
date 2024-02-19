@@ -23,11 +23,11 @@ knitr::opts_chunk$set(
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
 <!-- badges: end -->
 
-SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF).
+SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF).
 
 The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
 
-Fast and memory-efficient implementation using the core algorithm from 'Mbed TLS' under the Trusted Firmware Project <https://www.trustedfirmware.org/projects/mbed-tls/>.
+Fast and memory-efficient implementation using the core algorithms from 'Mbed TLS' under the Trusted Firmware Project <https://www.trustedfirmware.org/projects/mbed-tls/>.
 
 ### Installation
 
@@ -45,12 +45,12 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers the functions: `sha3()` for objects and `sha3file()` for files.
+`secretbase` offers the functions: `sha3()` and `sha256()`.
 
-To use:
+For `sha3()`, to use:
  
- - SHA-3 cryptographic hash algorithm, specify 'bits' as one of `224`, `256`, `384` or `512`
- - SHAKE256 extendable-output function (XOF), specify any other arbitrary bit length
+ - SHA-3 cryptographic hash algorithm, specify 'bits' as `224`, `256`, `384` or `512`
+ - SHAKE256 extendable-output function (XOF), specify any other bit length
 
 ```{r secretbase}
 library(secretbase)
@@ -59,16 +59,14 @@ sha3("secret base")
 
 sha3("secret base", convert = FALSE)
 
-sha3("秘密の基地の中", bits = 224)
-
-sha3("", bits = 512)
+sha3("秘密の基地の中", bits = 512)
 
 ```
 
 Hash arbitrary R objects:
 
- - using R serialization in a memory-efficient 'streaming' manner without allocation of the serialized object
- - ensures portability by always using serialization v3 XDR, skipping the headers (which contain R version and encoding information)
+ - uses memory-efficient 'streaming' serialization (no allocation of serialized object)
+ - portable as always uses R serialization v3 XDR, skipping headers (containing R version and encoding information)
 
 ```{r streaming}
 sha3(data.frame(a = 1, b = 2), bits = 160)
@@ -78,11 +76,11 @@ sha3(NULL)
 
 Hash files:
 
- - read in a streaming fashion so can be larger than memory
+ - in a streaming fashion, accepting files larger than memory
 
 ```{r files}
 file <- tempfile(); cat("secret base", file = file)
-sha3file(file)
+sha3(file = file)
 ```
 ```{r unlink, echo=FALSE}
 unlink(file)
@@ -90,16 +88,14 @@ unlink(file)
 
 Hash to integer:
 
- - specify 'convert' as `NA`
- - specify 'bits' as `32` for a single integer value
+ - specify 'convert' as `NA` (and 'bits' as `32` for a single integer value)
+ - may be supplied as deterministic random seeds for R's pseudo random number generators (RNGs)
 
 ```{r integer}
 sha3("秘密の基地の中", bits = 384, convert = NA)
 
 sha3("秘密の基地の中", bits = 32, convert = NA)
 ```
-
-These values may be supplied as deterministic (but indistinguishable from random) seeds for R's pseudo random number generators (RNGs).
 
 For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup>
 
