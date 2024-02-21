@@ -1,4 +1,4 @@
-# secretbase 0.2.0.9000 (development)
+# secretbase 0.3.0
 
 * Adds SHA-256 cryptographic hash algorithm.
 * Folds file hashing into the 'file' argument of the main hash function.
