@@ -1,3 +1,5 @@
+# secretbase 0.3.0.9000 (development)
+
 # secretbase 0.3.0
 
 * Adds SHA-256 cryptographic hash algorithm.

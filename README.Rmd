@@ -32,16 +32,16 @@ Fast and memory-efficient implementation using the core algorithms from 'Mbed TL
 
 ### Installation
 
-Install the latest release from CRAN:
-
-```{r cran, eval=FALSE}
-install.packages("secretbase")
-```
-
-or the development version from rOpenSci R-universe:
+Releases are made on rOpenSci R-universe, and also CRAN:
 
 ```{r runiv, eval=FALSE}
-install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
+install.packages("secretbase", repos = c("shikokuchuo.r-universe.dev", "cloud.r-project.org"))
+```
+
+Install the latest development version from Github:
+
+```{r github, eval=FALSE}
+remotes::install_github("shikokuchuo/secretbase")
 ```
 
 ### Quick Start
