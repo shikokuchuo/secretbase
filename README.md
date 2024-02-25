@@ -125,12 +125,9 @@ Simulation, Vol. 135, May 2017, pp. 3-17
 
 Links:
 
-`secretbase` website: <https://shikokuchuo.net/secretbase/><br />
-`secretbase` on CRAN:
-<https://cran.r-project.org/package=secretbase><br />
+◈ secretbase R package: <https://shikokuchuo.net/secretbase/>
 
-Mbed TLS website:
-<https://www.trustedfirmware.org/projects/mbed-tls/><br />
+Mbed TLS website: <https://www.trustedfirmware.org/projects/mbed-tls/>
 
 –
 
