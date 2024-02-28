@@ -29,16 +29,16 @@ Fast and memory-efficient implementation using the core algorithms from
 
 ### Installation
 
-Releases are made on rOpenSci R-universe, and also CRAN:
+Install the latest version from the R-releases R-universe, or CRAN:
 
 ``` r
-install.packages("secretbase", repos = c("shikokuchuo.r-universe.dev", "cloud.r-project.org"))
+install.packages("secretbase", repos = "https://r-releases.r-universe.dev")
 ```
 
-Install the latest development version from Github:
+Or the development version from the author’s R-universe:
 
 ``` r
-remotes::install_github("shikokuchuo/secretbase")
+install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 ```
 
 ### Quick Start
