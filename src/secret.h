@@ -67,17 +67,16 @@ typedef struct mbedtls_sha256_context {
   uint32_t state[8];
 } mbedtls_sha256_context;
 
-typedef void (*update_func)(void *, const uint8_t *, size_t);
-typedef void (*hash_func)(const update_func, void *, SEXP);
-
-typedef struct secretbase_context {
+typedef struct secretbase_sha3_context {
   int skip;
-  void *ctx;
-  update_func update;
-} secretbase_context;
+  mbedtls_sha3_context *ctx;
+} secretbase_sha3_context;
 
-void hash_object(const update_func, void *, const SEXP);
-void hash_file(const update_func, void *, const SEXP);
+typedef struct secretbase_sha256_context {
+  int skip;
+  mbedtls_sha256_context *ctx;
+} secretbase_sha256_context;
+
 SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);

@@ -1,4 +1,6 @@
-# secretbase 0.3.0.9000 (development)
+# secretbase 0.3.0.1
+
+* CRAN release correcting for Clang-UBSAN checks.
 
 # secretbase 0.3.0
 
