@@ -1,5 +1,7 @@
 # secretbase 0.3.0.9000 (development)
 
+* Adds 'xxHash64' as a fast non-cryptographic hash function.
+
 # secretbase 0.3.0.1
 
 * CRAN release correcting for Clang-UBSAN checks.

@@ -30,10 +30,11 @@
 #define SB_SERIAL_HEADERS 6
 #define SB_BUF_SIZE 4096
 
+
 #ifdef WORDS_BIGENDIAN
-# define MBEDTLS_IS_BIG_ENDIAN 1
+# define SB_IS_BIG_ENDIAN 1
 #else
-# define MBEDTLS_IS_BIG_ENDIAN 0
+# define SB_IS_BIG_ENDIAN 0
 #endif
 
 typedef enum {
@@ -67,6 +68,15 @@ typedef struct mbedtls_sha256_context {
   uint32_t state[8];
 } mbedtls_sha256_context;
 
+typedef struct XXH64_state_s {
+  uint64_t total_len;
+  uint64_t v[4];
+  uint64_t mem64[4];
+  uint32_t memsize;
+  uint32_t reserved32;
+  uint64_t reserved64;
+} XXH64_state_t;
+
 typedef struct secretbase_sha3_context {
   int skip;
   mbedtls_sha3_context *ctx;
@@ -77,11 +87,18 @@ typedef struct secretbase_sha256_context {
   mbedtls_sha256_context *ctx;
 } secretbase_sha256_context;
 
+typedef struct secretbase_xxh64_context {
+  int skip;
+  XXH64_state_t *ctx;
+} secretbase_xxh64_context;
+
 SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256(SEXP, SEXP);
 SEXP secretbase_sha256_file(SEXP, SEXP);
+SEXP secretbase_xxh64(SEXP, SEXP);
+SEXP secretbase_xxh64_file(SEXP, SEXP);
 
 #endif

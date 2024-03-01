@@ -116,14 +116,14 @@ static inline uint64_t mbedtls_bswap64(uint64_t x) {
 #endif /* !defined(MBEDTLS_BSWAP64) */
 
 #define MBEDTLS_GET_UINT32_BE(data, offset)                                \
-((MBEDTLS_IS_BIG_ENDIAN)                                                   \
+((SB_IS_BIG_ENDIAN)                                                   \
    ? mbedtls_get_unaligned_uint32((data) + (offset))                       \
    : MBEDTLS_BSWAP32(mbedtls_get_unaligned_uint32((data) + (offset)))      \
 )
 
 #define MBEDTLS_PUT_UINT32_BE(n, data, offset)                                        \
 {                                                                                     \
-  if (MBEDTLS_IS_BIG_ENDIAN)                                                          \
+  if (SB_IS_BIG_ENDIAN)                                                          \
   {                                                                                   \
     mbedtls_put_unaligned_uint32((data) + (offset), (uint32_t) (n));                  \
   }                                                                                   \

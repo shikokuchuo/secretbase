@@ -124,3 +124,33 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 sha256 <- function(x, convert = TRUE, file)
   if (missing(file)) .Call(secretbase_sha256, x, convert) else
     .Call(secretbase_sha256_file, file, convert)
+
+#' Fast Non-Cryptographic Hashing Using xxHash64
+#'
+#' Returns the 'xxHash64' of the supplied R object or file. This is an extremely
+#'     fast hash, processing at RAM speed limits.
+#' 
+#' @inheritParams sha3
+#' 
+#' @return A character string, raw or integer vector depending on 'convert'.
+#' 
+#' @details This implementation uses the algorithm released by Yann Collet at
+#'     \url{https://xxhash.com/}.
+#'     
+#' @examples
+#' # xxHash64 as character string:
+#' xxh64("secret base")
+#'
+#' # xxHash64 as raw vector:
+#' xxh64("secret base", convert = FALSE)
+#' 
+#' # xxHash64 a file:
+#' file <- tempfile(); cat("secret base", file = file)
+#' xxh64(file = file)
+#' unlink(file)
+#' 
+#' @export
+#'
+xxh64 <- function(x, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_xxh64, x, convert) else
+    .Call(secretbase_xxh64_file, file, convert)
