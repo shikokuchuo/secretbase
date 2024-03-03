@@ -45,8 +45,9 @@ if (.Platform[["OS.type"]] == "unix") test_error(sha3(file = "~/"), "file read e
 # SHA-256 tests:
 test_equal(sha256("secret base"), "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe")
 test_equal(sha256("secret base", convert = NA)[2L], 1592348733L)
-test_that(sha256("secret base", convert = FALSE), is.raw)
+test_equal(sha256(sha256("secret base", convert = FALSE)), "bd45eca9cbd4404cd467909fa8a2196ee9ffc7cb7f70f6343ff6647419744d41")
 test_equal(sha256(data.frame(a = 1, b = 2)), "189874c3ac59edecb4eab95a2d7c1bbb293a6ccd04e3da5b28daca91ebc7f15b")
+test_error(sha256(file = NULL), "'file' must be specified as a character string")
 hash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)
