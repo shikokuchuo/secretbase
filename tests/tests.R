@@ -47,6 +47,11 @@ test_equal(sha256("secret base"), "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a83
 test_equal(sha256("secret base", convert = NA)[2L], 1592348733L)
 test_equal(sha256(sha256("secret base", convert = FALSE)), "bd45eca9cbd4404cd467909fa8a2196ee9ffc7cb7f70f6343ff6647419744d41")
 test_equal(sha256(data.frame(a = 1, b = 2)), "189874c3ac59edecb4eab95a2d7c1bbb293a6ccd04e3da5b28daca91ebc7f15b")
+test_equal(sha256(c("secret", "base")), "6a38552b0dab8bf0a6c2f9a6a7acf764631319843f58e85f883301a3cd08b1f2")
+test_equal(sha256(`attr<-`("base", "secret", "base")), "6e9e5b1a42304047ba73161360917d001c19974aebd98d345251ff138cddf6ea")
+test_equal(sha256(NULL), "71557d1c8bac9bbe3cbec8d00bb223a2f372279827064095447e569fbf5a760a")
+test_equal(sha256(substitute()), "4627dde6550f3e355515de5f2c6bb0099161c53c2c7186ce79ab1a74df004bfc")
+test_equal(sha256(`class<-`(sha256(character(), convert = FALSE), "hash")), "c762db048ff48f7ba3e9df5539db3aa678cb2f336d96d5c81b4e5d3e19783d14") 
 test_error(sha256(file = NULL), "'file' must be specified as a character string")
 hash_func <- function(file, string) {
   on.exit(unlink(file))
@@ -57,4 +62,3 @@ test_equal(hash_func(tempfile(), "secret base"), "1951c1ca3d50e95e6ede2b1c26fefd
 test_error(hash_func("", ""), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(sha256(file = "~/"), "file read error")
 test_equal(sha256(paste(1:888, collapse = "")), "ec5df945d0ff0c927812ec503fe9ffd5cbdf7cf79b5391ad5002b3a80760183b")
-test_equal(sha256(NULL), "71557d1c8bac9bbe3cbec8d00bb223a2f372279827064095447e569fbf5a760a")
