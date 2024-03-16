@@ -23,6 +23,8 @@ static const R_CallMethodDef callMethods[] = {
   {"secretbase_sha3_file", (DL_FUNC) &secretbase_sha3_file, 3},
   {"secretbase_sha256", (DL_FUNC) &secretbase_sha256, 2},
   {"secretbase_sha256_file", (DL_FUNC) &secretbase_sha256_file, 2},
+  {"secretbase_siphash13", (DL_FUNC) &secretbase_siphash13, 2},
+  {"secretbase_siphash13_file", (DL_FUNC) &secretbase_siphash13_file, 2},
   {NULL, NULL, 0}
 };
 

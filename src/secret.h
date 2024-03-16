@@ -72,16 +72,33 @@ typedef struct secretbase_sha3_context {
   mbedtls_sha3_context *ctx;
 } secretbase_sha3_context;
 
+typedef struct CSipHash {
+  uint64_t v0;
+  uint64_t v1;
+  uint64_t v2;
+  uint64_t v3;
+  uint64_t padding;
+  size_t n_bytes;
+} CSipHash;
+
 typedef struct secretbase_sha256_context {
   int skip;
   mbedtls_sha256_context *ctx;
 } secretbase_sha256_context;
 
+typedef struct secretbase_siphash_context {
+  int skip;
+  CSipHash *ctx;
+} secretbase_siphash_context;
+
+void clear_buffer(void *, size_t);
 SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256(SEXP, SEXP);
 SEXP secretbase_sha256_file(SEXP, SEXP);
+SEXP secretbase_siphash13(SEXP, SEXP);
+SEXP secretbase_siphash13_file(SEXP, SEXP);
 
 #endif

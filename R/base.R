@@ -32,6 +32,18 @@
 #'     
 #'     The SHA-256 Secure Hash Standard was published by NIST in 2002 at
 #'     \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+#'     
+#'     This package adapts the SHA-256 and SHA-3 implementations by The Mbed TLS
+#'     Contributors at \url{https://github.com/Mbed-TLS/mbedtls}.
+#'     
+#'     The SipHash family of pseudo-random functions are described in
+#'     'SipHash: a fast short-input PRF', Jean-Philippe Aumasson and Daniel J.
+#'     Bernstein, 2012, Cryptology ePrint Archive at
+#'     \url{https://ia.cr/2012/351}.
+#'     
+#'     This package adapts the SipHash implementation by Daniele Nicolodi, David
+#'     Rheinsberg and Tom Gundersen at
+#'     \url{https://github.com/c-util/c-siphash}.
 #'
 #' @encoding UTF-8
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
@@ -124,3 +136,32 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 sha256 <- function(x, convert = TRUE, file)
   if (missing(file)) .Call(secretbase_sha256, x, convert) else
     .Call(secretbase_sha256_file, file, convert)
+
+#' Hashing Using the SipHash-1-3 Pseudorandom Function
+#'
+#' Returns a SipHash-1-3 hash of the supplied R object or file.
+#'
+#' @inheritParams sha3
+#'
+#' @return A character string, raw or integer vector depending on 'convert'.
+#' 
+#' @note Hashes produced are stable but may not be comparable to other
+#'     implementations as the key (seed) is set to a fixed pre-determined value.
+#'
+#' @examples
+#' # SipHash-1-3 hash as character string:
+#' siphash13("secret base")
+#'
+#' # SipHash-1-3 hash as raw vector:
+#' siphash13("secret base", convert = FALSE)
+#' 
+#' # SipHash-1-3 hash a file:
+#' file <- tempfile(); cat("secret base", file = file)
+#' siphash13(file = file)
+#' unlink(file)
+#'
+#' @export
+#'
+siphash13 <- function(x, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_siphash13, x, convert) else
+    .Call(secretbase_siphash13_file, file, convert)

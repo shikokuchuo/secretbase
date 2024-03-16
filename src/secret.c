@@ -197,7 +197,7 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
 
-static void clear_buffer(void *buf, size_t sz) {
+void clear_buffer(void *buf, size_t sz) {
   
   secure_memset(buf, 0, sz);
   

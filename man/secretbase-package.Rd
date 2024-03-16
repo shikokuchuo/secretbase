@@ -22,6 +22,18 @@ The SHA-3 Secure Hash Standard was published by the National
     
     The SHA-256 Secure Hash Standard was published by NIST in 2002 at
     \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+    
+    This package adapts the SHA-256 and SHA-3 implementations by The Mbed TLS
+    Contributors at \url{https://github.com/Mbed-TLS/mbedtls}.
+    
+    The SipHash family of pseudo-random functions are described in
+    'SipHash: a fast short-input PRF', Jean-Philippe Aumasson and Daniel J.
+    Bernstein, 2012, Cryptology ePrint Archive at
+    \url{https://ia.cr/2012/351}.
+    
+    This package adapts the SipHash implementation by Daniele Nicolodi, David
+    Rheinsberg and Tom Gundersen at
+    \url{https://github.com/c-util/c-siphash}.
 }
 \seealso{
 Useful links:

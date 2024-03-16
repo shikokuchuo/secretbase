@@ -360,14 +360,6 @@ static void mbedtls_sha256_finish(mbedtls_sha256_context *ctx,
 
 // secretbase - internals ------------------------------------------------------
 
-static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
-
-static void clear_buffer(void *buf, size_t sz) {
-  
-  secure_memset(buf, 0, sz);
-  
-}
-
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_sha256_context *sctx = (secretbase_sha256_context *) stream->data;

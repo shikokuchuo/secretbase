@@ -1,7 +1,7 @@
 Package: secretbase
 Type: Package
 Title: Cryptographic Hash and Extendable-Output Functions
-Version: 0.3.0.9000
+Version: 0.3.0.9001
 Description: SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output
     functions (XOF). The SHA-3 Secure Hash Standard was published by the
     National Institute of Standards and Technology (NIST) in 2015 at

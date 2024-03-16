@@ -62,3 +62,23 @@ test_equal(hash_func(tempfile(), "secret base"), "1951c1ca3d50e95e6ede2b1c26fefd
 test_error(hash_func("", ""), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(sha256(file = "~/"), "file read error")
 test_equal(sha256(paste(1:888, collapse = "")), "ec5df945d0ff0c927812ec503fe9ffd5cbdf7cf79b5391ad5002b3a80760183b")
+# SipHash13 tests:
+test_equal(siphash13("secret base"), "48c60a316babef0e")
+test_equal(siphash13("secret base", convert = NA)[2L], 250588011L)
+test_equal(siphash13(siphash13("secret base", convert = FALSE)), "498db1332ca02148")
+test_equal(siphash13(data.frame(a = 1, b = 2)), "e91a1e412627d654")
+test_equal(siphash13(c("secret", "base")), "ddf3c7a54c52150c")
+test_equal(siphash13(`attr<-`("base", "secret", "base")), "4a7c3eb69f91f04e")
+test_equal(siphash13(NULL), "08d5f59e833de599")
+test_equal(siphash13(substitute()), "c8cadc1ab377142a")
+test_equal(siphash13(`class<-`(siphash13(character(), convert = FALSE), "hash")), "39124d8b9643418a") 
+test_error(siphash13(file = NULL), "'file' must be specified as a character string")
+hash_func <- function(file, string) {
+  on.exit(unlink(file))
+  cat(string, file = file)
+  siphash13(file = file)
+}
+test_equal(hash_func(tempfile(), "secret base"), "48c60a316babef0e")
+test_error(hash_func("", ""), "file not found or no read permission")
+if (.Platform[["OS.type"]] == "unix") test_error(siphash13(file = "~/"), "file read error")
+test_equal(siphash13(paste(1:888, collapse = "")), "8337f50b05209c40")
