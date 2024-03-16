@@ -28,8 +28,8 @@ A character string, raw or integer vector depending on 'convert'.
 Returns a SipHash-1-3 hash of the supplied R object or file.
 }
 \note{
-Hashes produced are stable but may not be comparable to other
-    implementations as the key (seed) is set to a fixed pre-determined value.
+Hashes produced are stable, but may not be comparable to other
+    implementations as the key (seed) is fixed at the reference value.
 }
 \examples{
 # SipHash-1-3 hash as character string:

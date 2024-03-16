@@ -145,8 +145,8 @@ sha256 <- function(x, convert = TRUE, file)
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
 #' 
-#' @note Hashes produced are stable but may not be comparable to other
-#'     implementations as the key (seed) is set to a fixed pre-determined value.
+#' @note Hashes produced are stable, but may not be comparable to other
+#'     implementations as the key (seed) is fixed at the reference value.
 #'
 #' @examples
 #' # SipHash-1-3 hash as character string:
