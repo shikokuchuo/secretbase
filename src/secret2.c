@@ -434,7 +434,7 @@ static SEXP secretbase_sha256_impl(const SEXP x, const SEXP convert,
                                    void (*const hash_func)(mbedtls_sha256_context *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
-  const size_t sz = SB_SHA256_OUT_SIZE;
+  const size_t sz = SB_SHA256_SIZE;
   unsigned char buf[sz];
   
   mbedtls_sha256_context ctx;

@@ -273,31 +273,37 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP c
   
   const int conv = LOGICAL(convert)[0];
   uint64_t hash;
-  const size_t sz = SB_SIPH_OUT_SIZE;
+  const size_t sz = SB_SIPH_SIZE;
   
   CSipHash ctx;
   if (key == R_NilValue) {
     c_siphash_init_nokey(&ctx);
   } else {
-    uint8_t seed[SB_SIPH_KEY_SIZE];
-    memset(seed, 0, SB_SIPH_KEY_SIZE);
+    uint8_t seed[SB_SKEY_SIZE];
+    memset(seed, 0, SB_SKEY_SIZE);
+    size_t klen;
     switch (TYPEOF(key)) {
     case STRSXP: ;
       const char *s = CHAR(STRING_ELT(key, 0));
-      memcpy(seed, (unsigned char *) s, SB_SIPH_KEY_MAX(strlen(s)));
+      klen = strlen(s);
+      memcpy(seed, (unsigned char *) s, klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
       break;
     case REALSXP:
-      memcpy(seed, (unsigned char *) DATAPTR_RO(key), SB_SIPH_KEY_MAX(XLENGTH(key) * sizeof(double)));
+      klen = XLENGTH(key) * sizeof(double);
+      memcpy(seed, (unsigned char *) DATAPTR_RO(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
       break;
     case INTSXP:
     case LGLSXP:
-      memcpy(seed, (unsigned char *) DATAPTR_RO(key), SB_SIPH_KEY_MAX(XLENGTH(key) * sizeof(int)));
+      klen = XLENGTH(key) * sizeof(int);
+      memcpy(seed, (unsigned char *) DATAPTR_RO(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
       break;
     case CPLXSXP:
-      memcpy(seed, (unsigned char *) DATAPTR_RO(key), SB_SIPH_KEY_MAX(XLENGTH(key) * 2 * sizeof(double)));
+      klen = XLENGTH(key) * 2 * sizeof(double);
+      memcpy(seed, (unsigned char *) DATAPTR_RO(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
       break;
     case RAWSXP:
-      memcpy(seed, (unsigned char *) STDVEC_DATAPTR(key), SB_SIPH_KEY_MAX(XLENGTH(key)));
+      klen = XLENGTH(key);
+      memcpy(seed, (unsigned char *) STDVEC_DATAPTR(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
       break;
     default:
       Rf_error("'key' must be an atomic vector or NULL");
