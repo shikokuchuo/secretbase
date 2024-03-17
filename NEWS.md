@@ -1,4 +1,4 @@
-# secretbase 0.3.0.9001 (development)
+# secretbase 0.3.0.9002 (development)
 
 * Adds SipHash-1-3 pseudorandom function (PRF).
 

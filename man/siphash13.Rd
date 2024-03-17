@@ -4,7 +4,7 @@
 \alias{siphash13}
 \title{Hashing Using the SipHash-1-3 Pseudorandom Function}
 \usage{
-siphash13(x, convert = TRUE, file)
+siphash13(x, key = NULL, convert = TRUE, file)
 }
 \arguments{
 \item{x}{R object to hash. A character string or raw vector (without
@@ -13,6 +13,11 @@ serialization in a memory-efficient 'streaming' manner, without
 allocation of the serialized object. To ensure portability, serialization
 v3 XDR is always used with headers skipped (as these contain R version
 and encoding information).}
+
+\item{key}{[default NULL] an atomic vector comprising the 16 byte (128 bit)
+key data, or else NULL which is equivalent to '0'. If a longer vector is
+supplied, only the first 16 bytes are used, and if shorter, padded with
+trailing '0'. Note: for character vectors only the first element is used.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
@@ -28,13 +33,15 @@ A character string, raw or integer vector depending on 'convert'.
 Returns a cryptographically-strong SipHash-1-3 hash of the supplied R object
     or file.
 }
-\note{
-Hashes produced are stable, but may not be comparable to other
-    implementations as the key (seed) is fixed at the reference value.
-}
 \examples{
 # SipHash-1-3 hash as character string:
 siphash13("secret base")
+
+# SipHash-1-3 hash using a complex number (16 byte) key:
+siphash13("secret base", key = 1.2 + 3.4i)
+
+# SipHash-1-3 hash using a character string key:
+siphash13("secret", key = "base")
 
 # SipHash-1-3 hash as raw vector:
 siphash13("secret base", convert = FALSE)

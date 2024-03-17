@@ -81,8 +81,26 @@ static inline void c_siphash_sipround(CSipHash *state) {
   state->v2 = c_siphash_rotate_left(state->v2, 32);
 }
 
-void c_siphash_init(CSipHash *state) {
+void c_siphash_init(CSipHash *state, const uint8_t seed[16]) {
+  
+  uint64_t k0, k1;
+  
+  k0 = c_siphash_read_le64(seed);
+  k1 = c_siphash_read_le64(seed + 8);
 
+  *state = (CSipHash) {
+    .v0 = 0x736f6d6570736575ULL ^ k0,
+    .v1 = 0x646f72616e646f6dULL ^ k1,
+    .v2 = 0x6c7967656e657261ULL ^ k0,
+    .v3 = 0x7465646279746573ULL ^ k1,
+    .padding = 0,
+    .n_bytes = 0,
+  };
+  
+}
+
+void c_siphash_init_nokey(CSipHash *state) {
+  
   *state = (CSipHash) {
     .v0 = 0x736f6d6570736575ULL,
     .v1 = 0x646f72616e646f6dULL,
@@ -91,9 +109,11 @@ void c_siphash_init(CSipHash *state) {
     .padding = 0,
     .n_bytes = 0,
   };
+  
 }
 
 static inline void c_siphash_append_N(CSipHash *state, const uint8_t *bytes, size_t n_bytes, unsigned N) {
+  
   const uint8_t *end = bytes + n_bytes;
   size_t left = state->n_bytes & 7;
   uint64_t m;
@@ -145,9 +165,11 @@ static inline void c_siphash_append_N(CSipHash *state, const uint8_t *bytes, siz
   case 0:
     break;
   }
+  
 }
 
 static inline uint64_t c_siphash_finalize_NM(CSipHash *state, unsigned N, unsigned M) {
+  
   uint64_t b;
   
   b = state->padding | (((uint64_t) state->n_bytes) << 56);
@@ -163,6 +185,7 @@ static inline uint64_t c_siphash_finalize_NM(CSipHash *state, unsigned N, unsign
     c_siphash_sipround(state);
   
   return state->v0 ^ state->v1 ^ state->v2  ^ state->v3;
+  
 }
 
 static void c_siphash_append_13(CSipHash *state, const uint8_t *bytes, size_t n_bytes) {
@@ -245,15 +268,42 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
   
 }
 
-static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP convert,
+static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP convert,
                                       void (*const hash_func)(CSipHash *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
   uint64_t hash;
-  const size_t sz = 8;
+  const size_t sz = SB_SIPH_OUT_SIZE;
   
   CSipHash ctx;
-  c_siphash_init(&ctx);
+  if (key == R_NilValue) {
+    c_siphash_init_nokey(&ctx);
+  } else {
+    uint8_t seed[SB_SIPH_KEY_SIZE];
+    memset(seed, 0, SB_SIPH_KEY_SIZE);
+    switch (TYPEOF(key)) {
+    case STRSXP: ;
+      const char *s = CHAR(STRING_ELT(key, 0));
+      memcpy(seed, (unsigned char *) s, SB_SIPH_KEY_MAX(strlen(s)));
+      break;
+    case REALSXP:
+      memcpy(seed, (unsigned char *) DATAPTR_RO(key), SB_SIPH_KEY_MAX(XLENGTH(key) * sizeof(double)));
+      break;
+    case INTSXP:
+    case LGLSXP:
+      memcpy(seed, (unsigned char *) DATAPTR_RO(key), SB_SIPH_KEY_MAX(XLENGTH(key) * sizeof(int)));
+      break;
+    case CPLXSXP:
+      memcpy(seed, (unsigned char *) DATAPTR_RO(key), SB_SIPH_KEY_MAX(XLENGTH(key) * 2 * sizeof(double)));
+      break;
+    case RAWSXP:
+      memcpy(seed, (unsigned char *) STDVEC_DATAPTR(key), SB_SIPH_KEY_MAX(XLENGTH(key)));
+      break;
+    default:
+      Rf_error("'key' must be an atomic vector or NULL");
+    }
+    c_siphash_init(&ctx, seed);
+  }
   hash_func(&ctx, x);
   hash = c_siphash_finalize_13(&ctx);
   clear_buffer(&ctx, sizeof(CSipHash));
@@ -264,14 +314,14 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP convert,
 
 // secretbase - exported functions ---------------------------------------------
 
-SEXP secretbase_siphash13(SEXP x, SEXP convert) {
+SEXP secretbase_siphash13(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_siphash13_impl(x, convert, hash_object);
+  return secretbase_siphash13_impl(x, key, convert, hash_object);
   
 }
 
-SEXP secretbase_siphash13_file(SEXP x, SEXP convert) {
+SEXP secretbase_siphash13_file(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_siphash13_impl(x, convert, hash_file);
+  return secretbase_siphash13_impl(x, key, convert, hash_file);
   
 }

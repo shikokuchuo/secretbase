@@ -36,6 +36,11 @@
 # define MBEDTLS_IS_BIG_ENDIAN 0
 #endif
 
+#define SB_SHA256_OUT_SIZE 32
+#define SB_SIPH_OUT_SIZE 8
+#define SB_SIPH_KEY_SIZE 16
+#define SB_SIPH_KEY_MAX(len) (len) < SB_SIPH_KEY_SIZE ? (len) : SB_SIPH_KEY_SIZE
+
 typedef enum {
   MBEDTLS_SHA3_SHAKE256 = 0,
   MBEDTLS_SHA3_224,
@@ -98,7 +103,7 @@ SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256(SEXP, SEXP);
 SEXP secretbase_sha256_file(SEXP, SEXP);
-SEXP secretbase_siphash13(SEXP, SEXP);
-SEXP secretbase_siphash13_file(SEXP, SEXP);
+SEXP secretbase_siphash13(SEXP, SEXP, SEXP);
+SEXP secretbase_siphash13_file(SEXP, SEXP, SEXP);
 
 #endif

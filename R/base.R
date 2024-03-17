@@ -145,15 +145,22 @@ sha256 <- function(x, convert = TRUE, file)
 #'     or file.
 #'
 #' @inheritParams sha3
+#' @param key [default NULL] an atomic vector comprising the 16 byte (128 bit)
+#'     key data, or else NULL which is equivalent to '0'. If a longer vector is
+#'     supplied, only the first 16 bytes are used, and if shorter, padded with
+#'     trailing '0'. Note: for character vectors only the first element is used.
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
-#' 
-#' @note Hashes produced are stable, but may not be comparable to other
-#'     implementations as the key (seed) is fixed at the reference value.
 #'
 #' @examples
 #' # SipHash-1-3 hash as character string:
 #' siphash13("secret base")
+#' 
+#' # SipHash-1-3 hash using a complex number (16 byte) key:
+#' siphash13("secret base", key = 1.2 + 3.4i)
+#' 
+#' # SipHash-1-3 hash using a character string key:
+#' siphash13("secret", key = "base")
 #'
 #' # SipHash-1-3 hash as raw vector:
 #' siphash13("secret base", convert = FALSE)
@@ -165,6 +172,6 @@ sha256 <- function(x, convert = TRUE, file)
 #'
 #' @export
 #'
-siphash13 <- function(x, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_siphash13, x, convert) else
-    .Call(secretbase_siphash13_file, file, convert)
+siphash13 <- function(x, key = NULL, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_siphash13, x, key, convert) else
+    .Call(secretbase_siphash13_file, file, key, convert)
