@@ -41,9 +41,9 @@ To produce single integer values suitable for use as random seeds
     Standards and Technology (NIST) in 2015 at
     \doi{doi:10.6028/NIST.FIPS.202}.
     
-    This implementation is based on that of 'The Mbed TLS Contributors' under
+    This implementation is based on one by 'The Mbed TLS Contributors' under
     the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
+    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }
 \examples{
 # SHA3-256 hash as character string:
