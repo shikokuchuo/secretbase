@@ -13,15 +13,16 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Cryptographic Hash and Extendable-Output Functions">
-<meta property="og:description" content="SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output
-    functions (XOF). The SHA-3 Secure Hash Standard was published by the
-    National Institute of Standards and Technology (NIST) in 2015 at
-    &lt;doi:10.6028/NIST.FIPS.202&gt;. The SHA-256 Secure Hash Standard was published
-    by NIST in 2002 at
-    &lt;https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf&gt;. Fast and
-    memory-efficient implementation using the core algorithms from Mbed TLS
-    under the Trusted Firmware Project
-    &lt;https://www.trustedfirmware.org/projects/mbed-tls/&gt;.">
+<meta property="og:description" content="Fast and memory-efficient streaming hash functions. Performs direct
+    hashing of strings, raw bytes, and files potentially larger than memory, as
+    well as hashing in-memory objects through Rs serialization mechanism,
+    without requiring allocation of the serialized object. Implementations
+    include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256
+    extendable-output function (XOF), and SipHash' pseudo-random function. The
+    SHA-3 Secure Hash Standard was published by the National Institute of
+    Standards and Technology (NIST) in 2015 at &lt;doi:10.6028/NIST.FIPS.202&gt;. The
+    SHA-256 Secure Hash Standard was published by NIST in 2002 at
+    &lt;https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf&gt;.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -42,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">secretbase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.9003</span>
       </span>
     </div>
 
@@ -85,13 +86,14 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output functions (XOF).</p>
-<p>The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at <a href="https://dx.doi.org/10.6028/NIST.FIPS.202" class="external-link">doi:10.6028/NIST.FIPS.202</a>. The SHA-256 Secure Hash Standard was published by NIST in 2002 at <a href="https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf" class="external-link uri">https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf</a>.</p>
-<p>Fast and memory-efficient implementation using the core algorithms from ‘Mbed TLS’ under the Trusted Firmware Project <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls/</a>.</p>
+<p>Fast and memory-efficient streaming hash functions. Performs direct hashing of strings, raw bytes, and files potentially larger than memory, as well as hashing in-memory objects through R’s serialization mechanism, without requiring allocation of the serialized object.</p>
+<p>Implementations include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’ pseudo-random function.</p>
+<p>The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at <a href="https://dx.doi.org/10.6028/NIST.FIPS.202" class="external-link">doi:10.6028/NIST.FIPS.202</a>. The SHA-256 Secure Hash Standard was published by NIST in 2002 at <a href="https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf" class="external-link uri">https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf</a>. The SipHash family of pseudo-random functions by Jean-Philippe Aumasson and Daniel J. Bernstein was published in 2012 at <a href="https://ia.cr/2012/351" class="external-link uri">https://ia.cr/2012/351</a>.<sup>[1]</sup></p>
+<p>The SHA-256 and SHA-3 implementations are based on those by the ‘Mbed TLS’ Trusted Firmware Project at <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls/</a>. The SipHash-1-3 implementation is based on that of Daniele Nicolodi, David Rheinsberg and Tom Gundersen at <a href="https://github.com/c-util/c-siphash" class="external-link uri">https://github.com/c-util/c-siphash</a>, which is in turn based on the reference implementation by Jean-Philippe Aumasson and Daniel J. Bernstein released to the public domain at <a href="https://github.com/veorq/SipHash" class="external-link uri">https://github.com/veorq/SipHash</a>.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<p>Install the latest version from the R-releases R-universe, or CRAN:</p>
+<p>Install the latest version from R-releases or CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"secretbase"</span>, repos <span class="op">=</span> <span class="st">"https://r-releases.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
 <p>Or the development version from the author’s R-universe:</p>
@@ -101,12 +103,14 @@
 <div class="section level3">
 <h3 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h3>
-<p><code>secretbase</code> offers the functions: <code><a href="reference/sha3.html">sha3()</a></code> and <code><a href="reference/sha256.html">sha256()</a></code>.</p>
-<p>For <code><a href="reference/sha3.html">sha3()</a></code>, to use:</p>
+<p><code>secretbase</code> offers the functions: <code><a href="reference/sha3.html">sha3()</a></code>, <code><a href="reference/sha256.html">sha256()</a></code> and <code><a href="reference/siphash13.html">siphash13()</a></code>.</p>
+<div class="section level5">
+<h5 id="sha-3-and-xof-usage">SHA-3 and XOF usage:<a class="anchor" aria-label="anchor" href="#sha-3-and-xof-usage"></a>
+</h5>
 <ul>
-<li>SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
+<li>For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
 </li>
-<li>SHAKE256 extendable-output function (XOF), specify any other bit length</li>
+<li>For the SHAKE256 extendable-output function (XOF), specify any other bit length</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/">secretbase</a></span><span class="op">)</span></span>
@@ -120,7 +124,10 @@
 <span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">512</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"</span></span></code></pre></div>
-<p>Hash arbitrary R objects:</p>
+</div>
+<div class="section level5">
+<h5 id="hash-arbitrary-r-objects">Hash arbitrary R objects:<a class="anchor" aria-label="anchor" href="#hash-arbitrary-r-objects"></a>
+</h5>
 <ul>
 <li>uses memory-efficient ‘streaming’ serialization (no allocation of serialized object)</li>
 <li>portable as always uses R serialization v3 XDR, skipping headers (containing R version and encoding information)</li>
@@ -131,7 +138,10 @@
 <span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"</span></span></code></pre></div>
-<p>Hash files:</p>
+</div>
+<div class="section level5">
+<h5 id="hash-files">Hash files:<a class="anchor" aria-label="anchor" href="#hash-files"></a>
+</h5>
 <ul>
 <li>in a streaming fashion, accepting files larger than memory</li>
 </ul>
@@ -139,7 +149,10 @@
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"secret base"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span></code></pre></div>
-<p>Hash to integer:</p>
+</div>
+<div class="section level5">
+<h5 id="hash-to-integer">Hash to integer:<a class="anchor" aria-label="anchor" href="#hash-to-integer"></a>
+</h5>
 <ul>
 <li>specify ‘convert’ as <code>NA</code> (and ‘bits’ as <code>32</code> for a single integer value)</li>
 <li>may be supplied as deterministic random seeds for R’s pseudo random number generators (RNGs)</li>
@@ -151,19 +164,35 @@
 <span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
-<p>For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup></p>
+<p>For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[2]</sup></p>
+</div>
+<div class="section level5">
+<h5 id="using-a-keyed-hash">Using a keyed hash:<a class="anchor" aria-label="anchor" href="#using-a-keyed-hash"></a>
+</h5>
+<ul>
+<li>Use <code>spihash13()</code> passing an atomic vector to ‘key’.</li>
+<li>Up to 16 bytes (128 bits) are used i.e. the length of 1 complex number, 2 doubles, 4 integers, or 16 individual characters.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "a1f0a751892cc7dd"</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="fl">1.2</span> <span class="op">+</span> <span class="fl">3.4i</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "931a7b8f07c863a4"</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
-<p>[1] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard (2017), <em>“Random numbers for parallel computers: Requirements and methods, with emphasis on GPUs”</em>, Mathematics and Computers in Simulation, Vol. 135, May 2017, pp. 3-17 <a href="https://doi.org/10.1016/j.matcom.2016.05.005" class="external-link">doi:10.1016/j.matcom.2016.05.00</a>.</p>
+<p>[1] Jean-Philippe Aumasson and Daniel J. Bernstein (2012), <em>“SipHash: a fast short-input PRF”</em>, Paper 2012/351, Cryptology ePrint Archive, <a href="https://ia.cr/2012/351" class="external-link uri">https://ia.cr/2012/351</a>.</p>
+<p>[2] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard (2017), <em>“Random numbers for parallel computers: Requirements and methods, with emphasis on GPUs”</em>, Mathematics and Computers in Simulation, Vol. 135, May 2017, pp. 3-17 <a href="https://doi.org/10.1016/j.matcom.2016.05.005" class="external-link">doi:10.1016/j.matcom.2016.05.00</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
 </h3>
 <p>Links:</p>
 <p>◈ secretbase R package: <a href="https://shikokuchuo.net/secretbase/" class="uri">https://shikokuchuo.net/secretbase/</a></p>
-<p>Mbed TLS website: <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls/</a></p>
+<p>Mbed TLS website: <a href="https://www.trustedfirmware.org/projects/mbed-tls/" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls/</a><br> SipHash streaming implementation: <a href="https://github.com/c-util/c-siphash" class="external-link uri">https://github.com/c-util/c-siphash</a><br> SipHash reference implementation: <a href="https://github.com/veorq/SipHash" class="external-link uri">https://github.com/veorq/SipHash</a>.</p>
 <p>–</p>
 <p>Please note that this project is released with a <a href="https://shikokuchuo.net/secretbase/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>
