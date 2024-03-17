@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
 <!-- badges: end -->
 
-Fast and memory-efficient streaming hash functions for strings, raw bytes, files and in-memory objects using R's serialization mechanism.
+Fast and memory-efficient streaming hash functions. Performs direct hashing of strings, raw bytes, and files potentially larger than memory, as well as hashing in-memory objects through R's serialization mechanism, without requiring allocation of the serialized object.
 
 Implementations include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
 
