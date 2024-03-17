@@ -7,12 +7,12 @@
 siphash13(x, key = NULL, convert = TRUE, file)
 }
 \arguments{
-\item{x}{R object to hash. A character string or raw vector (without
-attributes) is hashed 'as is'. All other objects are hashed using R
-serialization in a memory-efficient 'streaming' manner, without
-allocation of the serialized object. To ensure portability, serialization
-v3 XDR is always used with headers skipped (as these contain R version
-and encoding information).}
+\item{x}{object to hash. A character string or raw vector (without
+attributes) is hashed 'as is'. All other objects are stream hashed using
+R serialization, but without requiring allocation of the serialized
+object. To ensure portability, serialization version 3 big-endian
+represenation is always used with headers skipped (as these contain R
+version and native encoding information).}
 
 \item{key}{[default NULL] an atomic vector comprising the 16 byte (128 bit)
 key data, or else NULL which is equivalent to '0'. If a longer vector is
@@ -24,14 +24,14 @@ representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
 \item{file}{character file name / path. If specified, 'x' is ignored. The
-file is hashed in a streaming fashion and may be larger than memory.}
+file is stream hashed, thus capable of handling files larger than memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a cryptographically-strong SipHash-1-3 hash of the supplied R object
-    or file.
+Returns a fast, cryptographically-strong SipHash-1-3 hash of the supplied
+    object or file.
 }
 \details{
 The SipHash family of cryptographically-strong pseudorandom

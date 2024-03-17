@@ -43,13 +43,13 @@ Daniel J. Bernstein released to the public domain at
 
 ### Installation
 
-Install the latest version from R-releases or CRAN:
+Install the latest version from CRAN:
 
 ``` r
-install.packages("secretbase", repos = "https://r-releases.r-universe.dev")
+install.packages("secretbase")
 ```
 
-Or the development version from the author’s R-universe:
+Or the development version from R-universe:
 
 ``` r
 install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
@@ -85,8 +85,9 @@ sha3("秘密の基地の中", bits = 512)
 
 - uses memory-efficient ‘streaming’ serialization (no allocation of
   serialized object)
-- portable as always uses R serialization v3 XDR, skipping headers
-  (which contain R version and encoding information)
+- portable as always uses R serialization version 3 big-endian
+  representation, skipping headers (which contain R version and native
+  encoding information)
 
 ``` r
 sha3(data.frame(a = 1, b = 2), bits = 160)

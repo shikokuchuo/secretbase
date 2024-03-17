@@ -7,16 +7,16 @@
 sha3(x, bits = 256L, convert = TRUE, file)
 }
 \arguments{
-\item{x}{R object to hash. A character string or raw vector (without
-attributes) is hashed 'as is'. All other objects are hashed using R
-serialization in a memory-efficient 'streaming' manner, without
-allocation of the serialized object. To ensure portability, serialization
-v3 XDR is always used with headers skipped (as these contain R version
-and encoding information).}
+\item{x}{object to hash. A character string or raw vector (without
+attributes) is hashed 'as is'. All other objects are stream hashed using
+R serialization, but without requiring allocation of the serialized
+object. To ensure portability, serialization version 3 big-endian
+represenation is always used with headers skipped (as these contain R
+version and native encoding information).}
 
 \item{bits}{[default 256L] output size of the returned hash. If one of 224,
-256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
-all other values, uses the SHAKE256 extendable-output function (XOF).
+256, 384 or 512, uses the respective SHA-3 cryptographic hash function.
+For all other values, uses the SHAKE256 extendable-output function (XOF).
 Must be between 8 and 2^24 and coercible to integer.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
@@ -24,13 +24,13 @@ representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
 \item{file}{character file name / path. If specified, 'x' is ignored. The
-file is hashed in a streaming fashion and may be larger than memory.}
+file is stream hashed, thus capable of handling files larger than memory.}
 }
 \value{
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SHA-3 hash of the supplied R object or file.
+Returns a SHA-3 hash of the supplied object or file.
 }
 \details{
 To produce single integer values suitable for use as random seeds
