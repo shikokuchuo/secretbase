@@ -1,16 +1,16 @@
 Package: secretbase
 Type: Package
 Title: Cryptographic Hash and Extendable-Output Functions
-Version: 0.3.0.9002
-Description: SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output
-    functions (XOF). The SHA-3 Secure Hash Standard was published by the
-    National Institute of Standards and Technology (NIST) in 2015 at
+Version: 0.3.0.9003
+Description: Fast and memory-efficient streaming hash functions for strings, raw
+    bytes, files and in-memory objects using R's serialization mechanism.
+    Implementations include the SHA-256 and SHA-3 cryptographic hash functions,
+    SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random
+    function. The SHA-3 Secure Hash Standard was published by the National
+    Institute of Standards and Technology (NIST) in 2015 at
     <doi:10.6028/NIST.FIPS.202>. The SHA-256 Secure Hash Standard was published
     by NIST in 2002 at
-    <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. Fast and
-    memory-efficient implementation using the core algorithms from 'Mbed TLS'
-    under the Trusted Firmware Project
-    <https://www.trustedfirmware.org/projects/mbed-tls/>.
+    <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
 Authors@R: 
     c(person(given = "Charlie",
              family = "Gao",

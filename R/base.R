@@ -18,33 +18,11 @@
 
 #' secretbase: Cryptographic Hash and Extendable-Output Functions
 #'
-#' Fast and memory-efficient implementations of the SHA-256, SHA-3 cryptographic
-#'     hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash'
-#'     pseudo-random function. \cr\cr The SHA-3 cryptographic hash functions are
-#'     SHA3-224, SHA3-256, SHA3-384 and SHA3-512, each an instance of the Keccak
-#'     algorithm. SHAKE256 is one of the two XOFs of the SHA-3 family, along
-#'     with SHAKE128 (not implemented).
-#'     
-#' @references The SHA-3 Secure Hash Standard was published by the National
-#'     Institute of Standards and Technology (NIST) in 2015 at
-#'     \doi{doi:10.6028/NIST.FIPS.202}.
-#'     
-#'     The SHA-256 Secure Hash Standard was published by NIST in 2002 at
-#'     \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
-#'     
-#'     \pkg{secretbase} adapts the SHA-256 and SHA-3 implementations by the
-#'     'Mbed TLS Contributors' at \url{https://github.com/Mbed-TLS/mbedtls} 
-#'     under the 'Mbed TLS' Trusted Firmware Project
-#'     \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
-#'     
-#'     The SipHash family of cryptographically-strong pseudorandom functions
-#'     (PRFs) are described in 'SipHash: a fast short-input PRF', Jean-Philippe
-#'     Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012, Cryptology ePrint
-#'     Archive at \url{https://ia.cr/2012/351}.
-#'     
-#'     \pkg{secretbase} adapts the SipHash streaming implementation by Daniele
-#'     Nicolodi, David Rheinsberg and Tom Gundersen at
-#'     \url{https://github.com/c-util/c-siphash}. 
+#' Fast and memory-efficient streaming hash functions for strings, raw bytes,
+#'     files and in-memory objects using R's serialization mechanism.
+#'     Implementations include the SHA-256 and SHA-3 cryptographic hash
+#'     functions, SHAKE256 extendable-output function (XOF), and 'SipHash'
+#'     pseudo-random function.
 #'
 #' @encoding UTF-8
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
@@ -81,6 +59,14 @@
 #' @details To produce single integer values suitable for use as random seeds
 #'     for R's pseudo random number generators (RNGs), set 'bits' to 32 and
 #'     'convert' to NA.
+#'     
+#'     The SHA-3 Secure Hash Standard was published by the National Institute of
+#'     Standards and Technology (NIST) in 2015 at
+#'     \doi{doi:10.6028/NIST.FIPS.202}.
+#'     
+#'     This implementation is based on that of 'The Mbed TLS Contributors' under
+#'     the 'Mbed TLS' Trusted Firmware Project at
+#'     \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
 #'
 #' @examples
 #' # SHA3-256 hash as character string:
@@ -119,6 +105,14 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' @inheritParams sha3
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
+#' 
+#' @details The SHA-256 Secure Hash Standard was published by the National
+#'     Institute of Standards and Technology (NIST) in 2002 at
+#'     \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+#'     
+#'     This implementation is based on that of 'The Mbed TLS Contributors' under
+#'     the 'Mbed TLS' Trusted Firmware Project at
+#'     \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
 #'
 #' @examples
 #' # SHA-256 hash as character string:
@@ -150,6 +144,15 @@ sha256 <- function(x, convert = TRUE, file)
 #'     trailing '0'. Note: for character vectors only the first element is used.
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
+#' 
+#' @details The SipHash family of cryptographically-strong pseudorandom
+#'     functions (PRFs) are described in 'SipHash: a fast short-input PRF',
+#'     Jean-Philippe Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012,
+#'     Cryptology ePrint Archive at \url{https://ia.cr/2012/351}.
+#'     
+#'     This implementation is based on the SipHash streaming implementation by
+#'     Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
+#'     \url{https://github.com/c-util/c-siphash}. 
 #'
 #' @examples
 #' # SipHash-1-3 hash as character string:

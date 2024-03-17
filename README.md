@@ -14,9 +14,12 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
 <!-- badges: end -->
 
-Fast and memory-efficient implementations of the SHA-256, SHA-3
-cryptographic hash functions, SHAKE256 extendable-output function (XOF),
-and ‘SipHash’ pseudo-random function.
+Fast and memory-efficient streaming hash functions for strings, raw
+bytes, files and in-memory objects using R’s serialization mechanism.
+
+Implementations include the SHA-256 and SHA-3 cryptographic hash
+functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
+pseudo-random function.
 
 The SHA-3 Secure Hash Standard was published by the National Institute
 of Standards and Technology (NIST) in 2015 at

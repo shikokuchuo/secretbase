@@ -33,6 +33,16 @@ A character string, raw or integer vector depending on 'convert'.
 Returns a cryptographically-strong SipHash-1-3 hash of the supplied R object
     or file.
 }
+\details{
+The SipHash family of cryptographically-strong pseudorandom
+    functions (PRFs) are described in 'SipHash: a fast short-input PRF',
+    Jean-Philippe Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012,
+    Cryptology ePrint Archive at \url{https://ia.cr/2012/351}.
+    
+    This implementation is based on the SipHash streaming implementation by
+    Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
+    \url{https://github.com/c-util/c-siphash}.
+}
 \examples{
 # SipHash-1-3 hash as character string:
 siphash13("secret base")

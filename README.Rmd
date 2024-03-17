@@ -23,7 +23,9 @@ knitr::opts_chunk$set(
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
 <!-- badges: end -->
 
-Fast and memory-efficient implementations of the SHA-256, SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
+Fast and memory-efficient streaming hash functions for strings, raw bytes, files and in-memory objects using R's serialization mechanism.
+
+Implementations include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
 
 The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202). The SHA-256 Secure Hash Standard was published by NIST in 2002 at <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The SipHash family of pseudo-random functions by Jean-Philippe Aumasson and Daniel J. Bernstein was published in 2012 at <https://ia.cr/2012/351>.<sup>[1]</sup>
 
