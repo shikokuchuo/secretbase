@@ -27,6 +27,15 @@ A character string, raw or integer vector depending on 'convert'.
 \description{
 Returns a SHA-256 hash of the supplied R object or file.
 }
+\details{
+The SHA-256 Secure Hash Standard was published by the National
+    Institute of Standards and Technology (NIST) in 2002 at
+    \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+    
+    This implementation is based on that of 'The Mbed TLS Contributors' under
+    the 'Mbed TLS' Trusted Firmware Project at
+    \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
+}
 \examples{
 # SHA-256 hash as character string:
 sha256("secret base")

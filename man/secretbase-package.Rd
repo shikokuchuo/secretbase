@@ -7,21 +7,12 @@
 \alias{secretbase-package}
 \title{secretbase: Cryptographic Hash and Extendable-Output Functions}
 \description{
-SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output functions
-    (XOF). Fast and memory-efficient implementation using the core algorithms
-    from 'Mbed TLS' under the Trusted Firmware Project
-    \url{https://www.trustedfirmware.org/projects/mbed-tls/}.\cr\cr The SHA-3
-    cryptographic hash functions are SHA3-224, SHA3-256, SHA3-384 and
-    SHA3-512, each an instance of the Keccak algorithm. SHAKE256 is one of
-    the two XOFs of the SHA-3 family, along with SHAKE128 (not implemented).
-}
-\references{
-The SHA-3 Secure Hash Standard was published by the National
-    Institute of Standards and Technology (NIST) in 2015 at
-    \doi{doi:10.6028/NIST.FIPS.202}.
-    
-    The SHA-256 Secure Hash Standard was published by NIST in 2002 at
-    \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+Fast and memory-efficient streaming hash functions. Performs direct hashing
+    of strings, raw bytes, and files potentially larger than memory, as well
+    as hashing in-memory objects through R's serialization mechanism, without
+    requiring allocation of the serialized object. Implementations include
+    the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256
+    extendable-output function (XOF), and 'SipHash' pseudo-random function.
 }
 \seealso{
 Useful links:

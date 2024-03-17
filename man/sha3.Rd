@@ -36,6 +36,14 @@ Returns a SHA-3 hash of the supplied R object or file.
 To produce single integer values suitable for use as random seeds
     for R's pseudo random number generators (RNGs), set 'bits' to 32 and
     'convert' to NA.
+    
+    The SHA-3 Secure Hash Standard was published by the National Institute of
+    Standards and Technology (NIST) in 2015 at
+    \doi{doi:10.6028/NIST.FIPS.202}.
+    
+    This implementation is based on that of 'The Mbed TLS Contributors' under
+    the 'Mbed TLS' Trusted Firmware Project at
+    \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
 }
 \examples{
 # SHA3-256 hash as character string:
