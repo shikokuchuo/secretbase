@@ -130,7 +130,7 @@
 </h5>
 <ul>
 <li>uses memory-efficient ‘streaming’ serialization (no allocation of serialized object)</li>
-<li>portable as always uses R serialization v3 XDR, skipping headers (containing R version and encoding information)</li>
+<li>portable as always uses R serialization v3 XDR, skipping headers (which contain R version and encoding information)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, bits <span class="op">=</span> <span class="fl">160</span><span class="op">)</span></span>
@@ -170,8 +170,8 @@
 <h5 id="using-a-keyed-hash">Using a keyed hash:<a class="anchor" aria-label="anchor" href="#using-a-keyed-hash"></a>
 </h5>
 <ul>
-<li>Use <code>spihash13()</code> passing an atomic vector to ‘key’.</li>
-<li>Up to 16 bytes (128 bits) are used i.e. the length of 1 complex number, 2 doubles, 4 integers, or 16 individual characters.</li>
+<li>Use <code><a href="reference/siphash13.html">siphash13()</a></code> passing an atomic vector to ‘key’.</li>
+<li>Up to 16 bytes (128 bits) of the key data is used i.e. the length of 1 complex number, 2 doubles, 4 integers, or 16 individual characters / raw bytes.</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
