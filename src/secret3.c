@@ -49,8 +49,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define C_SIPHASH_NULL {0}
-
 static inline uint64_t c_siphash_read_le64(const uint8_t bytes[8]) {
   return  ((uint64_t) bytes[0]) |
     (((uint64_t) bytes[1]) <<  8) |

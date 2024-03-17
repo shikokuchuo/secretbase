@@ -63,6 +63,7 @@ test_error(hash_func("", ""), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(sha256(file = "~/"), "file read error")
 test_equal(sha256(paste(1:888, collapse = "")), "ec5df945d0ff0c927812ec503fe9ffd5cbdf7cf79b5391ad5002b3a80760183b")
 # SipHash13 tests:
+test_equal(siphash13(""), "2c530c1562a7fbd1")
 test_equal(siphash13("secret base"), "48c60a316babef0e")
 test_equal(siphash13("secret base", convert = NA)[2L], 250588011L)
 test_equal(siphash13(siphash13("secret base", convert = FALSE)), "498db1332ca02148")

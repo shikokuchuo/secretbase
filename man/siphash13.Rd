@@ -25,7 +25,8 @@ file is hashed in a streaming fashion and may be larger than memory.}
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SipHash-1-3 hash of the supplied R object or file.
+Returns a cryptographically-strong SipHash-1-3 hash of the supplied R object
+    or file.
 }
 \note{
 Hashes produced are stable, but may not be comparable to other

@@ -36,14 +36,16 @@
 #'     This package adapts the SHA-256 and SHA-3 implementations by The Mbed TLS
 #'     Contributors at \url{https://github.com/Mbed-TLS/mbedtls}.
 #'     
-#'     The SipHash family of pseudo-random functions are described in
-#'     'SipHash: a fast short-input PRF', Jean-Philippe Aumasson and Daniel J.
-#'     Bernstein, 2012, Cryptology ePrint Archive at
+#'     The SipHash family of cryptographically-strong pseudorandom functions
+#'     (PRFs) are described in 'SipHash: a fast short-input PRF', Jean-Philippe
+#'     Aumasson and Daniel J. Bernstein, 2012, Cryptology ePrint Archive at
 #'     \url{https://ia.cr/2012/351}.
 #'     
 #'     This package adapts the SipHash implementation by Daniele Nicolodi, David
 #'     Rheinsberg and Tom Gundersen at
-#'     \url{https://github.com/c-util/c-siphash}.
+#'     \url{https://github.com/c-util/c-siphash}, which is itself based on the
+#'     public domain SipHash reference implementation by Jean-Philippe Aumasson
+#'     and Daniel J. Bernstein at \url{https://github.com/veorq/SipHash}. 
 #'
 #' @encoding UTF-8
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
@@ -139,7 +141,8 @@ sha256 <- function(x, convert = TRUE, file)
 
 #' Hashing Using the SipHash-1-3 Pseudorandom Function
 #'
-#' Returns a SipHash-1-3 hash of the supplied R object or file.
+#' Returns a cryptographically-strong SipHash-1-3 hash of the supplied R object
+#'     or file.
 #'
 #' @inheritParams sha3
 #'
