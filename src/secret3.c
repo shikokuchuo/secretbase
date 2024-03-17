@@ -14,16 +14,11 @@
 // You should have received a copy of the GNU General Public License along with
 // secretbase. If not, see <https://www.gnu.org/licenses/>.
 
-// SipHash 2-4 Implementation --------------------------------------------------
+// secretbase ------------------------------------------------------------------
 
 #include "secret.h"
 
 // secretbase - SipHash-1-3 implementation -------------------------------------
-
-// Modified from the implementation at https://github.com/c-util/c-siphash.
-// SipHash was created by Jean-Philippe Aumasson and Daniel J. Bernstein in 2012
-// and the reference implementation was released as public domain software under
-// the CC0.
 
 //  This program is free software; you can redistribute it and/or modify it
 //  under the terms of the GNU Lesser General Public License as published
