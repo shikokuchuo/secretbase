@@ -86,7 +86,7 @@ sha3("秘密の基地の中", bits = 512)
 - uses memory-efficient ‘streaming’ serialization (no allocation of
   serialized object)
 - portable as always uses R serialization v3 XDR, skipping headers
-  (containing R version and encoding information)
+  (which contain R version and encoding information)
 
 ``` r
 sha3(data.frame(a = 1, b = 2), bits = 160)
@@ -130,9 +130,10 @@ reproducibility. <sup>\[2\]</sup>
 
 ##### Using a keyed hash:
 
-- Use `spihash13()` passing an atomic vector to ‘key’.
-- Up to 16 bytes (128 bits) are used i.e. the length of 1 complex
-  number, 2 doubles, 4 integers, or 16 individual characters.
+- Use `siphash13()` passing an atomic vector to ‘key’.
+- Up to 16 bytes (128 bits) of the key data is used i.e. the length of 1
+  complex number, 2 doubles, 4 integers, or 16 individual characters /
+  raw bytes.
 
 ``` r
 siphash13("secret base", key = "秘密の基地の中")

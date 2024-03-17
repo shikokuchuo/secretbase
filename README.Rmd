@@ -68,7 +68,7 @@ sha3("秘密の基地の中", bits = 512)
 ##### Hash arbitrary R objects:
 
  - uses memory-efficient 'streaming' serialization (no allocation of serialized object)
- - portable as always uses R serialization v3 XDR, skipping headers (containing R version and encoding information)
+ - portable as always uses R serialization v3 XDR, skipping headers (which contain R version and encoding information)
 
 ```{r streaming}
 sha3(data.frame(a = 1, b = 2), bits = 160)
@@ -103,8 +103,8 @@ For use in parallel computing, this is a valid method for reducing to a negligib
 
 ##### Using a keyed hash:
 
-- Use `spihash13()` passing an atomic vector to 'key'.
-- Up to 16 bytes (128 bits) are used i.e. the length of 1 complex number, 2 doubles, 4 integers, or 16 individual characters.
+- Use `siphash13()` passing an atomic vector to 'key'.
+- Up to 16 bytes (128 bits) of the key data is used i.e. the length of 1 complex number, 2 doubles, 4 integers, or 16 individual characters / raw bytes.
 
 ```{r siphash}
 siphash13("secret base", key = "秘密の基地の中")
