@@ -65,18 +65,18 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>R object to hash. A character string or raw vector (without
-attributes) is hashed 'as is'. All other objects are hashed using R
-serialization in a memory-efficient 'streaming' manner, without
-allocation of the serialized object. To ensure portability, serialization
-v3 XDR is always used with headers skipped (as these contain R version
-and encoding information).</p></dd>
+<dd><p>object to hash. A character string or raw vector (without
+attributes) is hashed 'as is'. All other objects are stream hashed using
+R serialization, but without requiring allocation of the serialized
+object. To ensure portability, serialization version 3 big-endian
+represenation is always used with headers skipped (as these contain R
+version and native encoding information).</p></dd>
 
 
 <dt>bits</dt>
 <dd><p>[default 256L] output size of the returned hash. If one of 224,
-256, 384 or 512, uses the relevant SHA-3 cryptographic hash function. For
-all other values, uses the SHAKE256 extendable-output function (XOF).
+256, 384 or 512, uses the respective SHA-3 cryptographic hash function.
+For all other values, uses the SHAKE256 extendable-output function (XOF).
 Must be between 8 and 2^24 and coercible to integer.</p></dd>
 
 
@@ -88,7 +88,7 @@ vector, or if NA, a vector of (32-bit) integer values.</p></dd>
 
 <dt>file</dt>
 <dd><p>character file name / path. If specified, 'x' is ignored. The
-file is hashed in a streaming fashion and may be larger than memory.</p></dd>
+file is stream hashed, thus capable of handling files larger than memory.</p></dd>
 
 </dl></div>
     <div id="value">
