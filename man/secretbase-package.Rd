@@ -7,13 +7,12 @@
 \alias{secretbase-package}
 \title{secretbase: Cryptographic Hash and Extendable-Output Functions}
 \description{
-SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output functions
-    (XOF). Fast and memory-efficient implementation using the core algorithms
-    from 'Mbed TLS' under the Trusted Firmware Project
-    \url{https://www.trustedfirmware.org/projects/mbed-tls/}.\cr\cr The SHA-3
-    cryptographic hash functions are SHA3-224, SHA3-256, SHA3-384 and
-    SHA3-512, each an instance of the Keccak algorithm. SHAKE256 is one of
-    the two XOFs of the SHA-3 family, along with SHAKE128 (not implemented).
+Fast and memory-efficient implementations of the SHA-256, SHA-3 cryptographic
+    hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash'
+    pseudo-random function. \cr\cr The SHA-3 cryptographic hash functions are
+    SHA3-224, SHA3-256, SHA3-384 and SHA3-512, each an instance of the Keccak
+    algorithm. SHAKE256 is one of the two XOFs of the SHA-3 family, along
+    with SHAKE128 (not implemented).
 }
 \references{
 The SHA-3 Secure Hash Standard was published by the National
@@ -23,19 +22,19 @@ The SHA-3 Secure Hash Standard was published by the National
     The SHA-256 Secure Hash Standard was published by NIST in 2002 at
     \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
     
-    This package adapts the SHA-256 and SHA-3 implementations by The Mbed TLS
-    Contributors at \url{https://github.com/Mbed-TLS/mbedtls}.
+    \pkg{secretbase} adapts the SHA-256 and SHA-3 implementations by the
+    'Mbed TLS Contributors' at \url{https://github.com/Mbed-TLS/mbedtls} 
+    under the 'Mbed TLS' Trusted Firmware Project
+    \url{https://www.trustedfirmware.org/projects/mbed-tls/}.
     
     The SipHash family of cryptographically-strong pseudorandom functions
     (PRFs) are described in 'SipHash: a fast short-input PRF', Jean-Philippe
-    Aumasson and Daniel J. Bernstein, 2012, Cryptology ePrint Archive at
-    \url{https://ia.cr/2012/351}.
+    Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012, Cryptology ePrint
+    Archive at \url{https://ia.cr/2012/351}.
     
-    This package adapts the SipHash implementation by Daniele Nicolodi, David
-    Rheinsberg and Tom Gundersen at
-    \url{https://github.com/c-util/c-siphash}, which is itself based on the
-    public domain SipHash reference implementation by Jean-Philippe Aumasson
-    and Daniel J. Bernstein at \url{https://github.com/veorq/SipHash}.
+    \pkg{secretbase} adapts the SipHash streaming implementation by Daniele
+    Nicolodi, David Rheinsberg and Tom Gundersen at
+    \url{https://github.com/c-util/c-siphash}.
 }
 \seealso{
 Useful links:

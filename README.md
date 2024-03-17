@@ -14,18 +14,24 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
 <!-- badges: end -->
 
-SHA-256, SHA-3 cryptographic hash and SHAKE256 extendable-output
-functions (XOF).
+Fast and memory-efficient implementations of the SHA-256, SHA-3
+cryptographic hash functions, SHAKE256 extendable-output function (XOF),
+and ‘SipHash’ pseudo-random function.
 
 The SHA-3 Secure Hash Standard was published by the National Institute
 of Standards and Technology (NIST) in 2015 at
 [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
 The SHA-256 Secure Hash Standard was published by NIST in 2002 at
-<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
+<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The
+SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
+Daniel J. Bernstein was published in 2012 at
+<https://ia.cr/2012/351>.<sup>\[1\]</sup>
 
-Fast and memory-efficient implementation using the core algorithms from
-‘Mbed TLS’ under the Trusted Firmware Project
-<https://www.trustedfirmware.org/projects/mbed-tls/>.
+The SHA-256 and SHA-3 implementations are based on those by the ‘Mbed
+TLS’ Trusted Firmware Project at
+<https://www.trustedfirmware.org/projects/mbed-tls/>. The SipHash-1-3
+implementation is based on that of Daniele Nicolodi, David Rheinsberg
+and Tom Gundersen at <https://github.com/c-util/c-siphash>.
 
 ### Installation
 
@@ -43,14 +49,15 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers the functions: `sha3()` and `sha256()`.
+`secretbase` offers the functions: `sha3()`, `sha256()` and
+`siphash13()`.
 
-For `sha3()`, to use:
+##### SHA-3 and XOF usage:
 
-- SHA-3 cryptographic hash algorithm, specify ‘bits’ as `224`, `256`,
-  `384` or `512`
-- SHAKE256 extendable-output function (XOF), specify any other bit
-  length
+- For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as `224`,
+  `256`, `384` or `512`
+- For the SHAKE256 extendable-output function (XOF), specify any other
+  bit length
 
 ``` r
 library(secretbase)
@@ -66,7 +73,7 @@ sha3("秘密の基地の中", bits = 512)
 #> [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"
 ```
 
-Hash arbitrary R objects:
+##### Hash arbitrary R objects:
 
 - uses memory-efficient ‘streaming’ serialization (no allocation of
   serialized object)
@@ -81,7 +88,7 @@ sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
 ```
 
-Hash files:
+##### Hash files:
 
 - in a streaming fashion, accepting files larger than memory
 
@@ -91,7 +98,7 @@ sha3(file = file)
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
 ```
 
-Hash to integer:
+##### Hash to integer:
 
 - specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
   value)
@@ -111,11 +118,29 @@ For use in parallel computing, this is a valid method for reducing to a
 negligible probability that RNGs in each process may overlap. This may
 be especially suitable when first-best alternatives such as using
 recursive streams are too expensive or unable to preserve
-reproducibility. <sup>\[1\]</sup>
+reproducibility. <sup>\[2\]</sup>
+
+##### Using a keyed hash:
+
+- Use `spihash13()` passing an atomic vector to ‘key’.
+- Up to 16 bytes (128 bits) are used i.e. the length of 1 complex
+  number, 2 doubles, 4 integers, or 16 individual characters.
+
+``` r
+siphash13("secret base", key = "秘密の基地の中")
+#> [1] "a1f0a751892cc7dd"
+
+siphash13("secret base", key = 1.2 + 3.4i)
+#> [1] "931a7b8f07c863a4"
+```
 
 ### References
 
-\[1\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
+\[1\] Jean-Philippe Aumasson and Daniel J. Bernstein (2012), *“SipHash:
+a fast short-input PRF”*, Paper 2012/351, Cryptology ePrint Archive,
+<https://ia.cr/2012/351>.
+
+\[2\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
 (2017), *“Random numbers for parallel computers: Requirements and
 methods, with emphasis on GPUs”*, Mathematics and Computers in
 Simulation, Vol. 135, May 2017, pp. 3-17
@@ -127,7 +152,9 @@ Links:
 
 ◈ secretbase R package: <https://shikokuchuo.net/secretbase/>
 
-Mbed TLS website: <https://www.trustedfirmware.org/projects/mbed-tls/>
+Mbed TLS website:
+<https://www.trustedfirmware.org/projects/mbed-tls/><br /> SipHash
+streaming implementation: <https://github.com/c-util/c-siphash>
 
 –
 
