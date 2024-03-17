@@ -153,7 +153,10 @@ sha256 <- function(x, convert = TRUE, file)
 #'     
 #'     This implementation is based on the SipHash streaming implementation by
 #'     Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
-#'     \url{https://github.com/c-util/c-siphash}. 
+#'     \url{https://github.com/c-util/c-siphash}. This is in turn based on the
+#'     SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
+#'     Bernstein released to the public domain at
+#'     \url{https://github.com/veorq/SipHash}.
 #'
 #' @examples
 #' # SipHash-1-3 hash as character string:

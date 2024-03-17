@@ -36,11 +36,14 @@ The SHA-256 and SHA-3 implementations are based on those by the ‘Mbed
 TLS’ Trusted Firmware Project at
 <https://www.trustedfirmware.org/projects/mbed-tls/>. The SipHash-1-3
 implementation is based on that of Daniele Nicolodi, David Rheinsberg
-and Tom Gundersen at <https://github.com/c-util/c-siphash>.
+and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
+turn based on the reference implementation by Jean-Philippe Aumasson and
+Daniel J. Bernstein released to the public domain at
+<https://github.com/veorq/SipHash>.
 
 ### Installation
 
-Install the latest version from the R-releases R-universe, or CRAN:
+Install the latest version from R-releases or CRAN:
 
 ``` r
 install.packages("secretbase", repos = "https://r-releases.r-universe.dev")
@@ -159,7 +162,8 @@ Links:
 
 Mbed TLS website:
 <https://www.trustedfirmware.org/projects/mbed-tls/><br /> SipHash
-streaming implementation: <https://github.com/c-util/c-siphash>
+streaming implementation: <https://github.com/c-util/c-siphash><br />
+SipHash reference implementation: <https://github.com/veorq/SipHash>.
 
 –
 
