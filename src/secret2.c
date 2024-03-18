@@ -32,13 +32,19 @@
  *  http://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf
  */
 
-static uint32_t mbedtls_get_unaligned_uint32(const void *p) {
+#if defined(__GNUC__)
+__attribute__((always_inline))
+#endif
+static inline uint32_t mbedtls_get_unaligned_uint32(const void *p) {
   uint32_t r;
   memcpy(&r, p, sizeof(r));
   return r;
 }
 
-static void mbedtls_put_unaligned_uint32(void *p, uint32_t x) {
+#if defined(__GNUC__)
+__attribute__((always_inline))
+#endif
+static inline void mbedtls_put_unaligned_uint32(void *p, uint32_t x) {
   memcpy(p, &x, sizeof(x));
 }
 
