@@ -66,9 +66,12 @@ test_equal(sha256("secret", key = "base"), "14b24e4c66bd03c1d6b59bc59e1e47468a43
 test_equal(sha256("secret base", key = paste(rep("secret base ", 21L), collapse = "")), "5dab9794515ad176763276bd46f49b029b4578795c52c984243dd636dc0ac11f")
 test_equal(sha256("secret base", key = as.raw(1L)), "35a0fc031777e1a16b2c11a614532fbbee5e2ce83271230f62808432a4d13337")
 test_equal(sha256("secret base", key = rep(c(as.raw(1L), as.raw(2L)), 64L)), "0d9cbfe4872e0d9ef16f86fbbe5397fd4ed30b7e50b4c5c7722ccf4786aa58d2")
+test_equal(sha256("secret base", key = character()), "6bc4693e2025baadf345dd0b133b867ac081dbf6ae02e94e774db4b1a65203ca")
+test_error(sha256("secret base", key = list()), "'key' must be a character string, raw vector or NULL")
 # SipHash13 tests:
 test_equal(siphash13(""), "2c530c1562a7fbd1")
 test_equal(siphash13("", key = ""), "2c530c1562a7fbd1")
+test_equal(siphash13("", key = character()), "2c530c1562a7fbd1")
 test_equal(siphash13("secret base"), "48c60a316babef0e")
 test_equal(siphash13("secret base", key = "secret base"), "2cf27a8f22f02e59")
 test_equal(siphash13("secret base", key = c("secret base", "more")), "2cf27a8f22f02e59")

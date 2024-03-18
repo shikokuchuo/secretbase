@@ -464,8 +464,8 @@ static SEXP secretbase_sha256_impl(const SEXP x, SEXP key, const SEXP convert,
     unsigned char *data;
     
     switch (TYPEOF(key)) {
-    case STRSXP: ;
-      data = (unsigned char *) CHAR(STRING_ELT(key, 0));
+    case STRSXP:
+      data = (unsigned char *) (XLENGTH(key) ? CHAR(STRING_ELT(key, 0)) : "");
       klen = strlen((char *) data);
       break;
     case RAWSXP:

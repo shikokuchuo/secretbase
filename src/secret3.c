@@ -278,8 +278,8 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP c
     unsigned char * data;
     size_t klen;
     switch (TYPEOF(key)) {
-    case STRSXP: ;
-      data = (unsigned char *) CHAR(STRING_ELT(key, 0));
+    case STRSXP:
+      data = (unsigned char *) (XLENGTH(key) ? CHAR(STRING_ELT(key, 0)) : "");
       klen = strlen((char *) data);
       break;
     case RAWSXP:
