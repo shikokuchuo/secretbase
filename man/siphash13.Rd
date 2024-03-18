@@ -14,10 +14,11 @@ object. To ensure portability, serialization version 3 big-endian
 represenation is always used with headers skipped (as these contain R
 version and native encoding information).}
 
-\item{key}{[default NULL] an atomic vector comprising the 16 byte (128 bit)
-key data, or else NULL which is equivalent to '0'. If a longer vector is
-supplied, only the first 16 bytes are used, and if shorter, padded with
-trailing '0'. Note: for character vectors only the first element is used.}
+\item{key}{[default NULL] a character string or raw vector comprising the 16
+byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
+longer vector is supplied, only the first 16 bytes are used, and if
+shorter, padded with trailing '0'. Note: for character vectors only the
+first element is used.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
@@ -30,8 +31,8 @@ file is stream hashed, thus capable of handling files larger than memory.}
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a fast, cryptographically-strong SipHash-1-3 hash of the supplied
-    object or file.
+Returns a fast, cryptographically-strong SipHash-1-3 keyed hash of the
+    supplied object or file.
 }
 \details{
 The SipHash family of cryptographically-strong pseudorandom
@@ -50,14 +51,14 @@ The SipHash family of cryptographically-strong pseudorandom
 # SipHash-1-3 hash as character string:
 siphash13("secret base")
 
-# SipHash-1-3 hash using a complex number (16 byte) key:
-siphash13("secret base", key = 1.2 + 3.4i)
+# SipHash-1-3 hash as raw vector:
+siphash13("secret base", convert = FALSE)
 
 # SipHash-1-3 hash using a character string key:
 siphash13("secret", key = "base")
 
-# SipHash-1-3 hash as raw vector:
-siphash13("secret base", convert = FALSE)
+# SipHash-1-3 hash using a raw vector key:
+siphash13("secret", key = charToRaw("base"))
 
 # SipHash-1-3 hash a file:
 file <- tempfile(); cat("secret base", file = file)

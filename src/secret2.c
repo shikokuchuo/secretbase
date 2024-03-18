@@ -133,6 +133,17 @@ static inline uint64_t mbedtls_bswap64(uint64_t x) {
   }                                                                                   \
 }                                                                                     \
 
+static inline void mbedtls_xor(unsigned char *r,
+                               const unsigned char *a,
+                               const unsigned char *b,
+                               size_t n)
+{
+  size_t i = 0;
+  for (; i < n; i++) {
+    r[i] = a[i] ^ b[i];
+  }
+}
+
 static void mbedtls_sha256_init(mbedtls_sha256_context *ctx) {
   
   memset(ctx, 0, sizeof(mbedtls_sha256_context));
@@ -430,34 +441,84 @@ static void hash_object(mbedtls_sha256_context *ctx, const SEXP x) {
   
 }
 
-static SEXP secretbase_sha256_impl(const SEXP x, const SEXP convert,
+static SEXP secretbase_sha256_impl(const SEXP x, SEXP key, const SEXP convert,
                                    void (*const hash_func)(mbedtls_sha256_context *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
-  const size_t sz = SB_SHA256_SIZE;
-  unsigned char buf[sz];
+  unsigned char buf[SB_SHA256_SIZE];
   
-  mbedtls_sha256_context ctx;
-  mbedtls_sha256_init(&ctx);
-  mbedtls_sha256_starts(&ctx);
-  hash_func(&ctx, x);
-  mbedtls_sha256_finish(&ctx, buf);
-  clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
+  if (key == R_NilValue) {
+    mbedtls_sha256_context ctx;
+    mbedtls_sha256_init(&ctx);
+    mbedtls_sha256_starts(&ctx);
+    hash_func(&ctx, x);
+    mbedtls_sha256_finish(&ctx, buf);
+    clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
+  } else {
+    
+    size_t klen;
+    unsigned char sum[SB_SHA256_BLK], ipad[SB_SHA256_BLK], opad[SB_SHA256_BLK];
+    unsigned char tmp[SB_SHA256_SIZE];
+    mbedtls_sha256_context ctx;
+    memset(sum, 0, SB_SHA256_BLK);
+    unsigned char *data;
+    
+    switch (TYPEOF(key)) {
+    case STRSXP: ;
+      data = (unsigned char *) CHAR(STRING_ELT(key, 0));
+      klen = strlen((char *) data);
+      break;
+    case RAWSXP:
+      data = (unsigned char *) STDVEC_DATAPTR(key);
+      klen = XLENGTH(key);
+      break;
+    default:
+      Rf_error("'key' must be a character string, raw vector or NULL");
+    }
+    
+    if (klen > SB_SHA256_BLK) {
+      mbedtls_sha256_init(&ctx);
+      mbedtls_sha256_starts(&ctx);
+      hash_object(&ctx, key);
+      mbedtls_sha256_finish(&ctx, sum);
+    } else {
+      memcpy(sum, data, klen);
+    }
+    
+    memset(ipad, 0x36, SB_SHA256_BLK);
+    memset(opad, 0x5C, SB_SHA256_BLK);
+    
+    mbedtls_xor(ipad, ipad, sum, SB_SHA256_BLK);
+    mbedtls_xor(opad, opad, sum, SB_SHA256_BLK);
+    
+    mbedtls_sha256_init(&ctx);
+    mbedtls_sha256_starts(&ctx);
+    mbedtls_sha256_update(&ctx, ipad, SB_SHA256_BLK);
+    hash_func(&ctx, x);
+    mbedtls_sha256_finish(&ctx, tmp);
+    mbedtls_sha256_init(&ctx);
+    mbedtls_sha256_starts(&ctx);
+    mbedtls_sha256_update(&ctx, opad, SB_SHA256_BLK);
+    mbedtls_sha256_update(&ctx, tmp, SB_SHA256_SIZE);
+    mbedtls_sha256_finish(&ctx, buf);
+    clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
+
+  }
   
-  return hash_to_sexp(buf, sz, conv);
+  return hash_to_sexp(buf, SB_SHA256_SIZE, conv);
   
 }
 
 // secretbase - exported functions ---------------------------------------------
 
-SEXP secretbase_sha256(SEXP x, SEXP convert) {
+SEXP secretbase_sha256(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_sha256_impl(x, convert, hash_object);
+  return secretbase_sha256_impl(x, key, convert, hash_object);
   
 }
 
-SEXP secretbase_sha256_file(SEXP x, SEXP convert) {
+SEXP secretbase_sha256_file(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_sha256_impl(x, convert, hash_file);
+  return secretbase_sha256_impl(x, key, convert, hash_file);
   
 }

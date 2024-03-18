@@ -83,9 +83,9 @@ sha3("秘密の基地の中", bits = 512)
 
 ##### Hash arbitrary R objects:
 
-- uses memory-efficient ‘streaming’ serialization (no allocation of
-  serialized object)
-- portable as always uses R serialization version 3 big-endian
+- Uses memory-efficient ‘streaming’ serialization, without allocation of
+  the serialized object
+- Portable as always uses R serialization version 3 big-endian
   representation, skipping headers (which contain R version and native
   encoding information)
 
@@ -99,7 +99,7 @@ sha3(NULL)
 
 ##### Hash files:
 
-- in a streaming fashion, accepting files larger than memory
+- Performed in a streaming fashion, accepting files larger than memory
 
 ``` r
 file <- tempfile(); cat("secret base", file = file)
@@ -109,9 +109,9 @@ sha3(file = file)
 
 ##### Hash to integer:
 
-- specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
+- Specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
   value)
-- may be supplied as deterministic random seeds for R’s pseudo random
+- May be supplied as deterministic random seeds for R’s pseudo random
   number generators (RNGs)
 
 ``` r
@@ -129,19 +129,25 @@ be especially suitable when first-best alternatives such as using
 recursive streams are too expensive or unable to preserve
 reproducibility. <sup>\[2\]</sup>
 
-##### Using a keyed hash:
+##### Generating a SHA-256 HMAC:
 
-- Use `siphash13()` passing an atomic vector to ‘key’.
-- Up to 16 bytes (128 bits) of the key data is used i.e. the length of 1
-  complex number, 2 doubles, 4 integers, or 16 individual characters /
-  raw bytes.
+- Use `sha256()` passing a character string or raw vector to ‘key’.
 
 ``` r
-siphash13("secret base", key = "秘密の基地の中")
-#> [1] "a1f0a751892cc7dd"
+sha256("secret base", key = "秘密の基地の中")
+#> [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"
+```
 
-siphash13("secret base", key = 1.2 + 3.4i)
-#> [1] "931a7b8f07c863a4"
+##### Using SipHash:
+
+- SipHash is a fast, cryptographically-strong keyed hash. The
+  SipHash-1-3 parameters are optimized for performance.
+- Pass a character string or raw vector to ‘key’. Up to 16 bytes (128
+  bits) of the key data is used.
+
+``` r
+siphash13("secret base", key = charToRaw("秘密の基地の中"))
+#> [1] "a1f0a751892cc7dd"
 ```
 
 ### References

@@ -4,7 +4,7 @@
 \alias{sha256}
 \title{Cryptographic Hashing Using the SHA-256 Algorithm}
 \usage{
-sha256(x, convert = TRUE, file)
+sha256(x, key = NULL, convert = TRUE, file)
 }
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
@@ -13,6 +13,11 @@ R serialization, but without requiring allocation of the serialized
 object. To ensure portability, serialization version 3 big-endian
 represenation is always used with headers skipped (as these contain R
 version and native encoding information).}
+
+\item{key}{[default NULL] If NULL, the SHA-256 hash of 'x' is returned.
+Alternatively, supply a secret key as a character string or raw vector to
+generate an HMAC. Note: for character vectors only the first element is
+used.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
@@ -25,7 +30,8 @@ file is stream hashed, thus capable of handling files larger than memory.}
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SHA-256 hash of the supplied object or file.
+Returns a SHA-256 hash of the supplied object or file, or an HMAC if a secret
+    key is supplied.
 }
 \details{
 The SHA-256 Secure Hash Standard was published by the National
@@ -47,5 +53,11 @@ sha256("secret base", convert = FALSE)
 file <- tempfile(); cat("secret base", file = file)
 sha256(file = file)
 unlink(file)
+
+# SHA-256 HMAC using a character string secret key:
+sha256("secret", key = "base")
+
+# SHA-256 HMAC using a raw vector secret key:
+sha256("secret", key = charToRaw("base"))
 
 }

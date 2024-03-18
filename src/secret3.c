@@ -268,7 +268,6 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP c
   
   const int conv = LOGICAL(convert)[0];
   uint64_t hash;
-  const size_t sz = SB_SIPH_SIZE;
   
   CSipHash ctx;
   if (key == R_NilValue) {
@@ -276,40 +275,28 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP c
   } else {
     uint8_t seed[SB_SKEY_SIZE];
     memset(seed, 0, SB_SKEY_SIZE);
+    unsigned char * data;
     size_t klen;
     switch (TYPEOF(key)) {
     case STRSXP: ;
-      const char *s = CHAR(STRING_ELT(key, 0));
-      klen = strlen(s);
-      memcpy(seed, (unsigned char *) s, klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
-      break;
-    case REALSXP:
-      klen = XLENGTH(key) * sizeof(double);
-      memcpy(seed, (unsigned char *) DATAPTR_RO(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
-      break;
-    case INTSXP:
-    case LGLSXP:
-      klen = XLENGTH(key) * sizeof(int);
-      memcpy(seed, (unsigned char *) DATAPTR_RO(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
-      break;
-    case CPLXSXP:
-      klen = XLENGTH(key) * 2 * sizeof(double);
-      memcpy(seed, (unsigned char *) DATAPTR_RO(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
+      data = (unsigned char *) CHAR(STRING_ELT(key, 0));
+      klen = strlen((char *) data);
       break;
     case RAWSXP:
+      data = (unsigned char *) STDVEC_DATAPTR(key);
       klen = XLENGTH(key);
-      memcpy(seed, (unsigned char *) STDVEC_DATAPTR(key), klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
       break;
     default:
-      Rf_error("'key' must be an atomic vector or NULL");
+      Rf_error("'key' must be a character string, raw vector or NULL");
     }
+    memcpy(seed, data, klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
     c_siphash_init(&ctx, seed);
   }
   hash_func(&ctx, x);
   hash = c_siphash_finalize_13(&ctx);
   clear_buffer(&ctx, sizeof(CSipHash));
   
-  return hash_to_sexp((unsigned char *) &hash, sz, conv);
+  return hash_to_sexp((unsigned char *) &hash, SB_SIPH_SIZE, conv);
   
 }
 

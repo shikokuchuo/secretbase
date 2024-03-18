@@ -37,6 +37,7 @@
 #endif
 
 #define SB_SHA256_SIZE 32
+#define SB_SHA256_BLK 64
 #define SB_SIPH_SIZE 8
 #define SB_SKEY_SIZE 16
 
@@ -100,8 +101,8 @@ SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
-SEXP secretbase_sha256(SEXP, SEXP);
-SEXP secretbase_sha256_file(SEXP, SEXP);
+SEXP secretbase_sha256(SEXP, SEXP, SEXP);
+SEXP secretbase_sha256_file(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13_file(SEXP, SEXP, SEXP);
 
