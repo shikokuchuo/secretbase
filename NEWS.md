@@ -1,4 +1,4 @@
-# secretbase 0.3.0.9005 (development)
+# secretbase 0.3.0.9006 (development)
 
 * Adds HMAC generation to `sha256()`.
 * Adds SipHash-1-3 pseudo-random function (PRF) as a fast, cryptographically-strong keyed hash.

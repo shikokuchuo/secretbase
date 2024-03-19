@@ -454,17 +454,18 @@ static SEXP secretbase_sha256_impl(const SEXP x, SEXP key, const SEXP convert,
   unsigned char buf[SB_SHA256_SIZE];
   
   if (key == R_NilValue) {
+    
     mbedtls_sha256_context ctx;
     mbedtls_sha256_init(&ctx);
     mbedtls_sha256_starts(&ctx);
     hash_func(&ctx, x);
     mbedtls_sha256_finish(&ctx, buf);
     clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
+    
   } else {
     
     size_t klen;
     unsigned char sum[SB_SHA256_BLK], ipad[SB_SHA256_BLK], opad[SB_SHA256_BLK];
-    unsigned char tmp[SB_SHA256_SIZE];
     mbedtls_sha256_context ctx;
     memset(sum, 0, SB_SHA256_BLK);
     unsigned char *data;
@@ -501,11 +502,11 @@ static SEXP secretbase_sha256_impl(const SEXP x, SEXP key, const SEXP convert,
     mbedtls_sha256_starts(&ctx);
     mbedtls_sha256_update(&ctx, ipad, SB_SHA256_BLK);
     hash_func(&ctx, x);
-    mbedtls_sha256_finish(&ctx, tmp);
+    mbedtls_sha256_finish(&ctx, buf);
     mbedtls_sha256_init(&ctx);
     mbedtls_sha256_starts(&ctx);
     mbedtls_sha256_update(&ctx, opad, SB_SHA256_BLK);
-    mbedtls_sha256_update(&ctx, tmp, SB_SHA256_SIZE);
+    mbedtls_sha256_update(&ctx, buf, SB_SHA256_SIZE);
     mbedtls_sha256_finish(&ctx, buf);
     clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
 
