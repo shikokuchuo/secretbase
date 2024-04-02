@@ -3,4 +3,5 @@
 export(sha256)
 export(sha3)
 export(siphash13)
+export(siphash24)
 useDynLib(secretbase, .registration = TRUE)

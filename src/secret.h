@@ -93,6 +93,7 @@ typedef struct secretbase_sha256_context {
 
 typedef struct secretbase_siphash_context {
   int skip;
+  unsigned N;
   CSipHash *ctx;
 } secretbase_siphash_context;
 
@@ -105,5 +106,7 @@ SEXP secretbase_sha256(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256_file(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13_file(SEXP, SEXP, SEXP);
+SEXP secretbase_siphash24(SEXP, SEXP, SEXP);
+SEXP secretbase_siphash24_file(SEXP, SEXP, SEXP);
 
 #endif

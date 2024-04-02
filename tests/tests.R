@@ -68,11 +68,13 @@ test_equal(sha256("secret base", key = as.raw(1L)), "35a0fc031777e1a16b2c11a6145
 test_equal(sha256("secret base", key = rep(c(as.raw(1L), as.raw(2L)), 64L)), "0d9cbfe4872e0d9ef16f86fbbe5397fd4ed30b7e50b4c5c7722ccf4786aa58d2")
 test_equal(sha256("secret base", key = character()), "6bc4693e2025baadf345dd0b133b867ac081dbf6ae02e94e774db4b1a65203ca")
 test_error(sha256("secret base", key = list()), "'key' must be a character string, raw vector or NULL")
-# SipHash13 tests:
+# SipHash tests:
 test_equal(siphash13(""), "2c530c1562a7fbd1")
+test_equal(siphash24(""), "d70077739d4b921e")
 test_equal(siphash13("", key = ""), "2c530c1562a7fbd1")
 test_equal(siphash13("", key = character()), "2c530c1562a7fbd1")
 test_equal(siphash13("secret base"), "48c60a316babef0e")
+test_equal(siphash24("secret base"), "bdb6899a934fdf5a")
 test_equal(siphash13("secret base", key = "secret base"), "2cf27a8f22f02e59")
 test_equal(siphash13("secret base", key = c("secret base", "more")), "2cf27a8f22f02e59")
 test_equal(siphash13("secret base", key = as.raw(1L)), "5ecd894f7d269521")
@@ -86,12 +88,14 @@ test_equal(siphash13(NULL), "08d5f59e833de599")
 test_equal(siphash13(substitute()), "c8cadc1ab377142a")
 test_equal(siphash13(`class<-`(siphash13(character(), convert = FALSE), "hash")), "39124d8b9643418a") 
 test_error(siphash13(file = NULL), "'file' must be specified as a character string")
-hash_func <- function(file, string) {
+hash_func <- function(file, string, func) {
   on.exit(unlink(file))
   cat(string, file = file)
-  siphash13(file = file)
+  func(file = file)
 }
-test_equal(hash_func(tempfile(), "secret base"), "48c60a316babef0e")
-test_error(hash_func("", ""), "file not found or no read permission")
+test_equal(hash_func(tempfile(), "secret base", siphash13), "48c60a316babef0e")
+test_equal(hash_func(tempfile(), "secret base", siphash24), "bdb6899a934fdf5a")
+test_error(hash_func("", "", siphash13), "file not found or no read permission")
+test_error(hash_func("", "", siphash24), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(siphash13(file = "~/"), "file read error")
 test_equal(siphash13(paste(1:888, collapse = "")), "8337f50b05209c40")

@@ -2,7 +2,7 @@
 % Please edit documentation in R/base.R
 \name{sha3}
 \alias{sha3}
-\title{Cryptographic Hashing Using the SHA-3 Algorithms}
+\title{SHA-3 Cryptographic Hash Algorithms and SHAKE256 XOF}
 \usage{
 sha3(x, bits = 256L, convert = TRUE, file)
 }
@@ -30,7 +30,7 @@ file is stream hashed, thus capable of handling files larger than memory.}
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SHA-3 hash of the supplied object or file.
+Returns a SHA-3 or SHAKE256 hash of the supplied object or file.
 }
 \details{
 To produce single integer values suitable for use as random seeds

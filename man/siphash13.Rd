@@ -2,9 +2,12 @@
 % Please edit documentation in R/base.R
 \name{siphash13}
 \alias{siphash13}
-\title{Hashing Using the SipHash-1-3 Pseudorandom Function}
+\alias{siphash24}
+\title{SipHash Pseudorandom Function}
 \usage{
 siphash13(x, key = NULL, convert = TRUE, file)
+
+siphash24(x, key = NULL, convert = TRUE, file)
 }
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
@@ -31,8 +34,10 @@ file is stream hashed, thus capable of handling files larger than memory.}
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a fast, cryptographically-strong SipHash-1-3 keyed hash of the
-    supplied object or file.
+Returns a fast, cryptographically-strong SipHash keyed hash of the supplied
+    object or file. SipHash-1-3 is optimised for performance, whereas
+    SipHash-2-4 is recommended for security. Note: SipHash is not a
+    cryptographic hash algorithm.
 }
 \details{
 The SipHash family of cryptographically-strong pseudorandom
@@ -54,11 +59,11 @@ siphash13("secret base")
 # SipHash-1-3 hash as raw vector:
 siphash13("secret base", convert = FALSE)
 
-# SipHash-1-3 hash using a character string key:
-siphash13("secret", key = "base")
+# SipHash-2-4 hash using a character string key:
+siphash24("secret", key = "base")
 
-# SipHash-1-3 hash using a raw vector key:
-siphash13("secret", key = charToRaw("base"))
+# SipHash-2-4 hash using a raw vector key:
+siphash24("secret", key = charToRaw("base"))
 
 # SipHash-1-3 hash a file:
 file <- tempfile(); cat("secret base", file = file)

@@ -34,7 +34,7 @@ Daniel J. Bernstein was published in 2012 at
 
 The SHA-256 and SHA-3 implementations are based on those by the ‘Mbed
 TLS’ Trusted Firmware Project at
-<https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash-1-3
+<https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
 implementation is based on that of Daniele Nicolodi, David Rheinsberg
 and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
 turn based on the reference implementation by Jean-Philippe Aumasson and
@@ -57,10 +57,7 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-`secretbase` offers the functions: `sha3()`, `sha256()` and
-`siphash13()`.
-
-##### SHA-3 and XOF usage:
+#### SHA-3 and XOF usage:
 
 - For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as `224`,
   `256`, `384` or `512`
@@ -81,7 +78,7 @@ sha3("秘密の基地の中", bits = 512)
 #> [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"
 ```
 
-##### Hash arbitrary R objects:
+#### Hash arbitrary R objects:
 
 - Uses memory-efficient ‘streaming’ serialization, without allocation of
   the serialized object
@@ -97,7 +94,7 @@ sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
 ```
 
-##### Hash files:
+#### Hash files:
 
 - Performed in a streaming fashion, accepting files larger than memory
 
@@ -107,7 +104,7 @@ sha3(file = file)
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
 ```
 
-##### Hash to integer:
+#### Hash to integer:
 
 - Specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
   value)
@@ -129,7 +126,7 @@ be especially suitable when first-best alternatives such as using
 recursive streams are too expensive or unable to preserve
 reproducibility. <sup>\[2\]</sup>
 
-##### Generating a SHA-256 HMAC:
+#### Generating a SHA-256 HMAC:
 
 - Use `sha256()` passing a character string or raw vector to ‘key’.
 
@@ -138,16 +135,20 @@ sha256("secret base", key = "秘密の基地の中")
 #> [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"
 ```
 
-##### Using SipHash:
+#### Using SipHash:
 
-- SipHash is a fast, cryptographically-strong keyed hash. The
-  SipHash-1-3 parameters are optimized for performance.
+- SipHash is a fast, cryptographically-strong keyed hash.
 - Pass a character string or raw vector to ‘key’. Up to 16 bytes (128
   bits) of the key data is used.
+- SipHash-1-3 is optimized for performance; SipHash-2-4 recommended for
+  security.
 
 ``` r
 siphash13("secret base", key = charToRaw("秘密の基地の中"))
 #> [1] "a1f0a751892cc7dd"
+
+siphash24("secret base", key = charToRaw("秘密の基地の中"))
+#> [1] "1bedfe817cac0562"
 ```
 
 ### References

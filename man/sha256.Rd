@@ -2,7 +2,7 @@
 % Please edit documentation in R/base.R
 \name{sha256}
 \alias{sha256}
-\title{Cryptographic Hashing Using the SHA-256 Algorithm}
+\title{SHA-256 Cryptographic Hash Algorithm}
 \usage{
 sha256(x, key = NULL, convert = TRUE, file)
 }
@@ -30,7 +30,7 @@ file is stream hashed, thus capable of handling files larger than memory.}
 A character string, raw or integer vector depending on 'convert'.
 }
 \description{
-Returns a SHA-256 hash of the supplied object or file, or an HMAC if a secret
+Returns a SHA-256 hash of the supplied object or file, or HMAC if a secret
     key is supplied.
 }
 \details{

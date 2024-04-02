@@ -18,7 +18,7 @@
 
 #include "secret.h"
 
-// secretbase - SipHash-1-3 implementation -------------------------------------
+// secretbase - SipHash implementation -----------------------------------------
 
 //  This program is free software; you can redistribute it and/or modify it
 //  under the terms of the GNU Lesser General Public License as published
@@ -183,24 +183,16 @@ static inline uint64_t c_siphash_finalize_NM(CSipHash *state, unsigned N, unsign
   
 }
 
-static void c_siphash_append_13(CSipHash *state, const uint8_t *bytes, size_t n_bytes) {
-  c_siphash_append_N(state, bytes, n_bytes, 1);
-}
-
-static uint64_t c_siphash_finalize_13(CSipHash *state) {
-  return c_siphash_finalize_NM(state, 1, 3);
-}
-
 // secretbase - internals ------------------------------------------------------
 
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_siphash_context *sctx = (secretbase_siphash_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : c_siphash_append_13(sctx->ctx, (uint8_t *) src, (size_t) len);
+  sctx->skip ? (void) sctx->skip-- : c_siphash_append_N(sctx->ctx, (uint8_t *) src, (size_t) len, sctx->N);
   
 }
 
-static void hash_file(CSipHash *ctx, const SEXP x) {
+static void hash_file(CSipHash *ctx, const SEXP x, const unsigned N) {
   
   if (TYPEOF(x) != STRSXP)
     Rf_error("'file' must be specified as a character string");
@@ -215,7 +207,7 @@ static void hash_file(CSipHash *ctx, const SEXP x) {
   setbuf(f, NULL);
   
   while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, f))) {
-    c_siphash_append_13(ctx, buf, cur);
+    c_siphash_append_N(ctx, buf, cur, N);
   }
   
   if (ferror(f)) {
@@ -226,19 +218,19 @@ static void hash_file(CSipHash *ctx, const SEXP x) {
   
 }
 
-static void hash_object(CSipHash *ctx, const SEXP x) {
+static void hash_object(CSipHash *ctx, const SEXP x, const unsigned N) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
       const char *s = CHAR(STRING_ELT(x, 0));
-      c_siphash_append_13(ctx, (uint8_t *) s, strlen(s));
+      c_siphash_append_N(ctx, (uint8_t *) s, strlen(s), N);
       return;
     }
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      c_siphash_append_13(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      c_siphash_append_N(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x), N);
       return;
     }
     break;
@@ -246,6 +238,7 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
   
   secretbase_siphash_context sctx;
   sctx.skip = SB_SERIAL_HEADERS;
+  sctx.N = N;
   sctx.ctx = ctx;
   
   struct R_outpstream_st output_stream;
@@ -263,8 +256,9 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
   
 }
 
-static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP convert,
-                                      void (*const hash_func)(CSipHash *, SEXP)) {
+static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP convert,
+                                    void (*const hash_func)(CSipHash *, SEXP, unsigned),
+                                    const unsigned N, const unsigned M) {
   
   const int conv = LOGICAL(convert)[0];
   uint64_t hash;
@@ -292,8 +286,8 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP c
     memcpy(seed, data, klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
     c_siphash_init(&ctx, seed);
   }
-  hash_func(&ctx, x);
-  hash = c_siphash_finalize_13(&ctx);
+  hash_func(&ctx, x, N);
+  hash = c_siphash_finalize_NM(&ctx, N, M);
   clear_buffer(&ctx, sizeof(CSipHash));
   
   return hash_to_sexp((unsigned char *) &hash, SB_SIPH_SIZE, conv);
@@ -304,12 +298,24 @@ static SEXP secretbase_siphash13_impl(const SEXP x, const SEXP key, const SEXP c
 
 SEXP secretbase_siphash13(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_siphash13_impl(x, key, convert, hash_object);
+  return secretbase_siphash_impl(x, key, convert, hash_object, 1u, 3u);
   
 }
 
 SEXP secretbase_siphash13_file(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_siphash13_impl(x, key, convert, hash_file);
+  return secretbase_siphash_impl(x, key, convert, hash_file, 1u, 3u);
+  
+}
+
+SEXP secretbase_siphash24(SEXP x, SEXP key, SEXP convert) {
+  
+  return secretbase_siphash_impl(x, key, convert, hash_object, 2u, 4u);
+  
+}
+
+SEXP secretbase_siphash24_file(SEXP x, SEXP key, SEXP convert) {
+  
+  return secretbase_siphash_impl(x, key, convert, hash_file, 2u, 4u);
   
 }
