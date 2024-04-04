@@ -107,7 +107,7 @@ void c_siphash_init_nokey(CSipHash *state) {
   
 }
 
-static inline void c_siphash_append_N(CSipHash *state, const uint8_t *bytes, size_t n_bytes, unsigned N) {
+static inline void c_siphash_append(CSipHash *state, const uint8_t *bytes, size_t n_bytes) {
   
   const uint8_t *end = bytes + n_bytes;
   size_t left = state->n_bytes & 7;
@@ -123,8 +123,7 @@ static inline void c_siphash_append_N(CSipHash *state, const uint8_t *bytes, siz
       return;
     
     state->v3 ^= state->padding;
-    for (unsigned i = 0; i < N; i++)
-      c_siphash_sipround(state);
+    c_siphash_sipround(state);
     state->v0 ^= state->padding;
     
     state->padding = 0;
@@ -136,8 +135,7 @@ static inline void c_siphash_append_N(CSipHash *state, const uint8_t *bytes, siz
     m = c_siphash_read_le64(bytes);
     
     state->v3 ^= m;
-    for (unsigned i = 0; i < N; i++)
-      c_siphash_sipround(state);
+    c_siphash_sipround(state);
     state->v0 ^= m;
   }
 
@@ -163,20 +161,19 @@ static inline void c_siphash_append_N(CSipHash *state, const uint8_t *bytes, siz
   
 }
 
-static inline uint64_t c_siphash_finalize_NM(CSipHash *state, unsigned N, unsigned M) {
+static inline uint64_t c_siphash_finalize(CSipHash *state) {
   
   uint64_t b;
   
   b = state->padding | (((uint64_t) state->n_bytes) << 56);
   
   state->v3 ^= b;
-  for (unsigned i = 0; i < N; i++)
-    c_siphash_sipround(state);
+  c_siphash_sipround(state);
   state->v0 ^= b;
   
   state->v2 ^= 0xff;
   
-  for (unsigned i = 0; i < M; i++)
+  for (unsigned i = 0; i < 3; i++)
     c_siphash_sipround(state);
   
   return state->v0 ^ state->v1 ^ state->v2  ^ state->v3;
@@ -188,11 +185,11 @@ static inline uint64_t c_siphash_finalize_NM(CSipHash *state, unsigned N, unsign
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_siphash_context *sctx = (secretbase_siphash_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : c_siphash_append_N(sctx->ctx, (uint8_t *) src, (size_t) len, sctx->N);
+  sctx->skip ? (void) sctx->skip-- : c_siphash_append(sctx->ctx, (uint8_t *) src, (size_t) len);
   
 }
 
-static void hash_file(CSipHash *ctx, const SEXP x, const unsigned N) {
+static void hash_file(CSipHash *ctx, const SEXP x) {
   
   if (TYPEOF(x) != STRSXP)
     Rf_error("'file' must be specified as a character string");
@@ -204,10 +201,8 @@ static void hash_file(CSipHash *ctx, const SEXP x, const unsigned N) {
   if ((f = fopen(file, "rb")) == NULL)
     Rf_error("file not found or no read permission at '%s'", file);
   
-  setbuf(f, NULL);
-  
   while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, f))) {
-    c_siphash_append_N(ctx, buf, cur, N);
+    c_siphash_append(ctx, buf, cur);
   }
   
   if (ferror(f)) {
@@ -218,19 +213,19 @@ static void hash_file(CSipHash *ctx, const SEXP x, const unsigned N) {
   
 }
 
-static void hash_object(CSipHash *ctx, const SEXP x, const unsigned N) {
+static void hash_object(CSipHash *ctx, const SEXP x) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
       const char *s = CHAR(STRING_ELT(x, 0));
-      c_siphash_append_N(ctx, (uint8_t *) s, strlen(s), N);
+      c_siphash_append(ctx, (uint8_t *) s, strlen(s));
       return;
     }
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      c_siphash_append_N(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x), N);
+      c_siphash_append(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
       return;
     }
     break;
@@ -238,7 +233,6 @@ static void hash_object(CSipHash *ctx, const SEXP x, const unsigned N) {
   
   secretbase_siphash_context sctx;
   sctx.skip = SB_SERIAL_HEADERS;
-  sctx.N = N;
   sctx.ctx = ctx;
   
   struct R_outpstream_st output_stream;
@@ -257,8 +251,7 @@ static void hash_object(CSipHash *ctx, const SEXP x, const unsigned N) {
 }
 
 static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP convert,
-                                    void (*const hash_func)(CSipHash *, SEXP, unsigned),
-                                    const unsigned N, const unsigned M) {
+                                    void (*const hash_func)(CSipHash *, SEXP)) {
   
   const int conv = LOGICAL(convert)[0];
   uint64_t hash;
@@ -286,9 +279,8 @@ static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP con
     memcpy(seed, data, klen < SB_SKEY_SIZE ? klen : SB_SKEY_SIZE);
     c_siphash_init(&ctx, seed);
   }
-  hash_func(&ctx, x, N);
-  hash = c_siphash_finalize_NM(&ctx, N, M);
-  clear_buffer(&ctx, sizeof(CSipHash));
+  hash_func(&ctx, x);
+  hash = c_siphash_finalize(&ctx);
   
   return hash_to_sexp((unsigned char *) &hash, SB_SIPH_SIZE, conv);
   
@@ -298,24 +290,12 @@ static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP con
 
 SEXP secretbase_siphash13(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_siphash_impl(x, key, convert, hash_object, 1u, 3u);
+  return secretbase_siphash_impl(x, key, convert, hash_object);
   
 }
 
 SEXP secretbase_siphash13_file(SEXP x, SEXP key, SEXP convert) {
   
-  return secretbase_siphash_impl(x, key, convert, hash_file, 1u, 3u);
-  
-}
-
-SEXP secretbase_siphash24(SEXP x, SEXP key, SEXP convert) {
-  
-  return secretbase_siphash_impl(x, key, convert, hash_object, 2u, 4u);
-  
-}
-
-SEXP secretbase_siphash24_file(SEXP x, SEXP key, SEXP convert) {
-  
-  return secretbase_siphash_impl(x, key, convert, hash_file, 2u, 4u);
+  return secretbase_siphash_impl(x, key, convert, hash_file);
   
 }

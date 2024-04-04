@@ -147,9 +147,8 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #' SipHash Pseudorandom Function
 #'
 #' Returns a fast, cryptographically-strong SipHash keyed hash of the supplied
-#'     object or file. SipHash-1-3 is optimised for performance, whereas
-#'     SipHash-2-4 is recommended for security. Note: SipHash is not a
-#'     cryptographic hash algorithm.
+#'     object or file. SipHash-1-3 is optimised for performance. Note: SipHash
+#'     is not a cryptographic hash algorithm.
 #'
 #' @inheritParams sha3
 #' @param key [default NULL] a character string or raw vector comprising the 16
@@ -179,11 +178,11 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #' # SipHash-1-3 hash as raw vector:
 #' siphash13("secret base", convert = FALSE)
 #' 
-#' # SipHash-2-4 hash using a character string key:
-#' siphash24("secret", key = "base")
+#' # SipHash-1-3 hash using a character string key:
+#' siphash13("secret", key = "base")
 #' 
-#' # SipHash-2-4 hash using a raw vector key:
-#' siphash24("secret", key = charToRaw("base"))
+#' # SipHash-1-3 hash using a raw vector key:
+#' siphash13("secret", key = charToRaw("base"))
 #' 
 #' # SipHash-1-3 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
@@ -195,10 +194,3 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 siphash13 <- function(x, key = NULL, convert = TRUE, file)
   if (missing(file)) .Call(secretbase_siphash13, x, key, convert) else
     .Call(secretbase_siphash13_file, file, key, convert)
-
-#' @rdname siphash13
-#' @export
-#'
-siphash24 <- function(x, key = NULL, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_siphash24, x, key, convert) else
-    .Call(secretbase_siphash24_file, file, key, convert)

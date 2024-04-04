@@ -47,14 +47,16 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Quick Start
 
-#### SHA-3 and XOF usage:
+```{r secretbase}
+library(secretbase)
+```
+
+#### SHA-3
  
  - For the SHA-3 cryptographic hash algorithm, specify 'bits' as `224`, `256`, `384` or `512`
  - For the SHAKE256 extendable-output function (XOF), specify any other bit length
 
-```{r secretbase}
-library(secretbase)
-
+```{r sha3}
 sha3("secret base")
 
 sha3("secret base", convert = FALSE)
@@ -63,9 +65,10 @@ sha3("秘密の基地の中", bits = 512)
 
 ```
 
-#### Hash arbitrary R objects:
+#### Hash arbitrary R objects
 
- - Uses memory-efficient 'streaming' serialization, without allocation of the serialized object
+ - Character strings and raw vectors (without attributes) are hashed 'as is'
+ - Other objects are hashed using memory-efficient 'streaming' serialization, without allocation of the serialized object
  - Portable as always uses R serialization version 3 big-endian representation, skipping headers (which contain R version and native encoding information)
 
 ```{r streaming}
@@ -74,7 +77,7 @@ sha3(data.frame(a = 1, b = 2), bits = 160)
 sha3(NULL)
 ```
 
-#### Hash files:
+#### Hash files
 
  - Performed in a streaming fashion, accepting files larger than memory
 
@@ -86,7 +89,7 @@ sha3(file = file)
 unlink(file)
 ```
 
-#### Hash to integer:
+#### Hash to integer
 
  - Specify 'convert' as `NA` (and 'bits' as `32` for a single integer value)
  - May be supplied as deterministic random seeds for R's pseudo random number generators (RNGs)
@@ -99,24 +102,25 @@ sha3("秘密の基地の中", bits = 32, convert = NA)
 
 For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[2]</sup>
 
-#### Generating a SHA-256 HMAC:
+#### SHA-256
 
-- Use `sha256()` passing a character string or raw vector to 'key'.
+```{r sha256}
+sha256("secret base")
+```
+
+- For a SHA-256 HMAC, pass a character string or raw vector to 'key'
 
 ```{r hmac}
 sha256("secret base", key = "秘密の基地の中")
 ```
 
-#### Using SipHash:
+#### SipHash
 
-- SipHash is a fast, cryptographically-strong keyed hash.
-- Pass a character string or raw vector to 'key'. Up to 16 bytes (128 bits) of the key data is used.
-- SipHash-1-3 is optimized for performance; SipHash-2-4 recommended for security.
+- SipHash-1-3 is optimized for performance
+- Pass a character string or raw vector to 'key' - up to 16 bytes (128 bits) of the key data is used
 
 ```{r siphash}
 siphash13("secret base", key = charToRaw("秘密の基地の中"))
-
-siphash24("secret base", key = charToRaw("秘密の基地の中"))
 ```
 
 ### References
