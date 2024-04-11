@@ -1,3 +1,5 @@
+# secretbase 0.4.0 (development)
+
 # secretbase 0.4.0
 
 * Adds HMAC generation to `sha256()`.
