@@ -225,7 +225,7 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      c_siphash_append(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      c_siphash_append(ctx, (uint8_t *) DATAPTR_RO(x), (size_t) XLENGTH(x));
       return;
     }
     break;
@@ -270,7 +270,7 @@ static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP con
       klen = strlen((char *) data);
       break;
     case RAWSXP:
-      data = (unsigned char *) STDVEC_DATAPTR(key);
+      data = (unsigned char *) DATAPTR_RO(key);
       klen = XLENGTH(key);
       break;
     default:

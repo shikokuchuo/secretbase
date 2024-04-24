@@ -422,7 +422,7 @@ static void hash_object(mbedtls_sha256_context *ctx, const SEXP x) {
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      mbedtls_sha256_update(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      mbedtls_sha256_update(ctx, (uint8_t *) DATAPTR_RO(x), (size_t) XLENGTH(x));
       return;
     }
     break;
@@ -476,7 +476,7 @@ static SEXP secretbase_sha256_impl(const SEXP x, SEXP key, const SEXP convert,
       klen = strlen((char *) data);
       break;
     case RAWSXP:
-      data = (unsigned char *) STDVEC_DATAPTR(key);
+      data = (unsigned char *) DATAPTR_RO(key);
       klen = XLENGTH(key);
       break;
     default:

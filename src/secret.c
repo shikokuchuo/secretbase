@@ -271,7 +271,7 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
-      mbedtls_sha3_update(ctx, (uint8_t *) STDVEC_DATAPTR(x), (size_t) XLENGTH(x));
+      mbedtls_sha3_update(ctx, (uint8_t *) DATAPTR_RO(x), (size_t) XLENGTH(x));
       return;
     }
     break;
@@ -301,7 +301,7 @@ SEXP hash_to_sexp(unsigned char *buf, size_t sz, int conv) {
   SEXP out;
   if (conv == 0) {
     out = Rf_allocVector(RAWSXP, sz);
-    memcpy(STDVEC_DATAPTR(out), buf, sz);
+    memcpy(DATAPTR(out), buf, sz);
   } else if (conv == 1) {
     char cbuf[sz + sz + 1];
     char *cptr = cbuf;
@@ -312,7 +312,7 @@ SEXP hash_to_sexp(unsigned char *buf, size_t sz, int conv) {
     UNPROTECT(1);
   } else {
     out = Rf_allocVector(INTSXP, sz / sizeof(int));
-    memcpy(STDVEC_DATAPTR(out), buf, sz);
+    memcpy(DATAPTR(out), buf, sz);
   }
   
   return out;

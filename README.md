@@ -26,14 +26,16 @@ pseudo-random function.
 The SHA-3 Secure Hash Standard was published by the National Institute
 of Standards and Technology (NIST) in 2015 at
 [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
-The SHA-256 Secure Hash Standard was published by NIST in 2002 at
+SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
+Daemen, M. Peeters and G. Van Assche. The SHA-256 Secure Hash Standard
+was published by NIST in 2002 at
 <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The
 SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
 Daniel J. Bernstein was published in 2012 at
 <https://ia.cr/2012/351>.<sup>\[1\]</sup>
 
-The SHA-256 and SHA-3 implementations are based on those by the ‘Mbed
-TLS’ Trusted Firmware Project at
+The SHA-256, SHA-3 and Keccak implementations are based on those by the
+‘Mbed TLS’ Trusted Firmware Project at
 <https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
 implementation is based on that of Daniele Nicolodi, David Rheinsberg
 and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
