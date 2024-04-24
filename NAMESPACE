@@ -3,5 +3,6 @@
 export(keccak)
 export(sha256)
 export(sha3)
+export(shake256)
 export(siphash13)
 useDynLib(secretbase, .registration = TRUE)

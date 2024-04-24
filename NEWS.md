@@ -1,6 +1,8 @@
 # secretbase 0.4.0.9000 (development)
 
 * Adds Keccak cryptographic hash algorithm.
+* Adds `shake256()` to delineate from `sha3()`.
+* Use of `sha3()` supplying 'bit' argument other than 224, 256, 384 or 512 is deprecated.
 
 # secretbase 0.4.0
 

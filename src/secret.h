@@ -105,6 +105,8 @@ SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
+SEXP secretbase_shake256(SEXP, SEXP, SEXP);
+SEXP secretbase_shake256_file(SEXP, SEXP, SEXP);
 SEXP secretbase_keccak(SEXP, SEXP, SEXP);
 SEXP secretbase_keccak_file(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256(SEXP, SEXP, SEXP);

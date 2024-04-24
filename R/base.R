@@ -35,9 +35,9 @@
 
 # secretbase - Main Functions --------------------------------------------------
 
-#' SHA-3 Cryptographic Hash Algorithms and SHAKE256 XOF
+#' SHA-3 Cryptographic Hash Algorithms
 #'
-#' Returns a SHA-3 or SHAKE256 hash of the supplied object or file.
+#' Returns a SHA-3 hash of the supplied object or file.
 #'
 #' @param x object to hash. A character string or raw vector (without
 #'     attributes) is hashed 'as is'. All other objects are stream hashed using
@@ -45,10 +45,9 @@
 #'     object. To ensure portability, serialization version 3 big-endian
 #'     represenation is always used with headers skipped (as these contain R
 #'     version and native encoding information).
-#' @param bits [default 256L] output size of the returned hash. If one of 224,
-#'     256, 384 or 512, uses the respective SHA-3 cryptographic hash function.
-#'     For all other values, uses the SHAKE256 extendable-output function (XOF).
-#'     Must be between 8 and 2^24 and coercible to integer.
+#' @param bits [default 256L] output size of the returned hash. Must be one of
+#'     224, 256, 384 or 512. For legacy reasons (usage is deprecated), all other
+#'     values return the value of \code{\link{shake256}}.
 #' @param convert [default TRUE] if TRUE, the hash is converted to its hex
 #'     representation as a character string, if FALSE, output directly as a raw
 #'     vector, or if NA, a vector of (32-bit) integer values.
@@ -57,12 +56,8 @@
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
 #'
-#' @details To produce single integer values suitable for use as random seeds
-#'     for R's pseudo random number generators (RNGs), set 'bits' to 32 and
-#'     'convert' to NA.
-#'     
-#'     The SHA-3 Secure Hash Standard was published by the National Institute of
-#'     Standards and Technology (NIST) in 2015 at
+#' @details The SHA-3 Secure Hash Standard was published by the National
+#'     Institute of Standards and Technology (NIST) in 2015 at
 #'     \doi{doi:10.6028/NIST.FIPS.202}.
 #'     
 #'     This implementation is based on one by 'The Mbed TLS Contributors' under
@@ -84,9 +79,6 @@
 #' 
 #' # SHA3-512 hash as character string:
 #' sha3("secret base", bits = 512)
-#' 
-#' # SHAKE256 hash to integer:
-#' sha3("secret base", bits = 32L, convert = NA)
 #'
 #' # SHA3-256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
@@ -98,6 +90,55 @@
 sha3 <- function(x, bits = 256L, convert = TRUE, file)
   if (missing(file)) .Call(secretbase_sha3, x, bits, convert) else
     .Call(secretbase_sha3_file, file, bits, convert)
+
+#' SHAKE256 Extendable Output Function (XOF)
+#'
+#' Returns a SHAKE256 hash of the supplied object or file.
+#'
+#' @param x object to hash. A character string or raw vector (without
+#'     attributes) is hashed 'as is'. All other objects are stream hashed using
+#'     R serialization, but without requiring allocation of the serialized
+#'     object. To ensure portability, serialization version 3 big-endian
+#'     represenation is always used with headers skipped (as these contain R
+#'     version and native encoding information).
+#' @param bits [default 256L] output size of the returned hash. Must be between
+#'     8 and 2^24 and coercible to integer.
+#' @param convert [default TRUE] if TRUE, the hash is converted to its hex
+#'     representation as a character string, if FALSE, output directly as a raw
+#'     vector, or if NA, a vector of (32-bit) integer values.
+#' @param file character file name / path. If specified, 'x' is ignored. The
+#'     file is stream hashed, thus capable of handling files larger than memory.
+#'
+#' @return A character string, raw or integer vector depending on 'convert'.
+#'
+#' @details To produce single integer values suitable for use as random seeds
+#'     for R's pseudo random number generators (RNGs), set 'bits' to 32 and
+#'     'convert' to NA.
+#'     
+#'     This implementation is based on one by 'The Mbed TLS Contributors' under
+#'     the 'Mbed TLS' Trusted Firmware Project at
+#'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#'
+#' @examples
+#' # SHAKE256 hash as character string:
+#' shake256("secret base")
+#'
+#' # SHAKE256 hash as raw vector:
+#' shake256("secret base", convert = FALSE)
+#' 
+#' # SHAKE256 hash to integer:
+#' sha3("secret base", bits = 32L, convert = NA)
+#'
+#' # SHAKE256 hash a file:
+#' file <- tempfile(); cat("secret base", file = file)
+#' shake256(file = file)
+#' unlink(file)
+#'
+#' @export
+#'
+shake256 <- function(x, bits = 256L, convert = TRUE, file)
+  if (missing(file)) .Call(secretbase_shake256, x, bits, convert) else
+    .Call(secretbase_shake256_file, file, bits, convert)
 
 #' Keccak Cryptographic Hash Algorithms
 #'

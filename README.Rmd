@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 Fast and memory-efficient streaming hash functions. Performs direct hashing of strings, raw bytes, and files potentially larger than memory, as well as hashing in-memory objects through R's serialization mechanism, without requiring allocation of the serialized object.
 
-Implementations include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
+Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
 
 The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202). The SHA-256 Secure Hash Standard was published by NIST in 2002 at <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The SipHash family of pseudo-random functions by Jean-Philippe Aumasson and Daniel J. Bernstein was published in 2012 at <https://ia.cr/2012/351>.<sup>[1]</sup>
 
@@ -54,7 +54,6 @@ library(secretbase)
 #### SHA-3
  
  - For the SHA-3 cryptographic hash algorithm, specify 'bits' as `224`, `256`, `384` or `512`
- - For the SHAKE256 extendable-output function (XOF), specify any other bit length
 
 ```{r sha3}
 sha3("secret base")
@@ -72,7 +71,7 @@ sha3("秘密の基地の中", bits = 512)
  - Portable as always uses R serialization version 3 big-endian representation, skipping headers (which contain R version and native encoding information)
 
 ```{r streaming}
-sha3(data.frame(a = 1, b = 2), bits = 160)
+sha3(data.frame(a = 1, b = 2), bits = 224)
 
 sha3(NULL)
 ```
@@ -89,18 +88,22 @@ sha3(file = file)
 unlink(file)
 ```
 
-#### Hash to integer
+#### Hash to integer / SHAKE256 XOF
 
  - Specify 'convert' as `NA` (and 'bits' as `32` for a single integer value)
  - May be supplied as deterministic random seeds for R's pseudo random number generators (RNGs)
 
 ```{r integer}
-sha3("秘密の基地の中", bits = 384, convert = NA)
-
-sha3("秘密の基地の中", bits = 32, convert = NA)
+shake256("秘密の基地の中", bits = 32, convert = NA)
 ```
 
 For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[2]</sup>
+
+#### Keccak
+
+```{r keccak}
+keccak("secret base", bits = 384)
+```
 
 #### SHA-256
 

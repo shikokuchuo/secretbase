@@ -19,7 +19,7 @@ hashing of strings, raw bytes, and files potentially larger than memory,
 as well as hashing in-memory objects through R’s serialization
 mechanism, without requiring allocation of the serialized object.
 
-Implementations include the SHA-256 and SHA-3 cryptographic hash
+Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash
 functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
 
@@ -65,8 +65,6 @@ library(secretbase)
 
 - For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as `224`,
   `256`, `384` or `512`
-- For the SHAKE256 extendable-output function (XOF), specify any other
-  bit length
 
 ``` r
 sha3("secret base")
@@ -91,8 +89,8 @@ sha3("秘密の基地の中", bits = 512)
   encoding information)
 
 ``` r
-sha3(data.frame(a = 1, b = 2), bits = 160)
-#> [1] "bc5a411f87ef083296c60d6557f189b62ff9e7e6"
+sha3(data.frame(a = 1, b = 2), bits = 224)
+#> [1] "03778aad53bff7dd68caab94374bba6f07cea235fb97b3c52cf612e9"
 
 sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
@@ -108,7 +106,7 @@ sha3(file = file)
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
 ```
 
-#### Hash to integer
+#### Hash to integer / SHAKE256 XOF
 
 - Specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
   value)
@@ -116,11 +114,7 @@ sha3(file = file)
   number generators (RNGs)
 
 ``` r
-sha3("秘密の基地の中", bits = 384, convert = NA)
-#>  [1]  1421990570   338241144  1760362273 -1213241427  1313032644 -1154474231
-#>  [7]  1041052480   697347630 -1488396834  -917712316  1835427495  2044829552
-
-sha3("秘密の基地の中", bits = 32, convert = NA)
+shake256("秘密の基地の中", bits = 32, convert = NA)
 #> [1] 2000208511
 ```
 
@@ -129,6 +123,13 @@ negligible probability that RNGs in each process may overlap. This may
 be especially suitable when first-best alternatives such as using
 recursive streams are too expensive or unable to preserve
 reproducibility. <sup>\[2\]</sup>
+
+#### Keccak
+
+``` r
+keccak("secret base", bits = 384)
+#> [1] "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203"
+```
 
 #### SHA-256
 
