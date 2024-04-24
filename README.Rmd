@@ -33,9 +33,9 @@ The SHA-256, SHA-3 and Keccak implementations are based on those by the 'Mbed TL
 
 ### Installation
 
-Install the latest version from CRAN:
+Install the latest release from CRAN:
 
-```{r rrel, eval=FALSE}
+```{r cran, eval=FALSE}
 install.packages("secretbase")
 ```
 

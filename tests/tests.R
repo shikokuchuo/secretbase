@@ -58,6 +58,7 @@ test_equal(keccak("secret base", bits = 224), "1ddaa7776f138ff5bba898ca7530410a5
 test_equal(keccak("secret base", bits = 384L), "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203")
 test_equal(keccak("secret base", bits = "512"), "38297e891d9118e4cf6ff5ba6d6de8c2c3bfa790b425848da7b1d8dffcb4a6a3ca2e32ca0a66f36ce2882786ce2299642de8ffd3bae3b51a1ee145fad555a9d8")
 test_that(keccak("secret base", convert = FALSE), is.raw)
+test_error(keccak("secret base", bits = 6), "'bits' must be 224, 256, 384 or 512")
 hash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)

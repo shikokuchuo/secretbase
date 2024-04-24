@@ -45,7 +45,7 @@ Daniel J. Bernstein released to the public domain at
 
 ### Installation
 
-Install the latest version from CRAN:
+Install the latest release from CRAN:
 
 ``` r
 install.packages("secretbase")
