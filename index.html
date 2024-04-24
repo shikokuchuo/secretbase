@@ -13,7 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="Cryptographic Hash and Extendable-Output Functions">
-<meta property="og:description" content="Fast and memory-efficient streaming hash functions. Performs direct hashing of strings, raw bytes, and files potentially larger than memory, as well as hashing in-memory objects through Rs serialization mechanism, without requiring allocation of the serialized object. Implementations include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and SipHash' pseudo-random function. The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at &lt;doi:10.6028/NIST.FIPS.202&gt;. The SHA-256 Secure Hash Standard was published by NIST in 2002 at &lt;https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf&gt;.">
+<meta property="og:description" content="Fast and memory-efficient streaming hash functions. Performs direct hashing of strings, raw bytes, and files potentially larger than memory, as well as hashing in-memory objects through Rs serialization mechanism, without requiring allocation of the serialized object. Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and SipHash' pseudo-random function. The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at &lt;doi:10.6028/NIST.FIPS.202&gt;. The SHA-256 Secure Hash Standard was published by NIST in 2002 at &lt;https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf&gt;.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -78,7 +78,7 @@
 <!-- badges: start -->
 
 <p>Fast and memory-efficient streaming hash functions. Performs direct hashing of strings, raw bytes, and files potentially larger than memory, as well as hashing in-memory objects through R’s serialization mechanism, without requiring allocation of the serialized object.</p>
-<p>Implementations include the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’ pseudo-random function.</p>
+<p>Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’ pseudo-random function.</p>
 <p>The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at <a href="https://dx.doi.org/10.6028/NIST.FIPS.202" class="external-link">doi:10.6028/NIST.FIPS.202</a>. The SHA-256 Secure Hash Standard was published by NIST in 2002 at <a href="https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf" class="external-link uri">https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf</a>. The SipHash family of pseudo-random functions by Jean-Philippe Aumasson and Daniel J. Bernstein was published in 2012 at <a href="https://ia.cr/2012/351" class="external-link uri">https://ia.cr/2012/351</a>.<sup>[1]</sup></p>
 <p>The SHA-256 and SHA-3 implementations are based on those by the ‘Mbed TLS’ Trusted Firmware Project at <a href="https://www.trustedfirmware.org/projects/mbed-tls" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls</a>. The SipHash implementation is based on that of Daniele Nicolodi, David Rheinsberg and Tom Gundersen at <a href="https://github.com/c-util/c-siphash" class="external-link uri">https://github.com/c-util/c-siphash</a>, which is in turn based on the reference implementation by Jean-Philippe Aumasson and Daniel J. Bernstein released to the public domain at <a href="https://github.com/veorq/SipHash" class="external-link uri">https://github.com/veorq/SipHash</a>.</p>
 <div class="section level3">
@@ -102,7 +102,6 @@
 <ul>
 <li>For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
 </li>
-<li>For the SHAKE256 extendable-output function (XOF), specify any other bit length</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
@@ -124,8 +123,8 @@
 <li>Portable as always uses R serialization version 3 big-endian representation, skipping headers (which contain R version and native encoding information)</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, bits <span class="op">=</span> <span class="fl">160</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "bc5a411f87ef083296c60d6557f189b62ff9e7e6"</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, bits <span class="op">=</span> <span class="fl">224</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "03778aad53bff7dd68caab94374bba6f07cea235fb97b3c52cf612e9"</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"</span></span></code></pre></div>
@@ -142,31 +141,34 @@
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="hash-to-integer">Hash to integer<a class="anchor" aria-label="anchor" href="#hash-to-integer"></a>
+<h4 id="hash-to-integer--shake256-xof">Hash to integer / SHAKE256 XOF<a class="anchor" aria-label="anchor" href="#hash-to-integer--shake256-xof"></a>
 </h4>
 <ul>
 <li>Specify ‘convert’ as <code>NA</code> (and ‘bits’ as <code>32</code> for a single integer value)</li>
 <li>May be supplied as deterministic random seeds for R’s pseudo random number generators (RNGs)</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">384</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1]  1421990570   338241144  1760362273 -1213241427  1313032644 -1154474231</span></span>
-<span><span class="co">#&gt;  [7]  1041052480   697347630 -1488396834  -917712316  1835427495  2044829552</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/shake256.html">shake256</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
 <p>For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[2]</sup></p>
 </div>
 <div class="section level4">
-<h4 id="sha-256">SHA-256<a class="anchor" aria-label="anchor" href="#sha-256"></a>
+<h4 id="keccak">Keccak<a class="anchor" aria-label="anchor" href="#keccak"></a>
 </h4>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/keccak.html">keccak</a></span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">384</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203"</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="sha-256">SHA-256<a class="anchor" aria-label="anchor" href="#sha-256"></a>
+</h4>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"</span></span></code></pre></div>
 <ul>
 <li>For a SHA-256 HMAC, pass a character string or raw vector to ‘key’</li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"</span></span></code></pre></div>
 </div>
@@ -177,7 +179,7 @@
 <li>SipHash-1-3 is optimized for performance</li>
 <li>Pass a character string or raw vector to ‘key’ - up to 16 bytes (128 bits) of the key data is used</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a1f0a751892cc7dd"</span></span></code></pre></div>
 </div>
