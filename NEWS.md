@@ -1,4 +1,6 @@
-# secretbase 0.4.0 (development)
+# secretbase 0.4.0.9000 (development)
+
+* Adds Keccak cryptographic hash algorithm.
 
 # secretbase 0.4.0
 

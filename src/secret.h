@@ -46,7 +46,11 @@ typedef enum {
   MBEDTLS_SHA3_224,
   MBEDTLS_SHA3_256,
   MBEDTLS_SHA3_384,
-  MBEDTLS_SHA3_512
+  MBEDTLS_SHA3_512,
+  MBEDTLS_KECCAK_224,
+  MBEDTLS_KECCAK_256,
+  MBEDTLS_KECCAK_384,
+  MBEDTLS_KECCAK_512,
 } mbedtls_sha3_id;
 
 typedef struct mbedtls_sha3_family_functions {
@@ -101,6 +105,8 @@ SEXP hash_to_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
+SEXP secretbase_keccak(SEXP, SEXP, SEXP);
+SEXP secretbase_keccak_file(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256_file(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13(SEXP, SEXP, SEXP);

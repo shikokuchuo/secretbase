@@ -11,7 +11,7 @@ Fast and memory-efficient streaming hash functions. Performs direct hashing
     of strings, raw bytes, and files potentially larger than memory, as well
     as hashing in-memory objects through R's serialization mechanism, without
     requiring allocation of the serialized object. Implementations include
-    the SHA-256 and SHA-3 cryptographic hash functions, SHAKE256
+    the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256
     extendable-output function (XOF), and 'SipHash' pseudo-random function.
 }
 \seealso{

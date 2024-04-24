@@ -37,7 +37,11 @@ static mbedtls_sha3_family_functions sha3_families[] = {
   { MBEDTLS_SHA3_224,      1152, 224, 0x06 },
   { MBEDTLS_SHA3_256,      1088, 256, 0x06 },
   { MBEDTLS_SHA3_384,       832, 384, 0x06 },
-  { MBEDTLS_SHA3_512,       576, 512, 0x06 }
+  { MBEDTLS_SHA3_512,       576, 512, 0x06 },
+  { MBEDTLS_KECCAK_224,    1152, 224, 0x01 },
+  { MBEDTLS_KECCAK_256,    1088, 256, 0x01 },
+  { MBEDTLS_KECCAK_384,     832, 384, 0x01 },
+  { MBEDTLS_KECCAK_512,     576, 512, 0x01 }
 };
 
 static const uint64_t rc[24] = {
@@ -297,7 +301,8 @@ SEXP hash_to_sexp(unsigned char *buf, size_t sz, int conv) {
 }
 
 static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP convert,
-                                 void (*const hash_func)(mbedtls_sha3_context *, SEXP)) {
+                                 void (*const hash_func)(mbedtls_sha3_context *, SEXP),
+                                 const int keccak) {
   
   const int conv = LOGICAL(convert)[0];
   const int bt = Rf_asInteger(bits);
@@ -306,12 +311,21 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
   const size_t sz = (size_t) (bt / 8);
   unsigned char buf[sz];
   
-  mbedtls_sha3_id id = bt == 256 ? MBEDTLS_SHA3_256 :
-    bt == 512 ? MBEDTLS_SHA3_512 :
-    bt == 224 ? MBEDTLS_SHA3_224 :
-    bt == 384 ? MBEDTLS_SHA3_384 :
-    MBEDTLS_SHA3_SHAKE256;
-  
+  mbedtls_sha3_id id;
+  switch(bt) {
+  case 256:
+    id = keccak ? MBEDTLS_KECCAK_256 : MBEDTLS_SHA3_256; break;
+  case 512:
+    id = keccak ? MBEDTLS_KECCAK_512 : MBEDTLS_SHA3_512; break;
+  case 224:
+    id = keccak ? MBEDTLS_KECCAK_224 : MBEDTLS_SHA3_224; break;
+  case 384:
+    id = keccak ? MBEDTLS_KECCAK_384 : MBEDTLS_SHA3_384; break;
+  default:
+    if (keccak) Rf_error("'bits' must be 224, 256, 384 or 512");
+    id = MBEDTLS_SHA3_SHAKE256;
+  }
+
   mbedtls_sha3_context ctx;
   mbedtls_sha3_init(&ctx);
   mbedtls_sha3_starts(&ctx, id);
@@ -327,12 +341,24 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
 
 SEXP secretbase_sha3(SEXP x, SEXP bits, SEXP convert) {
   
-  return secretbase_sha3_impl(x, bits, convert, hash_object);
+  return secretbase_sha3_impl(x, bits, convert, hash_object, 0);
   
 }
 
 SEXP secretbase_sha3_file(SEXP x, SEXP bits, SEXP convert) {
   
-  return secretbase_sha3_impl(x, bits, convert, hash_file);
+  return secretbase_sha3_impl(x, bits, convert, hash_file, 0);
+  
+}
+
+SEXP secretbase_keccak(SEXP x, SEXP bits, SEXP convert) {
+  
+  return secretbase_sha3_impl(x, bits, convert, hash_object, 1);
+  
+}
+
+SEXP secretbase_keccak_file(SEXP x, SEXP bits, SEXP convert) {
+  
+  return secretbase_sha3_impl(x, bits, convert, hash_file, 1);
   
 }

@@ -42,6 +42,18 @@ hash_func <- function(file, string) {
 test_equal(hash_func(tempfile(), "secret base"), "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520")
 test_error(hash_func("", ""), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(sha3(file = "~/"), "file read error")
+# Keccak tests:
+test_equal(keccak("secret base"), "3fc6092bbec5a434a9933b486a89fa466c1ca013d1e37ab4348ce3764f3463d1")
+test_equal(keccak("secret base", bits = 224), "1ddaa7776f138ff5bba898ca7530410a52d09da412c4276bda0682a8")
+test_equal(keccak("secret base", bits = 384L), "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203")
+test_equal(keccak("secret base", bits = "512"), "38297e891d9118e4cf6ff5ba6d6de8c2c3bfa790b425848da7b1d8dffcb4a6a3ca2e32ca0a66f36ce2882786ce2299642de8ffd3bae3b51a1ee145fad555a9d8")
+test_that(keccak("secret base", convert = FALSE), is.raw)
+hash_func <- function(file, string) {
+  on.exit(unlink(file))
+  cat(string, file = file)
+  keccak(file = file)
+}
+test_equal(hash_func(tempfile(), "secret base"), "3fc6092bbec5a434a9933b486a89fa466c1ca013d1e37ab4348ce3764f3463d1")
 # SHA-256 tests:
 test_equal(sha256("secret base"), "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe")
 test_equal(sha256("secret base", convert = NA)[2L], 1592348733L)
