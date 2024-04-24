@@ -2,7 +2,7 @@
 % Please edit documentation in R/base.R
 \name{shake256}
 \alias{shake256}
-\title{SHAKE256 Extensible Output Function (XOF)}
+\title{SHAKE256 Extendable Output Function (XOF)}
 \usage{
 shake256(x, bits = 256L, convert = TRUE, file)
 }
