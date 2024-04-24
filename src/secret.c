@@ -32,6 +32,25 @@
  *  https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf
  */
 
+typedef enum {
+  MBEDTLS_SHA3_SHAKE256 = 0,
+  MBEDTLS_SHA3_224,
+  MBEDTLS_SHA3_256,
+  MBEDTLS_SHA3_384,
+  MBEDTLS_SHA3_512,
+  MBEDTLS_KECCAK_224,
+  MBEDTLS_KECCAK_256,
+  MBEDTLS_KECCAK_384,
+  MBEDTLS_KECCAK_512,
+} mbedtls_sha3_id;
+
+typedef struct mbedtls_sha3_family_functions {
+  mbedtls_sha3_id id;
+  uint16_t r;
+  uint16_t olen;
+  uint8_t xor_byte;
+} mbedtls_sha3_family_functions;
+
 static mbedtls_sha3_family_functions sha3_families[] = {
   { MBEDTLS_SHA3_SHAKE256, 1088,   0, 0x1F },
   { MBEDTLS_SHA3_224,      1152, 224, 0x06 },

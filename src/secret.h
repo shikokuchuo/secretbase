@@ -41,25 +41,6 @@
 #define SB_SIPH_SIZE 8
 #define SB_SKEY_SIZE 16
 
-typedef enum {
-  MBEDTLS_SHA3_SHAKE256 = 0,
-  MBEDTLS_SHA3_224,
-  MBEDTLS_SHA3_256,
-  MBEDTLS_SHA3_384,
-  MBEDTLS_SHA3_512,
-  MBEDTLS_KECCAK_224,
-  MBEDTLS_KECCAK_256,
-  MBEDTLS_KECCAK_384,
-  MBEDTLS_KECCAK_512,
-} mbedtls_sha3_id;
-
-typedef struct mbedtls_sha3_family_functions {
-  mbedtls_sha3_id id;
-  uint16_t r;
-  uint16_t olen;
-  uint8_t xor_byte;
-} mbedtls_sha3_family_functions;
-
 typedef struct mbedtls_sha3_context {
   uint64_t state[25];
   uint8_t index;
@@ -76,11 +57,6 @@ typedef struct mbedtls_sha256_context {
   uint32_t state[8];
 } mbedtls_sha256_context;
 
-typedef struct secretbase_sha3_context {
-  int skip;
-  mbedtls_sha3_context *ctx;
-} secretbase_sha3_context;
-
 typedef struct CSipHash {
   uint64_t v0;
   uint64_t v1;
@@ -89,6 +65,11 @@ typedef struct CSipHash {
   uint64_t padding;
   size_t n_bytes;
 } CSipHash;
+
+typedef struct secretbase_sha3_context {
+  int skip;
+  mbedtls_sha3_context *ctx;
+} secretbase_sha3_context;
 
 typedef struct secretbase_sha256_context {
   int skip;
@@ -113,7 +94,5 @@ SEXP secretbase_sha256(SEXP, SEXP, SEXP);
 SEXP secretbase_sha256_file(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13(SEXP, SEXP, SEXP);
 SEXP secretbase_siphash13_file(SEXP, SEXP, SEXP);
-SEXP secretbase_siphash24(SEXP, SEXP, SEXP);
-SEXP secretbase_siphash24_file(SEXP, SEXP, SEXP);
 
 #endif

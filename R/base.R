@@ -161,7 +161,10 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #' @return A character string, raw or integer vector depending on 'convert'.
 #'
 #' @details Keccak is the underlying algorithm for SHA-3, and is identical apart
-#'     from the padding value.
+#'     from the value of the padding parameter.
+#'     
+#'     The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters
+#'     and G. Van Assche.
 #'     
 #'     This implementation is based on one by 'The Mbed TLS Contributors' under
 #'     the 'Mbed TLS' Trusted Firmware Project at
