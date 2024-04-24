@@ -9,10 +9,7 @@ keccak(x, bits = 256L, convert = TRUE, file)
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
 attributes) is hashed 'as is'. All other objects are stream hashed using
-R serialization, but without requiring allocation of the serialized
-object. To ensure portability, serialization version 3 big-endian
-represenation is always used with headers skipped (as these contain R
-version and native encoding information).}
+R serialization (but without allocation of the serialized object).}
 
 \item{bits}{[default 256L] output size of the returned hash. Must be one of
 224, 256, 384 or 512.}
@@ -30,17 +27,14 @@ A character string, raw or integer vector depending on 'convert'.
 \description{
 Returns a Keccak hash of the supplied object or file.
 }
-\details{
-Keccak is the underlying algorithm for SHA-3, and is identical apart
-    from the value of the padding parameter.
+\section{R Serialization Stream Hashing}{
+
     
-    The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters
-    and G. Van Assche.
-    
-    This implementation is based on one by 'The Mbed TLS Contributors' under
-    the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+    Where this is used, serialization is always version 3 big-endian
+    represenation and the headers (containing R version and native encoding
+    information) are skipped to ensure portability across platforms.
 }
+
 \examples{
 # Keccak-256 hash as character string:
 keccak("secret base")
@@ -62,4 +56,15 @@ file <- tempfile(); cat("secret base", file = file)
 keccak(file = file)
 unlink(file)
 
+}
+\references{
+Keccak is the underlying algorithm for SHA-3, and is identical
+    apart from the value of the padding parameter.
+    
+    The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters
+    and G. Van Assche.
+    
+    This implementation is based on one by 'The Mbed TLS Contributors' under
+    the 'Mbed TLS' Trusted Firmware Project at
+    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }

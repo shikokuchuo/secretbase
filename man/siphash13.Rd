@@ -9,10 +9,7 @@ siphash13(x, key = NULL, convert = TRUE, file)
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
 attributes) is hashed 'as is'. All other objects are stream hashed using
-R serialization, but without requiring allocation of the serialized
-object. To ensure portability, serialization version 3 big-endian
-represenation is always used with headers skipped (as these contain R
-version and native encoding information).}
+R serialization (but without allocation of the serialized object).}
 
 \item{key}{[default NULL] a character string or raw vector comprising the 16
 byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
@@ -35,19 +32,14 @@ Returns a fast, cryptographically-strong SipHash keyed hash of the supplied
     object or file. SipHash-1-3 is optimised for performance. Note: SipHash
     is not a cryptographic hash algorithm.
 }
-\details{
-The SipHash family of cryptographically-strong pseudorandom
-    functions (PRFs) are described in 'SipHash: a fast short-input PRF',
-    Jean-Philippe Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012,
-    Cryptology ePrint Archive at \url{https://ia.cr/2012/351}.
+\section{R Serialization Stream Hashing}{
+
     
-    This implementation is based on the SipHash streaming implementation by
-    Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
-    \url{https://github.com/c-util/c-siphash}. This is in turn based on the
-    SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
-    Bernstein released to the public domain at
-    \url{https://github.com/veorq/SipHash}.
+    Where this is used, serialization is always version 3 big-endian
+    represenation and the headers (containing R version and native encoding
+    information) are skipped to ensure portability across platforms.
 }
+
 \examples{
 # SipHash-1-3 hash as character string:
 siphash13("secret base")
@@ -66,4 +58,17 @@ file <- tempfile(); cat("secret base", file = file)
 siphash13(file = file)
 unlink(file)
 
+}
+\references{
+The SipHash family of cryptographically-strong pseudorandom
+    functions (PRFs) are described in 'SipHash: a fast short-input PRF',
+    Jean-Philippe Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012,
+    Cryptology ePrint Archive at \url{https://ia.cr/2012/351}.
+    
+    This implementation is based on the SipHash streaming implementation by
+    Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
+    \url{https://github.com/c-util/c-siphash}. This is in turn based on the
+    SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
+    Bernstein released to the public domain at
+    \url{https://github.com/veorq/SipHash}.
 }

@@ -9,14 +9,11 @@ sha3(x, bits = 256L, convert = TRUE, file)
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
 attributes) is hashed 'as is'. All other objects are stream hashed using
-R serialization, but without requiring allocation of the serialized
-object. To ensure portability, serialization version 3 big-endian
-represenation is always used with headers skipped (as these contain R
-version and native encoding information).}
+R serialization (but without allocation of the serialized object).}
 
 \item{bits}{[default 256L] output size of the returned hash. Must be one of
 224, 256, 384 or 512. For legacy reasons (usage is deprecated), all other
-values return the value of \code{\link{shake256}}.}
+values will return the result of \code{\link{shake256}}.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
@@ -31,15 +28,14 @@ A character string, raw or integer vector depending on 'convert'.
 \description{
 Returns a SHA-3 hash of the supplied object or file.
 }
-\details{
-The SHA-3 Secure Hash Standard was published by the National
-    Institute of Standards and Technology (NIST) in 2015 at
-    \doi{doi:10.6028/NIST.FIPS.202}.
+\section{R Serialization Stream Hashing}{
+
     
-    This implementation is based on one by 'The Mbed TLS Contributors' under
-    the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+    Where this is used, serialization is always version 3 big-endian
+    represenation and the headers (containing R version and native encoding
+    information) are skipped to ensure portability across platforms.
 }
+
 \examples{
 # SHA3-256 hash as character string:
 sha3("secret base")
@@ -61,4 +57,13 @@ file <- tempfile(); cat("secret base", file = file)
 sha3(file = file)
 unlink(file)
 
+}
+\references{
+The SHA-3 Secure Hash Standard was published by the National
+    Institute of Standards and Technology (NIST) in 2015 at
+    \doi{doi:10.6028/NIST.FIPS.202}.
+    
+    This implementation is based on one by 'The Mbed TLS Contributors' under
+    the 'Mbed TLS' Trusted Firmware Project at
+    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }

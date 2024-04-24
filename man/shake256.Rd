@@ -2,17 +2,14 @@
 % Please edit documentation in R/base.R
 \name{shake256}
 \alias{shake256}
-\title{SHAKE256 Extendable Output Function (XOF)}
+\title{SHAKE256 Extendable Output Function}
 \usage{
 shake256(x, bits = 256L, convert = TRUE, file)
 }
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
 attributes) is hashed 'as is'. All other objects are stream hashed using
-R serialization, but without requiring allocation of the serialized
-object. To ensure portability, serialization version 3 big-endian
-represenation is always used with headers skipped (as these contain R
-version and native encoding information).}
+R serialization (but without allocation of the serialized object).}
 
 \item{bits}{[default 256L] output size of the returned hash. Must be between
 8 and 2^24 and coercible to integer.}
@@ -34,11 +31,15 @@ Returns a SHAKE256 hash of the supplied object or file.
 To produce single integer values suitable for use as random seeds
     for R's pseudo random number generators (RNGs), set 'bits' to 32 and
     'convert' to NA.
-    
-    This implementation is based on one by 'The Mbed TLS Contributors' under
-    the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }
+\section{R Serialization Stream Hashing}{
+
+    
+    Where this is used, serialization is always version 3 big-endian
+    represenation and the headers (containing R version and native encoding
+    information) are skipped to ensure portability across platforms.
+}
+
 \examples{
 # SHAKE256 hash as character string:
 shake256("secret base")
@@ -54,4 +55,9 @@ file <- tempfile(); cat("secret base", file = file)
 shake256(file = file)
 unlink(file)
 
+}
+\references{
+This implementation is based on one by 'The Mbed TLS
+    Contributors' under the 'Mbed TLS' Trusted Firmware Project at
+    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }
