@@ -69,15 +69,12 @@
     <dl><dt>x</dt>
 <dd><p>object to hash. A character string or raw vector (without
 attributes) is hashed 'as is'. All other objects are stream hashed using
-R serialization, but without requiring allocation of the serialized
-object. To ensure portability, serialization version 3 big-endian
-represenation is always used with headers skipped (as these contain R
-version and native encoding information).</p></dd>
+R serialization (but without allocation of the serialized object).</p></dd>
 
 
 <dt>key</dt>
 <dd><p>[default NULL] If NULL, the SHA-256 hash of 'x' is returned.
-Alternatively, supply a secret key as a character string or raw vector to
+Alternatively, supply a character string or raw vector as a secret key to
 generate an HMAC. Note: for character vectors only the first element is
 used.</p></dd>
 
@@ -99,8 +96,17 @@ file is stream hashed, thus capable of handling files larger than memory.</p></d
 
 <p>A character string, raw or integer vector depending on 'convert'.</p>
     </div>
-    <div id="details">
-    <h2>Details</h2>
+    <div id="r-serialization-stream-hashing">
+    <h2>R Serialization Stream Hashing</h2>
+    
+
+    
+<p>Where this is used, serialization is always version 3 big-endian
+    represenation and the headers (containing R version and native encoding
+    information) are skipped to ensure portability across platforms.</p>
+    </div>
+    <div id="references">
+    <h2>References</h2>
     <p>The SHA-256 Secure Hash Standard was published by the National
     Institute of Standards and Technology (NIST) in 2002 at
     <a href="https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf" class="external-link">https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf</a>.</p>    
