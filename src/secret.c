@@ -324,6 +324,8 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
   mbedtls_sha3_id id;
   
   if (offset < 0) {
+    if (bt < 8 || bt > (1 << 24))
+      Rf_error("'bits' outside valid range of 8 to 2^24");
     id = MBEDTLS_SHA3_SHAKE256;
   } else {
     switch(bt) {
@@ -336,13 +338,11 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
     case 384:
       id = MBEDTLS_SHA3_384 + offset; break;
     default:
-      if (offset) Rf_error("'bits' must be 224, 256, 384 or 512");
       id = MBEDTLS_SHA3_SHAKE256;
+      Rf_error("'bits' must be 224, 256, 384 or 512");
     }
   }
   
-  if (bt < 8 || bt > (1 << 24))
-    Rf_error("'bits' outside valid range of 8 to 2^24");
   const size_t sz = (size_t) (bt / 8);
   unsigned char buf[sz];
   

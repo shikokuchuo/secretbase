@@ -48,7 +48,7 @@ shake256("secret base")
 shake256("secret base", convert = FALSE)
 
 # SHAKE256 hash to integer:
-sha3("secret base", bits = 32L, convert = NA)
+shake256("secret base", bits = 32L, convert = NA)
 
 # SHAKE256 hash a file:
 file <- tempfile(); cat("secret base", file = file)

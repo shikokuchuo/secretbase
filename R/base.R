@@ -43,8 +43,7 @@
 #'     attributes) is hashed 'as is'. All other objects are stream hashed using
 #'     R serialization (but without allocation of the serialized object).
 #' @param bits [default 256L] output size of the returned hash. Must be one of
-#'     224, 256, 384 or 512. For legacy reasons (usage is deprecated), all other
-#'     values will return the result of \code{\link{shake256}}.
+#'     224, 256, 384 or 512.
 #' @param convert [default TRUE] if TRUE, the hash is converted to its hex
 #'     representation as a character string, if FALSE, output directly as a raw
 #'     vector, or if NA, a vector of (32-bit) integer values.
@@ -122,7 +121,7 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' shake256("secret base", convert = FALSE)
 #' 
 #' # SHAKE256 hash to integer:
-#' sha3("secret base", bits = 32L, convert = NA)
+#' shake256("secret base", bits = 32L, convert = NA)
 #'
 #' # SHAKE256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
@@ -140,8 +139,6 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #' Returns a Keccak hash of the supplied object or file.
 #'
 #' @inheritParams sha3
-#' @param bits [default 256L] output size of the returned hash. Must be one of
-#'     224, 256, 384 or 512.
 #'
 #' @return A character string, raw or integer vector depending on 'convert'.
 #'

@@ -16,22 +16,14 @@ test_equal(sha3("secret base", bits = 224), "5511b3469d3f1a87b62ce8f0d2dc9510ec5
 test_equal(sha3("secret base", bits = 384L), "79e54f865df004dde10dc2f61baf47eb4637c68d87a2baeb7fe6bc0ac983c2154835ec7deb49b16c246c0dc1d43e32f9")
 test_equal(sha3("secret base", bits = "512"), "31076b4690961320a761be0951eeaa9efd0c75c37137a2a50877cbebb8afcc6d7927c41a120ae8fa73fdce8fff726fcbc51d448d020240bc7455963a16e639b1")
 test_that(sha3("secret base", convert = FALSE), is.raw)
-# SHAKE256 tests:
-test_equal(sha3("secret base", bits = 32), "995ebac1")
-test_equal(sha3(sha3("secret base", bits = 32, convert = FALSE), bits = 32), "4d872090")
-test_that(sha3(rnorm(1e5), bits = 8196), is.character)
-test_equal(sha3("secret base", bits = 32, convert = NA), -1044750695L)
 # Streaming serialization tests:
 test_equal(sha3(data.frame(a = 1, b = 2)), "05d4308e79d029b4af5604739ecc6c4efa1f602a23add0ed2d247b7407d4832f")
 test_equal(sha3(c("secret", "base")), "d906024c71828a10e28865a80f5e81d2cb5cd74067d44852d7039813ba62b0b6")
 test_equal(sha3(`attr<-`("base", "secret", "base")), "eac181cb1c64e7196c458d40cebfb8bbd6d34a1d728936a2e689465879240e2a")
 test_equal(sha3(NULL), "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee")
 test_equal(sha3(substitute()), "9d31eb41cfb721b8040c52d574df1aacfc381d371c2b933f90792beba5160a57")
-test_equal(sha3(`class<-`(sha3(character(), bits = 192, convert = FALSE), "hash"), bits = "32", convert = NA), -111175135L)
 # Error handling tests:
-test_error(sha3("secret base", bits = 0), "'bits' outside valid range of 8 to 2^24")
-test_error(sha3("secret base", bits = -1), "'bits' outside valid range of 8 to 2^24")
-test_error(sha3("secret base", bits = 2^24 + 1), "'bits' outside valid range of 8 to 2^24")
+test_error(sha3("secret base", bits = 6), "'bits' must be 224, 256, 384 or 512")
 test_error(sha3(file = NULL), "'file' must be specified as a character string")
 # File interface tests:
 hash_func <- function(file, string) {
@@ -46,12 +38,19 @@ if (.Platform[["OS.type"]] == "unix") test_error(sha3(file = "~/"), "file read e
 test_equal(shake256("secret base"), "995ebac18dbfeb170606cbbc0f2accce85db4db0dcf4fbe4d3efaf8ccf4e0a94")
 test_equal(shake256("secret base", bits = 32, convert = NA), -1044750695L)
 test_that(shake256("secret base", convert = FALSE), is.raw)
+test_equal(shake256("secret base", bits = 32), "995ebac1")
+test_equal(shake256(shake256("secret base", bits = 32, convert = FALSE), bits = 32), "4d872090")
+test_that(shake256(rnorm(1e5), bits = 8196), is.character)
+test_equal(shake256(`class<-`(shake256(character(), bits = 192, convert = FALSE), "hash"), bits = "32", convert = NA), -111175135L)
 hash_func <- function(file, string) {
   on.exit(unlink(file))
   cat(string, file = file)
   shake256(file = file)
 }
 test_equal(hash_func(tempfile(), "secret base"), "995ebac18dbfeb170606cbbc0f2accce85db4db0dcf4fbe4d3efaf8ccf4e0a94")
+test_error(shake256("secret base", bits = 0), "'bits' outside valid range of 8 to 2^24")
+test_error(shake256("secret base", bits = -1), "'bits' outside valid range of 8 to 2^24")
+test_error(shake256("secret base", bits = 2^24 + 1), "'bits' outside valid range of 8 to 2^24")
 # Keccak tests:
 test_equal(keccak("secret base"), "3fc6092bbec5a434a9933b486a89fa466c1ca013d1e37ab4348ce3764f3463d1")
 test_equal(keccak("secret base", bits = 224), "1ddaa7776f138ff5bba898ca7530410a52d09da412c4276bda0682a8")

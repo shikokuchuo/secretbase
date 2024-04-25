@@ -12,8 +12,7 @@ attributes) is hashed 'as is'. All other objects are stream hashed using
 R serialization (but without allocation of the serialized object).}
 
 \item{bits}{[default 256L] output size of the returned hash. Must be one of
-224, 256, 384 or 512. For legacy reasons (usage is deprecated), all other
-values will return the result of \code{\link{shake256}}.}
+224, 256, 384 or 512.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw

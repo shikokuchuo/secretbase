@@ -1,3 +1,7 @@
+# secretbase 0.5.0.9000 (development)
+
+* `sha3()` now only allows supplying a 'bit' argument of 224, 256, 384 or 512.
+
 # secretbase 0.5.0
 
 * Adds Keccak cryptographic hash algorithm.
