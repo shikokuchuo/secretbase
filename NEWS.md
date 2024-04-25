@@ -1,4 +1,4 @@
-# secretbase 0.4.0.9000 (development)
+# secretbase 0.5.0
 
 * Adds Keccak cryptographic hash algorithm.
 * Adds `shake256()` to delineate from `sha3()`.

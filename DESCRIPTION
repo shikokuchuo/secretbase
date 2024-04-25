@@ -1,7 +1,7 @@
 Package: secretbase
 Type: Package
 Title: Cryptographic Hash and Extendable-Output Functions
-Version: 0.4.0.9000
+Version: 0.5.0
 Description: Fast and memory-efficient streaming hash functions. Performs direct
     hashing of strings, raw bytes, and files potentially larger than memory, as
     well as hashing in-memory objects through R's serialization mechanism,
