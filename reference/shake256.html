@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">secretbase</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.5.0.9000</span>
       </span>
     </div>
 
@@ -126,7 +126,7 @@ file is stream hashed, thus capable of handling files larger than memory.</p></d
 <span class="r-out co"><span class="r-pr">#&gt;</span> [26] ef af 8c cf 4e 0a 94</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHAKE256 hash to integer:</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">shake256</span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1044750695</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># SHAKE256 hash a file:</span></span></span>
