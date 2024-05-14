@@ -15,9 +15,9 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https
 <!-- badges: end -->
 
 Fast and memory-efficient streaming hash functions. Performs direct
-hashing of strings, raw bytes, and files potentially larger than memory,
-as well as hashing in-memory objects through R’s serialization
-mechanism, without requiring allocation of the serialized object.
+hashing of strings and raw vectors. Stream hashes files potentially
+larger than memory, as well as in-memory objects through R’s
+serialization mechanism.
 
 Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
@@ -80,12 +80,16 @@ sha3("秘密の基地の中", bits = 512)
 #> [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"
 ```
 
-#### Hash arbitrary R objects
+#### Hash strings and raw vectors
 
-- Character strings and raw vectors (without attributes) are hashed ‘as
-  is’
-- Other objects are hashed using memory-efficient ‘streaming’
-  serialization, without allocation of the serialized object
+- Character strings and raw vectors are hashed directly (as per the
+  above)
+
+#### Stream hash R objects
+
+- All other objects are stream hashed using R serialization
+  (memory-efficient as performed without allocation of the serialized
+  object)
 - Portable as always uses R serialization version 3 big-endian
   representation, skipping headers (which contain R version and native
   encoding information)
@@ -98,9 +102,10 @@ sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
 ```
 
-#### Hash files
+#### Stream hash files
 
-- Performed in a streaming fashion, accepting files larger than memory
+- Files are read and hashed incrementally, accepting files larger than
+  memory
 
 ``` r
 file <- tempfile(); cat("secret base", file = file)
