@@ -77,15 +77,9 @@ library(secretbase)
 ``` r
 sha3("secret base")
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
-```
-
-``` r
 sha3("secret base", convert = FALSE)
 #>  [1] a7 21 d5 75 70 e7 ce 36 6a de e2 fc cb e9 77 07 23 c6 e3 62 25 49 c3 1c 7c
 #> [26] ab 9d bb 4a 79 55 20
-```
-
-``` r
 sha3("秘密の基地の中", bits = 512)
 #> [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"
 ```
@@ -107,9 +101,6 @@ sha3("秘密の基地の中", bits = 512)
 ``` r
 sha3(data.frame(a = 1, b = 2), bits = 224)
 #> [1] "03778aad53bff7dd68caab94374bba6f07cea235fb97b3c52cf612e9"
-```
-
-``` r
 sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
 ```
