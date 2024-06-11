@@ -19,6 +19,8 @@
 #include "secret.h"
 
 static const R_CallMethodDef callMethods[] = {
+  {"secretbase_base64enc", (DL_FUNC) &secretbase_base64enc, 2},
+  {"secretbase_base64dec", (DL_FUNC) &secretbase_base64dec, 2},
   {"secretbase_sha3", (DL_FUNC) &secretbase_sha3, 3},
   {"secretbase_sha3_file", (DL_FUNC) &secretbase_sha3_file, 3},
   {"secretbase_shake256", (DL_FUNC) &secretbase_shake256, 3},

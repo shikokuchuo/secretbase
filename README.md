@@ -29,6 +29,9 @@ Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
 
+Base 64 encoding and decoding of strings, raw vectors and serialized
+objects.
+
 The SHA-3 Secure Hash Standard was published by the National Institute
 of Standards and Technology (NIST) in 2015 at
 [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
@@ -49,19 +52,9 @@ turn based on the reference implementation by Jean-Philippe Aumasson and
 Daniel J. Bernstein released to the public domain at
 <https://github.com/veorq/SipHash>.
 
-### Installation
-
-Install the latest release from CRAN:
-
-``` r
-install.packages("secretbase")
-```
-
-Or the development version from R-universe:
-
-``` r
-install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
-```
+Base64 encoding and decoding implementations are based on those by the
+‘Mbed TLS’ Trusted Firmware Project at
+<https://www.trustedfirmware.org/projects/mbed-tls>.
 
 ### Quick Start
 
@@ -166,6 +159,35 @@ siphash13("secret base", key = charToRaw("秘密の基地の中"))
 #> [1] "a1f0a751892cc7dd"
 ```
 
+#### Base64 Encoding / Decoding
+
+Strings:
+
+``` r
+base64enc("secret base")
+#> [1] "c2VjcmV0IGJhc2U="
+base64dec(base64enc("secret base"))
+#> [1] "secret base"
+```
+
+Raw vectors:
+
+``` r
+base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
+#> [1] 41 51 49 45
+base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
+#> [1] 01 02 04
+```
+
+Serialized objects:
+
+``` r
+base64enc(data.frame())
+#> [1] "WAoAAAADAAQEAAADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
+base64dec(base64enc(data.frame()), convert = NA)
+#> data frame with 0 columns and 0 rows
+```
+
 ### References
 
 \[1\] Jean-Philippe Aumasson and Daniel J. Bernstein (2012), *“SipHash:
@@ -178,9 +200,21 @@ methods, with emphasis on GPUs”*, Mathematics and Computers in
 Simulation, Vol. 135, May 2017, pp. 3-17
 [doi:10.1016/j.matcom.2016.05.00](https://doi.org/10.1016/j.matcom.2016.05.005).
 
-### Links
+### Installation
 
-Links:
+Install the latest release from CRAN:
+
+``` r
+install.packages("secretbase")
+```
+
+Or the development version from R-universe:
+
+``` r
+install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
+```
+
+### Links
 
 ◈ secretbase R package: <https://shikokuchuo.net/secretbase/>
 

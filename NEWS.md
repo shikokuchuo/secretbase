@@ -1,6 +1,7 @@
-# secretbase 0.5.0.9000 (development)
+# secretbase 0.5.0.9001 (development)
 
-* `sha3()` now only allows supplying a 'bit' argument of 224, 256, 384 or 512.
+* Adds base64 encoding and decoding.
+* `sha3()` restricts 'bit' argument to one of 224, 256, 384 or 512.
 
 # secretbase 0.5.0
 

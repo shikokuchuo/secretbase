@@ -81,9 +81,34 @@ typedef struct secretbase_siphash_context {
   CSipHash *ctx;
 } secretbase_siphash_context;
 
+typedef struct nano_buf_s {
+  unsigned char *buf;
+  size_t len;
+  size_t cur;
+} nano_buf;
+
+#define SB_INIT_BUFSIZE 8192
+#define SB_SERIAL_VER 3
+#define SB_SERIAL_THR 134217728
+#define NANO_ALLOC(x, sz)                                      \
+(x)->buf = R_Calloc(sz, unsigned char);                        \
+(x)->len = sz;                                                 \
+(x)->cur = 0
+#define NANO_INIT(x, ptr, sz)                                  \
+(x)->buf = ptr;                                                \
+(x)->len = 0;                                                  \
+(x)->cur = sz
+#define NANO_FREE(x) if (x.len) R_Free(x.buf)
+#define CHECK_ERROR(x) if (x) { R_Free(buf);                   \
+Rf_error("write buffer insufficient"); }
+#define ERROR_OUT(x) if (x->len) R_Free(x->buf);               \
+Rf_error("serialization exceeds max length of raw vector")
+
 void clear_buffer(void *, size_t);
 SEXP hash_to_sexp(unsigned char *, size_t, int);
 
+SEXP secretbase_base64enc(SEXP, SEXP);
+SEXP secretbase_base64dec(SEXP, SEXP);
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_shake256(SEXP, SEXP, SEXP);

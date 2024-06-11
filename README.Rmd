@@ -34,23 +34,13 @@ Fast and memory-efficient streaming hash functions. Performs direct hashing of s
 
 Implementations include the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
 
+Base 64 encoding and decoding of strings, raw vectors and serialized objects.
+
 The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202). SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J. Daemen, M. Peeters and G. Van Assche. The SHA-256 Secure Hash Standard was published by NIST in 2002 at <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The SipHash family of pseudo-random functions by Jean-Philippe Aumasson and Daniel J. Bernstein was published in 2012 at <https://ia.cr/2012/351>.<sup>[1]</sup>
 
 The SHA-256, SHA-3 and Keccak implementations are based on those by the 'Mbed TLS' Trusted Firmware Project at <https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash implementation is based on that of Daniele Nicolodi, David Rheinsberg and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in turn based on the reference implementation by Jean-Philippe Aumasson and Daniel J. Bernstein released to the public domain at <https://github.com/veorq/SipHash>.
 
-### Installation
-
-Install the latest release from CRAN:
-
-```{r cran, eval=FALSE}
-install.packages("secretbase")
-```
-
-Or the development version from R-universe:
-
-```{r runiv, eval=FALSE}
-install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
-```
+Base64 encoding and decoding implementations are based on those by the 'Mbed TLS' Trusted Firmware Project at <https://www.trustedfirmware.org/projects/mbed-tls>.
 
 ### Quick Start
 
@@ -133,15 +123,46 @@ sha256("secret base", key = "秘密の基地の中")
 siphash13("secret base", key = charToRaw("秘密の基地の中"))
 ```
 
+#### Base64 Encoding / Decoding
+
+Strings:
+```{r base64str}
+base64enc("secret base")
+base64dec(base64enc("secret base"))
+```
+Raw vectors:
+```{r base64raw}
+base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
+base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
+```
+Serialized objects:
+```{r base64ser}
+base64enc(data.frame())
+base64dec(base64enc(data.frame()), convert = NA)
+```
+
 ### References
 
 [1] Jean-Philippe Aumasson and Daniel J. Bernstein (2012), *"SipHash: a fast short-input PRF"*, Paper 2012/351, Cryptology ePrint Archive, <https://ia.cr/2012/351>.
 
 [2] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard (2017), *"Random numbers for parallel computers: Requirements and methods, with emphasis on GPUs"*, Mathematics and Computers in Simulation, Vol. 135, May 2017, pp. 3-17 [doi:10.1016/j.matcom.2016.05.00](https://doi.org/10.1016/j.matcom.2016.05.005).
 
-### Links
 
-Links:
+### Installation
+
+Install the latest release from CRAN:
+
+```{r cran, eval=FALSE}
+install.packages("secretbase")
+```
+
+Or the development version from R-universe:
+
+```{r runiv, eval=FALSE}
+install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
+```
+
+### Links
 
 ◈ secretbase R package: <https://shikokuchuo.net/secretbase/>
 

@@ -313,9 +313,7 @@ static void mbedtls_sha256_update(mbedtls_sha256_context *ctx,
   ctx->total[0] += (uint32_t) ilen;
   ctx->total[0] &= 0xFFFFFFFF;
   
-  if (ctx->total[0] < (uint32_t) ilen) {
-    ctx->total[1]++;
-  }
+  if (ctx->total[0] < (uint32_t) ilen) { ctx->total[1]++; }
   
   if (left && ilen >= fill) {
     memcpy((void *) (ctx->buffer + left), input, fill);
