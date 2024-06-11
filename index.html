@@ -91,10 +91,7 @@
 <div class="section level4">
 <h4 id="sha-3">SHA-3<a class="anchor" aria-label="anchor" href="#sha-3"></a>
 </h4>
-<ul>
-<li>For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>
-</li>
-</ul>
+<p>For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span>
@@ -107,15 +104,13 @@
 <div class="section level4">
 <h4 id="hash-strings-and-raw-vectors">Hash strings and raw vectors<a class="anchor" aria-label="anchor" href="#hash-strings-and-raw-vectors"></a>
 </h4>
-<ul>
-<li>Character strings and raw vectors are hashed directly (as per the above)</li>
-</ul>
+<p>Character strings and raw vectors are hashed directly (as per the above).</p>
 </div>
 <div class="section level4">
 <h4 id="stream-hash-r-objects">Stream hash R objects<a class="anchor" aria-label="anchor" href="#stream-hash-r-objects"></a>
 </h4>
+<p>All other objects are stream hashed using R serialization (memory-efficient as performed without allocation of the serialized object).</p>
 <ul>
-<li>All other objects are stream hashed using R serialization (memory-efficient as performed without allocation of the serialized object)</li>
 <li>Portable as always uses R serialization version 3 big-endian representation, skipping headers (which contain R version and native encoding information)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -127,9 +122,7 @@
 <div class="section level4">
 <h4 id="stream-hash-files">Stream hash files<a class="anchor" aria-label="anchor" href="#stream-hash-files"></a>
 </h4>
-<ul>
-<li>Files are read and hashed incrementally, accepting files larger than memory</li>
-</ul>
+<p>Files are read and hashed incrementally, accepting files larger than memory:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"secret base"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
@@ -138,8 +131,8 @@
 <div class="section level4">
 <h4 id="hash-to-integer--shake256-xof">Hash to integer / SHAKE256 XOF<a class="anchor" aria-label="anchor" href="#hash-to-integer--shake256-xof"></a>
 </h4>
+<p>Specify ‘convert’ as <code>NA</code> (and ‘bits’ as <code>32</code> for a single integer value).</p>
 <ul>
-<li>Specify ‘convert’ as <code>NA</code> (and ‘bits’ as <code>32</code> for a single integer value)</li>
 <li>May be supplied as deterministic random seeds for R’s pseudo random number generators (RNGs)</li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -160,9 +153,7 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"</span></span></code></pre></div>
-<ul>
-<li>For a SHA-256 HMAC, pass a character string or raw vector to ‘key’</li>
-</ul>
+<p>For a SHA-256 HMAC, pass a character string or raw vector to ‘key’:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"</span></span></code></pre></div>
@@ -170,8 +161,8 @@
 <div class="section level4">
 <h4 id="siphash">SipHash<a class="anchor" aria-label="anchor" href="#siphash"></a>
 </h4>
+<p>SipHash-1-3 is optimized for performance.</p>
 <ul>
-<li>SipHash-1-3 is optimized for performance</li>
 <li>Pass a character string or raw vector to ‘key’ - up to 16 bytes (128 bits) of the key data is used</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
