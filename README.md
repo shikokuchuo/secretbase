@@ -9,6 +9,7 @@
 status](https://www.r-pkg.org/badges/version/secretbase?color=17411d)](https://CRAN.R-project.org/package=secretbase)
 [![secretbase status
 badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https://shikokuchuo.r-universe.dev/secretbase)
+[![diffify](https://diffify.com/diffify-badge.svg)](https://diffify.com/R/secretbase)
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/secretbase/actions)
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
