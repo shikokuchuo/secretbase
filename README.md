@@ -60,8 +60,8 @@ library(secretbase)
 
 #### SHA-3
 
-- For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as `224`,
-  `256`, `384` or `512`
+For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as `224`,
+`256`, `384` or `512`:
 
 ``` r
 sha3("secret base")
@@ -75,14 +75,15 @@ sha3("秘密の基地の中", bits = 512)
 
 #### Hash strings and raw vectors
 
-- Character strings and raw vectors are hashed directly (as per the
-  above)
+Character strings and raw vectors are hashed directly (as per the
+above).
 
 #### Stream hash R objects
 
-- All other objects are stream hashed using R serialization
-  (memory-efficient as performed without allocation of the serialized
-  object)
+All other objects are stream hashed using R serialization
+(memory-efficient as performed without allocation of the serialized
+object).
+
 - Portable as always uses R serialization version 3 big-endian
   representation, skipping headers (which contain R version and native
   encoding information)
@@ -96,8 +97,8 @@ sha3(NULL)
 
 #### Stream hash files
 
-- Files are read and hashed incrementally, accepting files larger than
-  memory
+Files are read and hashed incrementally, accepting files larger than
+memory:
 
 ``` r
 file <- tempfile(); cat("secret base", file = file)
@@ -107,8 +108,9 @@ sha3(file = file)
 
 #### Hash to integer / SHAKE256 XOF
 
-- Specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
-  value)
+Specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
+value).
+
 - May be supplied as deterministic random seeds for R’s pseudo random
   number generators (RNGs)
 
@@ -137,7 +139,7 @@ sha256("secret base")
 #> [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"
 ```
 
-- For a SHA-256 HMAC, pass a character string or raw vector to ‘key’
+For a SHA-256 HMAC, pass a character string or raw vector to ‘key’:
 
 ``` r
 sha256("secret base", key = "秘密の基地の中")
@@ -146,7 +148,8 @@ sha256("secret base", key = "秘密の基地の中")
 
 #### SipHash
 
-- SipHash-1-3 is optimized for performance
+SipHash-1-3 is optimized for performance.
+
 - Pass a character string or raw vector to ‘key’ - up to 16 bytes (128
   bits) of the key data is used
 
