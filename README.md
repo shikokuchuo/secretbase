@@ -29,7 +29,7 @@ Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
 
-Base 64 encoding and decoding of strings, raw vectors and serialized
+Base64 encoding and decoding of strings, raw vectors and serialized
 objects.
 
 The SHA-3 Secure Hash Standard was published by the National Institute
@@ -43,18 +43,14 @@ SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
 Daniel J. Bernstein was published in 2012 at
 <https://ia.cr/2012/351>.<sup>\[1\]</sup>
 
-The SHA-256, SHA-3 and Keccak implementations are based on those by the
-‘Mbed TLS’ Trusted Firmware Project at
+The SHA-256, SHA-3, Keccak, and base64 encoding/decoding implementations
+are based on those by the ‘Mbed TLS’ Trusted Firmware Project at
 <https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
 implementation is based on that of Daniele Nicolodi, David Rheinsberg
 and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
 turn based on the reference implementation by Jean-Philippe Aumasson and
 Daniel J. Bernstein released to the public domain at
 <https://github.com/veorq/SipHash>.
-
-Base64 encoding and decoding implementations are based on those by the
-‘Mbed TLS’ Trusted Firmware Project at
-<https://www.trustedfirmware.org/projects/mbed-tls>.
 
 ### Quick Start
 
