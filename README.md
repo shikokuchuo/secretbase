@@ -43,8 +43,8 @@ SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
 Daniel J. Bernstein was published in 2012 at
 <https://ia.cr/2012/351>.<sup>\[1\]</sup>
 
-The SHA-256, SHA-3, Keccak, and base64 encoding/decoding implementations
-are based on those by the ‘Mbed TLS’ Trusted Firmware Project at
+The SHA-256, SHA-3, Keccak, and base64 implementations are based on
+those by the ‘Mbed TLS’ Trusted Firmware Project at
 <https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
 implementation is based on that of Daniele Nicolodi, David Rheinsberg
 and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
@@ -81,10 +81,10 @@ above).
 #### Stream hash R objects
 
 All other objects are stream hashed using R serialization
-(memory-efficient as performed without allocation of the serialized
-object).
 
-- Portable as always uses R serialization version 3 big-endian
+- memory-efficient as performed without allocation of the serialized
+  object
+- portable as always uses R serialization version 3 big-endian
   representation, skipping headers (which contain R version and native
   encoding information)
 
@@ -108,11 +108,9 @@ sha3(file = file)
 
 #### Hash to integer / SHAKE256 XOF
 
-Specify ‘convert’ as `NA` (and ‘bits’ as `32` for a single integer
-value).
-
-- May be supplied as deterministic random seeds for R’s pseudo random
-  number generators (RNGs)
+May be used as deterministic random seeds for R’s pseudo random number
+generators (RNGs). <br /> Specify ‘convert’ as `NA` (and ‘bits’ as `32`
+for a single integer value):
 
 ``` r
 shake256("秘密の基地の中", bits = 32, convert = NA)
@@ -148,10 +146,9 @@ sha256("secret base", key = "秘密の基地の中")
 
 #### SipHash
 
-SipHash-1-3 is optimized for performance.
-
-- Pass a character string or raw vector to ‘key’ - up to 16 bytes (128
-  bits) of the key data is used
+SipHash-1-3 is optimized for performance. <br /> Pass a character string
+or raw vector to ‘key’ - up to 16 bytes (128 bits) of the key data is
+used:
 
 ``` r
 siphash13("secret base", key = charToRaw("秘密の基地の中"))
