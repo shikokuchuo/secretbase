@@ -240,7 +240,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
 // secretbase - internals ------------------------------------------------------
 
-SEXP rawToChar(const unsigned char *buf, const size_t sz) {
+static SEXP rawToChar(const unsigned char *buf, const size_t sz) {
   
   SEXP out;
   int i, j;
@@ -260,7 +260,7 @@ SEXP rawToChar(const unsigned char *buf, const size_t sz) {
   
 }
 
-static void nano_read_bytes(R_inpstream_t stream, void *dst, int len) {
+static inline void nano_read_bytes(R_inpstream_t stream, void *dst, int len) {
   
   nano_buf *buf = (nano_buf *) stream->data;
   if (buf->cur + len > buf->len) Rf_error("unserialization error");
@@ -270,7 +270,7 @@ static void nano_read_bytes(R_inpstream_t stream, void *dst, int len) {
   
 }
 
-static void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
+static inline void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
   
   nano_buf *buf = (nano_buf *) stream->data;
   

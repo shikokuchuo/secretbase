@@ -218,7 +218,7 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
 #endif
 
-void clear_buffer(void *buf, size_t sz) {
+inline void clear_buffer(void *buf, size_t sz) {
 #ifdef MBEDTLS_CT_ASM
   memset(buf, 0, sz);
   asm volatile ("" ::: "memory");
@@ -227,7 +227,7 @@ void clear_buffer(void *buf, size_t sz) {
 #endif
 }
 
-static void hash_bytes(R_outpstream_t stream, void *src, int len) {
+static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_sha3_context *sctx = (secretbase_sha3_context *) stream->data;
   sctx->skip ? (void) sctx->skip-- : mbedtls_sha3_update(sctx->ctx, (uint8_t *) src, (size_t) len);

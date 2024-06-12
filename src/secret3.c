@@ -76,7 +76,7 @@ static inline void c_siphash_sipround(CSipHash *state) {
   state->v2 = c_siphash_rotate_left(state->v2, 32);
 }
 
-void c_siphash_init(CSipHash *state, const uint8_t seed[16]) {
+static void c_siphash_init(CSipHash *state, const uint8_t seed[16]) {
   
   uint64_t k0, k1;
   
@@ -94,7 +94,7 @@ void c_siphash_init(CSipHash *state, const uint8_t seed[16]) {
   
 }
 
-void c_siphash_init_nokey(CSipHash *state) {
+static void c_siphash_init_nokey(CSipHash *state) {
   
   *state = (CSipHash) {
     .v0 = 0x736f6d6570736575ULL,
@@ -182,7 +182,7 @@ static inline uint64_t c_siphash_finalize(CSipHash *state) {
 
 // secretbase - internals ------------------------------------------------------
 
-static void hash_bytes(R_outpstream_t stream, void *src, int len) {
+static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
   secretbase_siphash_context *sctx = (secretbase_siphash_context *) stream->data;
   sctx->skip ? (void) sctx->skip-- : c_siphash_append(sctx->ctx, (uint8_t *) src, (size_t) len);
