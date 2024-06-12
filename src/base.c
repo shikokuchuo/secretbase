@@ -31,23 +31,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef uint32_t  mbedtls_ct_uint_t;
-
-#define MBEDTLS_HAVE_ASM
 #define MBEDTLS_BYTE_0(x) ((uint8_t) ((x)         & 0xff))
 #define MBEDTLS_BYTE_1(x) ((uint8_t) (((x) >>  8) & 0xff))
 #define MBEDTLS_BYTE_2(x) ((uint8_t) (((x) >> 16) & 0xff))
 
-#if defined(MBEDTLS_HAVE_ASM) && defined(__GNUC__) && (!defined(__ARMCC_VERSION) || \
-__ARMCC_VERSION >= 6000000)
-#define MBEDTLS_CT_ASM
-#endif
-
 #if !defined(MBEDTLS_CT_ASM)
-volatile mbedtls_ct_uint_t mbedtls_ct_zero = 0;
+volatile uint32_t mbedtls_ct_zero = 0;
 #endif
 
-static inline mbedtls_ct_uint_t mbedtls_ct_compiler_opaque(mbedtls_ct_uint_t x) {
+static inline uint32_t mbedtls_ct_compiler_opaque(uint32_t x) {
 #if defined(MBEDTLS_CT_ASM)
   asm volatile ("" : [x] "+r" (x) :);
   return x;

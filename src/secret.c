@@ -214,12 +214,17 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 // secretbase - internals ------------------------------------------------------
 
+#if !defined(MBEDTLS_CT_ASM)
 static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
+#endif
 
 void clear_buffer(void *buf, size_t sz) {
-  
+#ifdef MBEDTLS_CT_ASM
+  memset(buf, 0, sz);
+  asm volatile ("" ::: "memory");
+#else
   secure_memset(buf, 0, sz);
-  
+#endif
 }
 
 static void hash_bytes(R_outpstream_t stream, void *src, int len) {

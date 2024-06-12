@@ -41,6 +41,11 @@
 #define SB_SIPH_SIZE 8
 #define SB_SKEY_SIZE 16
 
+#if defined(__GNUC__) && (!defined(__ARMCC_VERSION) || \
+__ARMCC_VERSION >= 6000000)
+#define MBEDTLS_CT_ASM
+#endif
+
 typedef struct mbedtls_sha3_context {
   uint64_t state[25];
   uint8_t index;

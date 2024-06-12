@@ -1,4 +1,4 @@
-# secretbase 0.5.0.9001 (development)
+# secretbase 0.5.0.9002 (development)
 
 * Adds base64 encoding and decoding.
 * `sha3()` restricts 'bit' argument to one of 224, 256, 384 or 512.
