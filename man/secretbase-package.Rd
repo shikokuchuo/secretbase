@@ -5,7 +5,7 @@
 \name{secretbase-package}
 \alias{secretbase}
 \alias{secretbase-package}
-\title{secretbase: Cryptographic Hash and Extendable-Output Functions}
+\title{secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions}
 \description{
 Fast and memory-efficient streaming hash functions and base64 encoding and
     decoding. Performs direct hashing of strings and raw vectors. Stream

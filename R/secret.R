@@ -16,7 +16,7 @@
 
 # secretbase - Package Documentation -------------------------------------------
 
-#' secretbase: Cryptographic Hash and Extendable-Output Functions
+#' secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions
 #'
 #' Fast and memory-efficient streaming hash functions and base64 encoding and
 #'     decoding. Performs direct hashing of strings and raw vectors. Stream

@@ -14,53 +14,65 @@
 # You should have received a copy of the GNU General Public License along with
 # secretbase. If not, see <https://www.gnu.org/licenses/>.
 
-# secretbase - Base Functions --------------------------------------------------
+# secretbase - Base64 Functions ------------------------------------------------
 
-#' Base64 Encode / Decode
+#' Base64 Encode
 #'
-#' Encodes / decodes a character string, raw vector or other object to base64
-#'     encoding.
+#' Encodes a character string, raw vector or other object to base64 encoding.
 #'
 #' @param x an object.
-#' @param convert For \strong{base64enc}: [default TRUE] logical TRUE to encode
-#'     to a character string or FALSE to a raw vector.\cr
-#'     For \strong{base64dec}: [default TRUE] logical TRUE to convert back to a
-#'     character string, FALSE to convert back to a raw vector or NA to decode
-#'     and then unserialize back to the original object.
+#' @param convert [default TRUE] logical TRUE to encode to a character string or
+#'     FALSE to a raw vector.
 #'
-#' @return For \strong{base64enc}: A character string or raw vector depending on
-#'     the value of \sQuote{convert}.
+#' @return A character string or raw vector depending on the value of
+#'     \sQuote{convert}.
 #'
-#'     For \strong{base64dec}: A character string, raw vector, or other object
-#'     depending on the value of \sQuote{convert}.
-#'
-#' @details For encoding: a character string or raw vector (with no attributes)
-#'     is encoded \emph{as is}, whilst all other objects are first serialized
-#'     (using R serialisation version 3, big-endian representation).
-#'
-#'     For decoding: the value of \sQuote{convert} should be set to TRUE, FALSE
-#'     or NA to be the analogue of the above 3 cases in order to return the
-#'     original object.
+#' @details A character string or raw vector (with no attributes) is encoded
+#'     \emph{as is}, whilst all other objects are first serialized (using R
+#'     serialisation version 3, big-endian representation).
 #'     
 #' @references This implementation is based that by 'The Mbed TLS Contributors'
 #'     under the 'Mbed TLS' Trusted Firmware Project at
 #'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#'     
+#' @seealso \code{\link{base64dec}}
 #'
 #' @examples
 #' base64enc("secret base")
-#' base64dec(base64enc("secret base"))
-#'
 #' base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
-#' base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
-#'
 #' base64enc(data.frame())
-#' base64dec(base64enc(data.frame()), convert = NA)
 #'
 #' @export
 #'
 base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 
-#' @rdname base64enc
+#' Base64 Decode
+#'
+#' Decodes a character string, raw vector or other object from base64 encoding.
+#'
+#' @param x an object.
+#' @param convert [default TRUE] logical TRUE to convert back to a character
+#'     string, FALSE to convert back to a raw vector or NA to decode and then
+#'     unserialize back to the original object.
+#'
+#' @return A character string, raw vector, or other object depending on the
+#'     value of \sQuote{convert}.
+#'
+#' @details The value of \sQuote{convert} should be set to TRUE, FALSE or NA to
+#'     be the reverse of the 3 encoding operations (for strings, raw vectors and
+#'     arbitrary objects), in order to return the original object.
+#'     
+#' @references This implementation is based that by 'The Mbed TLS Contributors'
+#'     under the 'Mbed TLS' Trusted Firmware Project at
+#'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#'
+#' @seealso \code{\link{base64enc}}
+#'
+#' @examples
+#' base64dec(base64enc("secret base"))
+#' base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
+#' base64dec(base64enc(data.frame()), convert = NA)
+#'
 #' @export
 #'
 base64dec <- function(x, convert = TRUE) .Call(secretbase_base64dec, x, convert)

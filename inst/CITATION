@@ -1,5 +1,5 @@
 bibentry(bibtype = "Manual",
-         title = "secretbase: Cryptographic Hash and Extendable-Output Functions",
+         title = "secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions",
          author = person("Charlie", "Gao"),
          year = 2024,
          note = sprintf("R package version %s", meta$Version),
