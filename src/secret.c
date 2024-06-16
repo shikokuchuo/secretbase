@@ -342,8 +342,6 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
       id = MBEDTLS_SHA3_224 + offset; break;
     case 384:
       id = MBEDTLS_SHA3_384 + offset; break;
-    case 32: // for targets 1.7.0 compat
-      id = MBEDTLS_SHA3_SHAKE256; break;
     default:
       id = MBEDTLS_SHA3_SHAKE256;
       Rf_error("'bits' must be 224, 256, 384 or 512");
