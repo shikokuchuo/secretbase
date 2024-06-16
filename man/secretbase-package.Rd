@@ -7,13 +7,12 @@
 \alias{secretbase-package}
 \title{secretbase: Cryptographic Hash and Extendable-Output Functions}
 \description{
-Fast and memory-efficient streaming hash functions. Performs direct hashing
-    of strings and raw vectors. Stream hashes files potentially larger than
-    memory, as well as in-memory objects through R's serialization mechanism.
-    Implementations include the SHA-256, SHA-3 and 'Keccak' cryptographic
-    hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash'
-    pseudo-random function. Base 64 encoding and decoding of strings, raw
-    vectors and serialized objects.
+Fast and memory-efficient streaming hash functions and base64 encoding and
+    decoding. Performs direct hashing of strings and raw vectors. Stream
+    hashes files potentially larger than memory, as well as in-memory objects
+    through R's serialization mechanism. Implementations include the SHA-256,
+    SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256
+    extendable-output function (XOF), and 'SipHash' pseudo-random function.
 }
 \seealso{
 Useful links:

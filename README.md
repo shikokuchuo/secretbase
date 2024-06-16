@@ -21,17 +21,14 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https
     \  /  base /
      \/_______/
 
-Fast and memory-efficient streaming hash functions. Performs direct
-hashing of strings and raw vectors. Stream hashes files potentially
-larger than memory, as well as in-memory objects through R’s
-serialization mechanism.
+Fast and memory-efficient streaming hash functions and base64 encoding
+and decoding. Performs direct hashing of strings and raw vectors. Stream
+hashes files potentially larger than memory, as well as in-memory
+objects through R’s serialization mechanism.
 
 Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
-
-Base64 encoding and decoding of strings, raw vectors and serialized
-objects.
 
 The SHA-3 Secure Hash Standard was published by the National Institute
 of Standards and Technology (NIST) in 2015 at
