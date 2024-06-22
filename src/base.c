@@ -95,14 +95,14 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
   
   if (n > (SIZE_MAX - 1) / 4) {
     *olen = SIZE_MAX;
-    return -1;
+    return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
   }
   
   n *= 4;
   
   if ((dlen < n + 1) || (NULL == dst)) {
     *olen = n + 1;
-    return -1;
+    return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
   }
   
   n = (slen / 3) * 3;
@@ -174,21 +174,21 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
     }
 
     if (spaces_present) {
-      return -2;
+      return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
     }
     
-    if (src[i] > 127) { return -2; }
+    if (src[i] > 127) { return MBEDTLS_ERR_BASE64_INVALID_CHARACTER; }
     
     if (src[i] == '=') {
       if (++equals > 2) {
-        return -2;
+        return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
     } else {
       if (equals != 0) {
-        return -2;
+        return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
       if (mbedtls_ct_base64_dec_value(src[i]) < 0) {
-        return -2;
+        return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
     }
     n++;
@@ -204,7 +204,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
   
   if (dst == NULL || dlen < n) {
     *olen = n;
-    return -1;
+    return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
   }
   
   equals = 0;
@@ -341,18 +341,19 @@ static nano_buf nano_any_buf(const SEXP x) {
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
       const char *s = CHAR(STRING_ELT(x, 0));
       NANO_INIT(&buf, (unsigned char *) s, strlen(s));
-      return buf;
+      goto resume;
     }
     break;
   case RAWSXP:
     if (ATTRIB(x) == R_NilValue) {
       NANO_INIT(&buf, (unsigned char *) DATAPTR_RO(x), XLENGTH(x));
-      return buf;
+      goto resume;
     }
   }
   
   nano_serialize_xdr(&buf, x);
   
+  resume:
   return buf;
   
 }
@@ -370,7 +371,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur);
   NANO_FREE(hash);
-  CHECK_ERROR(xc);
+  CHECK_ERROR(xc, buf);
   
   if (*(int *) DATAPTR_RO(convert)) {
     out = rawToChar(buf, olen);
@@ -406,11 +407,11 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   }
   
   xc = mbedtls_base64_decode(NULL, 0, &olen, inbuf, inlen);
-  if (xc == -2)
+  if (xc == MBEDTLS_ERR_BASE64_INVALID_CHARACTER)
     Rf_error("input is not valid base64");
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen);
-  CHECK_ERROR(xc);
+  CHECK_ERROR(xc, buf);
   
   switch (*(int *) DATAPTR_RO(convert)) {
   case 0:

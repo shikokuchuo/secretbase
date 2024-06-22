@@ -41,6 +41,9 @@
 #define SB_SIPH_SIZE 8
 #define SB_SKEY_SIZE 16
 
+#define MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL -1
+#define MBEDTLS_ERR_BASE64_INVALID_CHARACTER -2
+
 #if defined(__GNUC__) && (!defined(__ARMCC_VERSION) || \
 __ARMCC_VERSION >= 6000000)
 #define MBEDTLS_CT_ASM
@@ -104,7 +107,7 @@ typedef struct nano_buf_s {
 (x)->len = 0;                                                  \
 (x)->cur = sz
 #define NANO_FREE(x) if (x.len) R_Free(x.buf)
-#define CHECK_ERROR(x) if (x) { R_Free(buf);                   \
+#define CHECK_ERROR(x, buf) if (x) { R_Free(buf);              \
 Rf_error("write buffer insufficient"); }
 #define ERROR_OUT(x) if (x->len) R_Free(x->buf);               \
 Rf_error("serialization exceeds max length of raw vector")
