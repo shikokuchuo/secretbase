@@ -214,6 +214,19 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 // secretbase - internals ------------------------------------------------------
 
+static inline int R_Integer(SEXP x) {
+  int out;
+  switch (TYPEOF(x)) {
+  case INTSXP:
+  case LGLSXP:
+    out = *(int * ) DATAPTR_RO(x);
+    break;
+  default:
+    out = Rf_asInteger(x);
+  }
+  return out;
+}
+
 #if !defined(MBEDTLS_CT_ASM)
 static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
 #endif
@@ -325,7 +338,7 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
                                  const int offset) {
   
   const int conv = LOGICAL(convert)[0];
-  const int bt = Rf_asInteger(bits);
+  const int bt = R_Integer(bits);
   mbedtls_sha3_id id;
   
   if (offset < 0) {
