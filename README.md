@@ -33,6 +33,19 @@ Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
 
+The SHA-3 Secure Hash Standard was published by the National Institute
+of Standards and Technology (NIST) in 2015 at
+[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
+SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
+Daemen, M. Peeters and G. Van Assche.
+
+The SHA-256 Secure Hash Standard was published by NIST in 2002 at
+<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
+
+The SipHash family of pseudo-random functions by Jean-Philippe Aumasson
+and Daniel J. Bernstein was published in 2012 at
+<https://ia.cr/2012/351>.<sup>\[1\]</sup>
+
 ### Overview
 
 ``` r
@@ -50,7 +63,7 @@ sha3("secret base")
 sha3("secret base", convert = FALSE)
 #>  [1] a7 21 d5 75 70 e7 ce 36 6a de e2 fc cb e9 77 07 23 c6 e3 62 25 49 c3 1c 7c
 #> [26] ab 9d bb 4a 79 55 20
-sha3("秘密の基地の中", bits = 512)
+sha3("秘密の基地の中", bits = 512L)
 #> [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"
 ```
 
@@ -70,7 +83,7 @@ All other objects are stream hashed using R serialization
   encoding information)
 
 ``` r
-sha3(data.frame(a = 1, b = 2), bits = 224)
+sha3(data.frame(a = 1, b = 2), bits = 224L)
 #> [1] "03778aad53bff7dd68caab94374bba6f07cea235fb97b3c52cf612e9"
 sha3(NULL)
 #> [1] "b3e37e4c5def1bfb2841b79ef8503b83d1fed46836b5b913d7c16de92966dcee"
@@ -94,7 +107,7 @@ generators (RNGs). <br /> Specify ‘convert’ as `NA` (and ‘bits’ as `32`
 for a single integer value):
 
 ``` r
-shake256("秘密の基地の中", bits = 32, convert = NA)
+shake256("秘密の基地の中", bits = 32L, convert = NA)
 #> [1] 2000208511
 ```
 
@@ -107,7 +120,7 @@ reproducibility. <sup>\[2\]</sup>
 #### Keccak
 
 ``` r
-keccak("secret base", bits = 384)
+keccak("secret base", bits = 384L)
 #> [1] "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203"
 ```
 
@@ -181,24 +194,14 @@ install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 
 ### Implementation Notes
 
-The SHA-3 Secure Hash Standard was published by the National Institute
-of Standards and Technology (NIST) in 2015 at
-[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
-SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
-Daemen, M. Peeters and G. Van Assche. The SHA-256 Secure Hash Standard
-was published by NIST in 2002 at
-<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The
-SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
-Daniel J. Bernstein was published in 2012 at
-<https://ia.cr/2012/351>.<sup>\[1\]</sup>
-
 The SHA-256, SHA-3, Keccak, and base64 implementations are based on
 those by the ‘Mbed TLS’ Trusted Firmware Project at
-<https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
-implementation is based on that of Daniele Nicolodi, David Rheinsberg
-and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
-turn based on the reference implementation by Jean-Philippe Aumasson and
-Daniel J. Bernstein released to the public domain at
+<https://www.trustedfirmware.org/projects/mbed-tls>.
+
+The SipHash implementation is based on that of Daniele Nicolodi, David
+Rheinsberg and Tom Gundersen at <https://github.com/c-util/c-siphash>,
+which is in turn based on the reference implementation by Jean-Philippe
+Aumasson and Daniel J. Bernstein released to the public domain at
 <https://github.com/veorq/SipHash>.
 
 ### References
