@@ -26,6 +26,8 @@
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 
+#define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
+
 #define SB_R_SERIAL_VER 3
 #define SB_SERIAL_HEADERS 6
 #define SB_BUF_SIZE 4096

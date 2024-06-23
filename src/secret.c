@@ -214,7 +214,7 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 
 // secretbase - internals ------------------------------------------------------
 
-static inline int R_Integer(SEXP x) {
+static inline int nano_integer(SEXP x) {
   int out;
   switch (TYPEOF(x)) {
   case INTSXP:
@@ -315,7 +315,7 @@ SEXP hash_to_sexp(unsigned char *buf, size_t sz, int conv) {
   SEXP out;
   if (conv == 0) {
     out = Rf_allocVector(RAWSXP, sz);
-    memcpy(DATAPTR(out), buf, sz);
+    memcpy(SB_DATAPTR(out), buf, sz);
   } else if (conv == 1) {
     char cbuf[sz + sz + 1];
     char *cptr = cbuf;
@@ -326,7 +326,7 @@ SEXP hash_to_sexp(unsigned char *buf, size_t sz, int conv) {
     UNPROTECT(1);
   } else {
     out = Rf_allocVector(INTSXP, sz / sizeof(int));
-    memcpy(DATAPTR(out), buf, sz);
+    memcpy(SB_DATAPTR(out), buf, sz);
   }
   
   return out;
@@ -338,7 +338,7 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
                                  const int offset) {
   
   const int conv = LOGICAL(convert)[0];
-  const int bt = R_Integer(bits);
+  const int bt = nano_integer(bits);
   mbedtls_sha3_id id;
   
   if (offset < 0) {

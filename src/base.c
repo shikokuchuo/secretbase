@@ -248,7 +248,7 @@ static SEXP rawToChar(const unsigned char *buf, const size_t sz) {
   if (sz - i > 1) {
     REprintf("data could not be converted to a character string\n");
     out = Rf_allocVector(RAWSXP, sz);
-    memcpy(DATAPTR(out), buf, sz);
+    memcpy(SB_DATAPTR(out), buf, sz);
     return out;
   }
   
@@ -377,7 +377,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
     out = rawToChar(buf, olen);
   } else {
     out = Rf_allocVector(RAWSXP, olen);
-    memcpy(DATAPTR(out), buf, olen);
+    memcpy(SB_DATAPTR(out), buf, olen);
   }
   
   R_Free(buf);
@@ -416,7 +416,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   switch (*(int *) DATAPTR_RO(convert)) {
   case 0:
     out = Rf_allocVector(RAWSXP, olen);
-    memcpy(DATAPTR(out), buf, olen);
+    memcpy(SB_DATAPTR(out), buf, olen);
     break;
   case 1:
     out = rawToChar(buf, olen);
