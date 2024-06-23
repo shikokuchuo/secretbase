@@ -7,9 +7,10 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/secretbase?color=17411d)](https://CRAN.R-project.org/package=secretbase)
+[![R-multiverse
+status](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcommunity.r-multiverse.org%2Fapi%2Fpackages%2Fsecretbase&query=%24.Version&label=r-multiverse)](https://community.r-multiverse.org/secretbase)
 [![secretbase status
 badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https://shikokuchuo.r-universe.dev/secretbase)
-[![diffify](https://diffify.com/diffify-badge.svg)](https://diffify.com/R/secretbase)
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/secretbase/actions)
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
@@ -22,35 +23,17 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e4723a)](https
      \/_______/
 
 Fast and memory-efficient streaming hash functions and base64 encoding
-and decoding. Performs direct hashing of strings and raw vectors. Stream
-hashes files potentially larger than memory, as well as in-memory
-objects through R’s serialization mechanism.
+and decoding.
+
+Performs direct hashing of strings and raw vectors. Stream hashes files
+potentially larger than memory, as well as in-memory objects through R’s
+serialization mechanism.
 
 Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
 
-The SHA-3 Secure Hash Standard was published by the National Institute
-of Standards and Technology (NIST) in 2015 at
-[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
-SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
-Daemen, M. Peeters and G. Van Assche. The SHA-256 Secure Hash Standard
-was published by NIST in 2002 at
-<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The
-SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
-Daniel J. Bernstein was published in 2012 at
-<https://ia.cr/2012/351>.<sup>\[1\]</sup>
-
-The SHA-256, SHA-3, Keccak, and base64 implementations are based on
-those by the ‘Mbed TLS’ Trusted Firmware Project at
-<https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
-implementation is based on that of Daniele Nicolodi, David Rheinsberg
-and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
-turn based on the reference implementation by Jean-Philippe Aumasson and
-Daniel J. Bernstein released to the public domain at
-<https://github.com/veorq/SipHash>.
-
-### Quick Start
+### Overview
 
 ``` r
 library(secretbase)
@@ -177,10 +160,46 @@ Serialized objects:
 
 ``` r
 base64enc(data.frame())
-#> [1] "WAoAAAADAAQEAAADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
+#> [1] "WAoAAAADAAQEAQADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
 ```
+
+### Installation
+
+Install the latest release from CRAN or R-multiverse:
+
+``` r
+install.packages("secretbase")
+```
+
+The current development version is available from R-universe:
+
+``` r
+install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
+```
+
+### Implementation Notes
+
+The SHA-3 Secure Hash Standard was published by the National Institute
+of Standards and Technology (NIST) in 2015 at
+[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
+SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
+Daemen, M. Peeters and G. Van Assche. The SHA-256 Secure Hash Standard
+was published by NIST in 2002 at
+<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>. The
+SipHash family of pseudo-random functions by Jean-Philippe Aumasson and
+Daniel J. Bernstein was published in 2012 at
+<https://ia.cr/2012/351>.<sup>\[1\]</sup>
+
+The SHA-256, SHA-3, Keccak, and base64 implementations are based on
+those by the ‘Mbed TLS’ Trusted Firmware Project at
+<https://www.trustedfirmware.org/projects/mbed-tls>. The SipHash
+implementation is based on that of Daniele Nicolodi, David Rheinsberg
+and Tom Gundersen at <https://github.com/c-util/c-siphash>, which is in
+turn based on the reference implementation by Jean-Philippe Aumasson and
+Daniel J. Bernstein released to the public domain at
+<https://github.com/veorq/SipHash>.
 
 ### References
 
@@ -193,20 +212,6 @@ a fast short-input PRF”*, Paper 2012/351, Cryptology ePrint Archive,
 methods, with emphasis on GPUs”*, Mathematics and Computers in
 Simulation, Vol. 135, May 2017, pp. 3-17
 [doi:10.1016/j.matcom.2016.05.00](https://doi.org/10.1016/j.matcom.2016.05.005).
-
-### Installation
-
-Install the latest release from CRAN:
-
-``` r
-install.packages("secretbase")
-```
-
-Or the development version from R-universe:
-
-``` r
-install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
-```
 
 ### Links
 
