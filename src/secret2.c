@@ -384,8 +384,7 @@ static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
 
 static void hash_file(mbedtls_sha256_context *ctx, const SEXP x) {
   
-  if (TYPEOF(x) != STRSXP)
-    Rf_error("'file' must be specified as a character string");
+  SB_CHK_STR(x);
   const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
   unsigned char buf[SB_BUF_SIZE];
   FILE *f;
@@ -445,10 +444,11 @@ static void hash_object(mbedtls_sha256_context *ctx, const SEXP x) {
   
 }
 
-static SEXP secretbase_sha256_impl(const SEXP x, SEXP key, const SEXP convert,
+static SEXP secretbase_sha256_impl(const SEXP x, const SEXP key, const SEXP convert,
                                    void (*const hash_func)(mbedtls_sha256_context *, SEXP)) {
   
-  const int conv = LOGICAL(convert)[0];
+  int conv;
+  SB_LOGICAL(conv, convert);
   unsigned char buf[SB_SHA256_SIZE];
   
   if (key == R_NilValue) {

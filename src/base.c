@@ -362,8 +362,9 @@ static nano_buf nano_any_buf(const SEXP x) {
 
 SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   
+  int xc, conv;
+  SB_LOGICAL(conv, convert);
   SEXP out;
-  int xc;
   size_t olen;
   
   nano_buf hash = nano_any_buf(x);
@@ -373,7 +374,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   NANO_FREE(hash);
   CHECK_ERROR(xc, buf);
   
-  if (*(int *) DATAPTR_RO(convert)) {
+  if (conv) {
     out = rawToChar(buf, olen);
   } else {
     out = Rf_allocVector(RAWSXP, olen);
@@ -388,10 +389,11 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
 
 SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   
-  SEXP out;
-  int xc;
-  size_t inlen, olen;
+  int xc, conv;
+  SB_LOGICAL(conv, convert);
   unsigned char *inbuf;
+  SEXP out;
+  size_t inlen, olen;
   
   switch (TYPEOF(x)) {
   case STRSXP:
@@ -413,7 +415,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen);
   CHECK_ERROR(xc, buf);
   
-  switch (*(int *) DATAPTR_RO(convert)) {
+  switch (conv) {
   case 0:
     out = Rf_allocVector(RAWSXP, olen);
     memcpy(SB_DATAPTR(out), buf, olen);

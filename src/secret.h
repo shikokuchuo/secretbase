@@ -27,6 +27,10 @@
 #include <R_ext/Visibility.h>
 
 #define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
+#define SB_LOGICAL(v, x) if (TYPEOF(x) != LGLSXP)              \
+Rf_error("'convert' must be a logical value"); else v = *(int *) DATAPTR_RO(x)
+#define SB_CHK_STR(x) if (TYPEOF(x) != STRSXP)                 \
+Rf_error("'file' must be a character string")
 
 #define SB_R_SERIAL_VER 3
 #define SB_SERIAL_HEADERS 6

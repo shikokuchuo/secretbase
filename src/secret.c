@@ -249,8 +249,7 @@ static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
 
 static void hash_file(mbedtls_sha3_context *ctx, const SEXP x) {
   
-  if (TYPEOF(x) != STRSXP)
-    Rf_error("'file' must be specified as a character string");
+  SB_CHK_STR(x);
   const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
   unsigned char buf[SB_BUF_SIZE];
   FILE *f;
@@ -337,7 +336,8 @@ static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP conve
                                  void (*const hash_func)(mbedtls_sha3_context *, SEXP),
                                  const int offset) {
   
-  const int conv = LOGICAL(convert)[0];
+  int conv;
+  SB_LOGICAL(conv, convert);
   const int bt = nano_integer(bits);
   mbedtls_sha3_id id;
   
