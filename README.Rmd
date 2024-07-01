@@ -16,8 +16,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/secretbase?color=17411d)](https://CRAN.R-project.org/package=secretbase)
-[![R-multiverse status](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcommunity.r-multiverse.org%2Fapi%2Fpackages%2Fsecretbase&query=%24.Version&label=r-multiverse)](https://community.r-multiverse.org/secretbase)
-[![secretbase status badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=e67f53)](https://shikokuchuo.r-universe.dev/secretbase)
+[![R-multiverse status](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcommunity.r-multiverse.org%2Fapi%2Fpackages%2Fsecretbase&query=%24.Version&label=r-multiverse&color=17411d)](https://community.r-multiverse.org/secretbase)
+[![secretbase status badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=ff803d)](https://shikokuchuo.r-universe.dev/secretbase)
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/secretbase/actions)
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)

@@ -198,7 +198,7 @@ static void hash_file(CSipHash *ctx, const SEXP x) {
   size_t cur;
   
   if ((f = fopen(file, "rb")) == NULL)
-    Rf_error("file not found or no read permission at '%s'", file);
+    ERROR_FOPEN(file);
   
   while ((cur = fread(buf, sizeof(char), SB_BUF_SIZE, f))) {
     c_siphash_append(ctx, buf, cur);
@@ -206,7 +206,7 @@ static void hash_file(CSipHash *ctx, const SEXP x) {
   
   if (ferror(f)) {
     fclose(f);
-    Rf_error("file read error at '%s'", file);
+    ERROR_FREAD(file);
   }
   fclose(f);
   
