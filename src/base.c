@@ -338,7 +338,7 @@ static nano_buf nano_any_buf(const SEXP x) {
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
-      const char *s = CHAR(STRING_ELT(x, 0));
+      const char *s = SB_STRING(x);
       NANO_INIT(&buf, (unsigned char *) s, strlen(s));
       goto resume;
     }
@@ -396,8 +396,8 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
-    inbuf = (unsigned char *) CHAR(STRING_ELT(x, 0));
-    inlen = XLENGTH(STRING_ELT(x, 0));
+    inbuf = (unsigned char *) SB_STRING(x);
+    inlen = XLENGTH(*((const SEXP *) DATAPTR_RO(x)));
     break;
   case RAWSXP:
     inbuf = RAW(x);

@@ -27,6 +27,7 @@
 #include <R_ext/Visibility.h>
 
 #define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
+#define SB_STRING(x) CHAR(*((const SEXP *) DATAPTR_RO(x)))
 #define SB_LOGICAL(v, x) if (TYPEOF(x) != LGLSXP)              \
 Rf_error("'convert' must be a logical value"); else v = *(int *) DATAPTR_RO(x)
 #define SB_CHK_STR(x) if (TYPEOF(x) != STRSXP)                 \

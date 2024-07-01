@@ -385,7 +385,7 @@ static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
 static void hash_file(mbedtls_sha256_context *ctx, const SEXP x) {
   
   SB_CHK_STR(x);
-  const char *file = R_ExpandFileName(CHAR(STRING_ELT(x, 0)));
+  const char *file = R_ExpandFileName(SB_STRING(x));
   unsigned char buf[SB_BUF_SIZE];
   FILE *f;
   size_t cur;
@@ -412,7 +412,7 @@ static void hash_object(mbedtls_sha256_context *ctx, const SEXP x) {
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
-      const char *s = CHAR(STRING_ELT(x, 0));
+      const char *s = SB_STRING(x);
       mbedtls_sha256_update(ctx, (uint8_t *) s, strlen(s));
       return;
     }
@@ -470,7 +470,7 @@ static SEXP secretbase_sha256_impl(const SEXP x, const SEXP key, const SEXP conv
     
     switch (TYPEOF(key)) {
     case STRSXP:
-      data = (unsigned char *) (XLENGTH(key) ? CHAR(STRING_ELT(key, 0)) : "");
+      data = (unsigned char *) (XLENGTH(key) ? SB_STRING(key) : "");
       klen = strlen((char *) data);
       break;
     case RAWSXP:
