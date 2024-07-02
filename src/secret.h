@@ -28,9 +28,10 @@
 
 #define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
 #define SB_STRING(x) CHAR(*((const SEXP *) DATAPTR_RO(x)))
-#define SB_LOGICAL(v, x) if (TYPEOF(x) != LGLSXP)              \
-Rf_error("'convert' must be a logical value"); else v = *(int *) DATAPTR_RO(x)
-#define SB_CHK_STR(x) if (TYPEOF(x) != STRSXP)                 \
+#define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
+#define SB_ASSERT_LOGICAL(x) if (TYPEOF(x) != LGLSXP)          \
+Rf_error("'convert' must be a logical value")
+#define SB_ASSERT_STR(x) if (TYPEOF(x) != STRSXP)              \
 Rf_error("'file' must be a character string")
 
 #define SB_R_SERIAL_VER 3
@@ -114,7 +115,7 @@ typedef struct nano_buf_s {
 (x)->len = 0;                                                  \
 (x)->cur = sz
 #define NANO_FREE(x) if (x.len) R_Free(x.buf)
-#define CHECK_ERROR(x, buf) if (x) { R_Free(buf);              \
+#define CHECK_ERROR(x) if (x) { R_Free(buf);                   \
 Rf_error("write buffer insufficient"); }
 #define ERROR_OUT(x) if (x->len) R_Free(x->buf);               \
 Rf_error("serialization exceeds max length of raw vector")

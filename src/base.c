@@ -361,8 +361,9 @@ static nano_buf nano_any_buf(const SEXP x) {
 
 SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   
-  int xc, conv;
-  SB_LOGICAL(conv, convert);
+  SB_ASSERT_LOGICAL(convert);
+  const int conv = SB_LOGICAL(convert);
+  int xc;
   SEXP out;
   size_t olen;
   
@@ -371,7 +372,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur);
   NANO_FREE(hash);
-  CHECK_ERROR(xc, buf);
+  CHECK_ERROR(xc);
   
   if (conv) {
     out = rawToChar(buf, olen);
@@ -388,8 +389,9 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
 
 SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   
-  int xc, conv;
-  SB_LOGICAL(conv, convert);
+  SB_ASSERT_LOGICAL(convert);
+  const int conv = SB_LOGICAL(convert);
+  int xc;
   unsigned char *inbuf;
   SEXP out;
   size_t inlen, olen;
@@ -412,7 +414,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
     Rf_error("input is not valid base64");
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen);
-  CHECK_ERROR(xc, buf);
+  CHECK_ERROR(xc);
   
   switch (conv) {
   case 0:

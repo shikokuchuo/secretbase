@@ -191,7 +191,7 @@ static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
 
 static void hash_file(CSipHash *ctx, const SEXP x) {
   
-  SB_CHK_STR(x);
+  SB_ASSERT_STR(x);
   const char *file = R_ExpandFileName(SB_STRING(x));
   unsigned char buf[SB_BUF_SIZE];
   FILE *f;
@@ -252,8 +252,8 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
 static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP convert,
                                     void (*const hash_func)(CSipHash *, SEXP)) {
   
-  int conv;
-  SB_LOGICAL(conv, convert);
+  SB_ASSERT_LOGICAL(convert);
+  const int conv = SB_LOGICAL(convert);
   uint64_t hash;
   
   CSipHash ctx;
