@@ -1,48 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/404.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/base64dec.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/base64enc.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/keccak.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/secretbase-package.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/sha256.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/sha3.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/shake256.html</loc>
-  </url>
-  <url>
-    <loc>https://shikokuchuo.net/secretbase/reference/siphash13.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://shikokuchuo.net/secretbase/404.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/LICENSE.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/authors.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/index.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/news/index.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/base64dec.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/base64enc.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/index.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/keccak.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/secretbase-package.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/sha256.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/sha3.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/shake256.html</loc></url>
+<url><loc>https://shikokuchuo.net/secretbase/reference/siphash13.html</loc></url>
 </urlset>
+
