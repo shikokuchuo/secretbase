@@ -287,7 +287,7 @@ static inline void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
   
 }
 
-void nano_serialize_xdr(nano_buf *buf, const SEXP object) {
+void nano_serialize(nano_buf *buf, const SEXP object) {
   
   NANO_ALLOC(buf, SB_INIT_BUFSIZE);
   
@@ -320,7 +320,7 @@ SEXP nano_unserialize(unsigned char *buf, const size_t sz) {
   R_InitInPStream(
     &input_stream,
     (R_pstream_data_t) &nbuf,
-    R_pstream_any_format,
+    R_pstream_xdr_format,
     NULL,
     nano_read_bytes,
     NULL,
@@ -350,7 +350,7 @@ static nano_buf nano_any_buf(const SEXP x) {
     }
   }
   
-  nano_serialize_xdr(&buf, x);
+  nano_serialize(&buf, x);
   
   resume:
   return buf;
