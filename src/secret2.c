@@ -458,7 +458,7 @@ static SEXP secretbase_sha256_impl(const SEXP x, const SEXP key, const SEXP conv
     mbedtls_sha256_starts(&ctx);
     hash_func(&ctx, x);
     mbedtls_sha256_finish(&ctx, buf);
-    clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
+    sb_clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
     
   } else {
     
@@ -506,11 +506,11 @@ static SEXP secretbase_sha256_impl(const SEXP x, const SEXP key, const SEXP conv
     mbedtls_sha256_update(&ctx, opad, SB_SHA256_BLK);
     mbedtls_sha256_update(&ctx, buf, SB_SHA256_SIZE);
     mbedtls_sha256_finish(&ctx, buf);
-    clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
+    sb_clear_buffer(&ctx, sizeof(mbedtls_sha256_context));
 
   }
   
-  return hash_to_sexp(buf, SB_SHA256_SIZE, conv);
+  return sb_hash_sexp(buf, SB_SHA256_SIZE, conv);
   
 }
 

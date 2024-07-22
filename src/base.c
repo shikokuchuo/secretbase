@@ -259,7 +259,7 @@ static SEXP rawToChar(const unsigned char *buf, const size_t sz) {
   
 }
 
-static inline void nano_read_bytes(R_inpstream_t stream, void *dst, int len) {
+static inline void sb_read_bytes(R_inpstream_t stream, void *dst, int len) {
   
   nano_buf *buf = (nano_buf *) stream->data;
   if (buf->cur + len > buf->len) Rf_error("unserialization error");
@@ -269,7 +269,7 @@ static inline void nano_read_bytes(R_inpstream_t stream, void *dst, int len) {
   
 }
 
-static inline void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
+static inline void sb_write_bytes(R_outpstream_t stream, void *src, int len) {
   
   nano_buf *buf = (nano_buf *) stream->data;
   
@@ -287,7 +287,7 @@ static inline void nano_write_bytes(R_outpstream_t stream, void *src, int len) {
   
 }
 
-void nano_serialize(nano_buf *buf, const SEXP object) {
+static void sb_serialize(nano_buf *buf, const SEXP object) {
   
   NANO_ALLOC(buf, SB_INIT_BUFSIZE);
   
@@ -299,7 +299,7 @@ void nano_serialize(nano_buf *buf, const SEXP object) {
     R_pstream_xdr_format,
     SB_SERIAL_VER,
     NULL,
-    nano_write_bytes,
+    sb_write_bytes,
     NULL,
     R_NilValue
   );
@@ -308,7 +308,7 @@ void nano_serialize(nano_buf *buf, const SEXP object) {
   
 }
 
-SEXP nano_unserialize(unsigned char *buf, const size_t sz) {
+static SEXP sb_unserialize(unsigned char *buf, const size_t sz) {
 
   nano_buf nbuf;
   struct R_inpstream_st input_stream;
@@ -322,7 +322,7 @@ SEXP nano_unserialize(unsigned char *buf, const size_t sz) {
     (R_pstream_data_t) &nbuf,
     R_pstream_xdr_format,
     NULL,
-    nano_read_bytes,
+    sb_read_bytes,
     NULL,
     R_NilValue
   );
@@ -331,7 +331,7 @@ SEXP nano_unserialize(unsigned char *buf, const size_t sz) {
   
 }
 
-static nano_buf nano_any_buf(const SEXP x) {
+static nano_buf sb_any_buf(const SEXP x) {
   
   nano_buf buf;
   
@@ -350,7 +350,7 @@ static nano_buf nano_any_buf(const SEXP x) {
     }
   }
   
-  nano_serialize(&buf, x);
+  sb_serialize(&buf, x);
   
   resume:
   return buf;
@@ -367,7 +367,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   SEXP out;
   size_t olen;
   
-  nano_buf hash = nano_any_buf(x);
+  nano_buf hash = sb_any_buf(x);
   xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur);
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur);
@@ -425,7 +425,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
     out = rawToChar(buf, olen);
     break;
   default:
-    out = nano_unserialize(buf, olen);
+    out = sb_unserialize(buf, olen);
   }
   
   R_Free(buf);

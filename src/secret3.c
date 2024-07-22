@@ -282,7 +282,7 @@ static SEXP secretbase_siphash_impl(const SEXP x, const SEXP key, const SEXP con
   hash_func(&ctx, x);
   hash = c_siphash_finalize(&ctx);
   
-  return hash_to_sexp((unsigned char *) &hash, SB_SIPH_SIZE, conv);
+  return sb_hash_sexp((unsigned char *) &hash, SB_SIPH_SIZE, conv);
   
 }
 

@@ -33,19 +33,6 @@ Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
 
-The SHA-3 Secure Hash Standard was published by the National Institute
-of Standards and Technology (NIST) in 2015 at
-[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
-SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
-Daemen, M. Peeters and G. Van Assche.
-
-The SHA-256 Secure Hash Standard was published by NIST in 2002 at
-<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
-
-The SipHash family of pseudo-random functions by Jean-Philippe Aumasson
-and Daniel J. Bernstein was published in 2012 at
-<https://ia.cr/2012/351>.<sup>\[1\]</sup>
-
 ### Overview
 
 ``` r
@@ -78,7 +65,7 @@ All other objects are stream hashed using R serialization
 
 - memory-efficient as performed without allocation of the serialized
   object
-- portable as always uses R serialization version 3 big-endian
+- portable as always uses R serialization version 3, big-endian
   representation, skipping headers (which contain R version and native
   encoding information)
 
@@ -115,7 +102,7 @@ For use in parallel computing, this is a valid method for reducing to a
 negligible probability that RNGs in each process may overlap. This may
 be especially suitable when first-best alternatives such as using
 recursive streams are too expensive or unable to preserve
-reproducibility. <sup>\[2\]</sup>
+reproducibility. <sup>\[1\]</sup>
 
 #### Keccak
 
@@ -141,8 +128,7 @@ sha256("secret base", key = "秘密の基地の中")
 #### SipHash
 
 SipHash-1-3 is optimized for performance. <br /> Pass a character string
-or raw vector to ‘key’ - up to 16 bytes (128 bits) of the key data is
-used:
+or raw vector of up to 16 bytes (128 bits) to ‘key’:
 
 ``` r
 siphash13("secret base", key = charToRaw("秘密の基地の中"))
@@ -192,11 +178,24 @@ The current development version is available from R-universe:
 install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 ```
 
-### Implementation Notes
+### Implementation
+
+The SHA-3 Secure Hash Standard was published by the National Institute
+of Standards and Technology (NIST) in 2015 at
+[doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202).
+SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J.
+Daemen, M. Peeters and G. Van Assche.
+
+The SHA-256 Secure Hash Standard was published by NIST in 2002 at
+<https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
 
 The SHA-256, SHA-3, Keccak, and base64 implementations are based on
 those by the ‘Mbed TLS’ Trusted Firmware Project at
 <https://www.trustedfirmware.org/projects/mbed-tls>.
+
+The SipHash family of pseudo-random functions by Jean-Philippe Aumasson
+and Daniel J. Bernstein was published in 2012 at
+<https://ia.cr/2012/351>. <sup>\[2\]</sup>
 
 The SipHash implementation is based on that of Daniele Nicolodi, David
 Rheinsberg and Tom Gundersen at <https://github.com/c-util/c-siphash>,
@@ -206,15 +205,15 @@ Aumasson and Daniel J. Bernstein released to the public domain at
 
 ### References
 
-\[1\] Jean-Philippe Aumasson and Daniel J. Bernstein (2012), *“SipHash:
-a fast short-input PRF”*, Paper 2012/351, Cryptology ePrint Archive,
-<https://ia.cr/2012/351>.
-
-\[2\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
+\[1\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
 (2017), *“Random numbers for parallel computers: Requirements and
 methods, with emphasis on GPUs”*, Mathematics and Computers in
 Simulation, Vol. 135, May 2017, pp. 3-17
 [doi:10.1016/j.matcom.2016.05.00](https://doi.org/10.1016/j.matcom.2016.05.005).
+
+\[2\] Jean-Philippe Aumasson and Daniel J. Bernstein (2012), *“SipHash:
+a fast short-input PRF”*, Paper 2012/351, Cryptology ePrint Archive,
+<https://ia.cr/2012/351>.
 
 ### Links
 

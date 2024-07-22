@@ -122,8 +122,8 @@ Rf_error("serialization exceeds max length of raw vector")
 #define ERROR_FOPEN(x) Rf_error("file not found or no read permission at '%s'", x)
 #define ERROR_FREAD(x) Rf_error("file read error at '%s'", x)
 
-void clear_buffer(void *, size_t);
-SEXP hash_to_sexp(unsigned char *, size_t, int);
+void sb_clear_buffer(void *, size_t);
+SEXP sb_hash_sexp(unsigned char *, size_t, int);
 
 SEXP secretbase_base64enc(SEXP, SEXP);
 SEXP secretbase_base64dec(SEXP, SEXP);
