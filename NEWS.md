@@ -1,3 +1,5 @@
+# secretbase 1.0.1.9000 (development)
+
 # secretbase 1.0.1
 
 * Improved error message if argument 'convert' is not of logical type.
