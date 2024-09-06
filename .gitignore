@@ -4,3 +4,5 @@
 .Ruserdata
 docs
 inst/doc
+compile_commands.json
+.cache
