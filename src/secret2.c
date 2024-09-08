@@ -411,14 +411,14 @@ static void hash_object(mbedtls_sha256_context *ctx, const SEXP x) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
-    if (XLENGTH(x) == 1 && ATTRIB(x) == R_NilValue) {
+    if (XLENGTH(x) == 1 && !ANY_ATTRIB(x)) {
       const char *s = SB_STRING(x);
       mbedtls_sha256_update(ctx, (uint8_t *) s, strlen(s));
       return;
     }
     break;
   case RAWSXP:
-    if (ATTRIB(x) == R_NilValue) {
+    if (!ANY_ATTRIB(x)) {
       mbedtls_sha256_update(ctx, (uint8_t *) DATAPTR_RO(x), (size_t) XLENGTH(x));
       return;
     }

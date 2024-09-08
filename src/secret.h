@@ -30,6 +30,10 @@
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 
+#ifndef ANY_ATTRIB
+#define ANY_ATTRIB(x) (ATTRIB(x) != R_NilValue)
+#endif
+
 #define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
 #define SB_STRING(x) CHAR(*((const SEXP *) DATAPTR_RO(x)))
 #define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
