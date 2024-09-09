@@ -22,11 +22,11 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=ff803d)](https
     \  /  base /
      \/_______/
 
-Fast and memory-efficient streaming hash functions and base64 encoding
-and decoding.
+Fast and memory-efficient streaming hash functions and base64 encoding /
+decoding.
 
-Performs direct hashing of strings and raw vectors. Stream hashes files
-potentially larger than memory, as well as in-memory objects through R’s
+Hashes strings and raw vectors directly. Stream hashes files potentially
+larger than memory, as well as in-memory objects through R’s
 serialization mechanism.
 
 Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
@@ -56,8 +56,7 @@ sha3("秘密の基地の中", bits = 512L)
 
 #### Hash strings and raw vectors
 
-Character strings and raw vectors are hashed directly (as per the
-above).
+Character strings and raw vectors are hashed directly (as above).
 
 #### Stream hash R objects
 
@@ -118,7 +117,7 @@ sha256("secret base")
 #> [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"
 ```
 
-For a SHA-256 HMAC, pass a character string or raw vector to ‘key’:
+For SHA-256 HMAC, pass a character string or raw vector to ‘key’:
 
 ``` r
 sha256("secret base", key = "秘密の基地の中")

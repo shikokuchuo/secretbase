@@ -1,6 +1,6 @@
-# secretbase 1.0.1.9000 (development)
+# secretbase 1.0.2
 
-* Improves performance in most situations by optimizing buffer sizes, especially when hashing large files.
+* Improves hash performance in most situations, especially for large files, by optimizing buffer sizes.
 
 # secretbase 1.0.1
 

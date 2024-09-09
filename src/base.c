@@ -297,7 +297,7 @@ static void sb_serialize(nano_buf *buf, const SEXP object) {
     &output_stream,
     (R_pstream_data_t) buf,
     R_pstream_xdr_format,
-    SB_SERIAL_VER,
+    SB_R_SERIAL_VER,
     NULL,
     sb_write_bytes,
     NULL,

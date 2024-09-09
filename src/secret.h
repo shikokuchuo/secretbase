@@ -30,32 +30,11 @@
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 
-#ifndef ANY_ATTRIB
-#define ANY_ATTRIB(x) (ATTRIB(x) != R_NilValue)
-#endif
-
-#define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
-#define SB_STRING(x) CHAR(*((const SEXP *) DATAPTR_RO(x)))
-#define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
-#define SB_ASSERT_LOGICAL(x) if (TYPEOF(x) != LGLSXP)          \
-Rf_error("'convert' must be a logical value")
-#define SB_ASSERT_STR(x) if (TYPEOF(x) != STRSXP)              \
-Rf_error("'file' must be a character string")
-
-#define SB_R_SERIAL_VER 3
-#define SB_SERIAL_HEADERS 6
-#define SB_BUF_SIZE 65536
-
 #ifdef WORDS_BIGENDIAN
 # define MBEDTLS_IS_BIG_ENDIAN 1
 #else
 # define MBEDTLS_IS_BIG_ENDIAN 0
 #endif
-
-#define SB_SHA256_SIZE 32
-#define SB_SHA256_BLK 64
-#define SB_SIPH_SIZE 8
-#define SB_SKEY_SIZE 16
 
 #define MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL -1
 #define MBEDTLS_ERR_BASE64_INVALID_CHARACTER -2
@@ -111,9 +90,26 @@ typedef struct nano_buf_s {
   size_t cur;
 } nano_buf;
 
+#define SB_SHA256_SIZE 32
+#define SB_SHA256_BLK 64
+#define SB_SIPH_SIZE 8
+#define SB_SKEY_SIZE 16
+#define SB_R_SERIAL_VER 3
+#define SB_SERIAL_HEADERS 6
+#define SB_BUF_SIZE 65536
 #define SB_INIT_BUFSIZE 4096
-#define SB_SERIAL_VER 3
 #define SB_SERIAL_THR 134217728
+
+#ifndef ANY_ATTRIB
+#define ANY_ATTRIB(x) (ATTRIB(x) != R_NilValue)
+#endif
+#define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
+#define SB_STRING(x) CHAR(*((const SEXP *) DATAPTR_RO(x)))
+#define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
+#define SB_ASSERT_LOGICAL(x) if (TYPEOF(x) != LGLSXP)          \
+Rf_error("'convert' must be a logical value")
+#define SB_ASSERT_STR(x) if (TYPEOF(x) != STRSXP)              \
+Rf_error("'file' must be a character string")
 #define NANO_ALLOC(x, sz)                                      \
 (x)->buf = R_Calloc(sz, unsigned char);                        \
 (x)->len = sz;                                                 \
@@ -130,8 +126,8 @@ Rf_error("serialization exceeds max length of raw vector")
 #define ERROR_FOPEN(x) Rf_error("file not found or no read permission at '%s'", x)
 #define ERROR_FREAD(x) Rf_error("file read error at '%s'", x)
 
-void sb_clear_buffer(void *, size_t);
-SEXP sb_hash_sexp(unsigned char *, size_t, int);
+void sb_clear_buffer(void *, const size_t);
+SEXP sb_hash_sexp(unsigned char *, const size_t, const int);
 
 SEXP secretbase_base64enc(SEXP, SEXP);
 SEXP secretbase_base64dec(SEXP, SEXP);

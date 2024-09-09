@@ -231,7 +231,7 @@ static inline int sb_integer(SEXP x) {
 static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
 #endif
 
-inline void sb_clear_buffer(void *buf, size_t sz) {
+inline void sb_clear_buffer(void *buf, const size_t sz) {
 #ifdef MBEDTLS_CT_ASM
   memset(buf, 0, sz);
   asm volatile ("" ::: "memory");
@@ -309,7 +309,7 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
   
 }
 
-SEXP sb_hash_sexp(unsigned char *buf, size_t sz, int conv) {
+SEXP sb_hash_sexp(unsigned char *buf, const size_t sz, const int conv) {
   
   SEXP out;
   if (conv == 0) {
