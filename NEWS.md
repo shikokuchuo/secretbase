@@ -1,5 +1,7 @@
 # secretbase 1.0.1.9000 (development)
 
+* Improves performance in most situations by optimizing buffer sizes, especially when hashing large files.
+
 # secretbase 1.0.1
 
 * Improved error message if argument 'convert' is not of logical type.

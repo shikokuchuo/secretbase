@@ -44,7 +44,7 @@ Rf_error("'file' must be a character string")
 
 #define SB_R_SERIAL_VER 3
 #define SB_SERIAL_HEADERS 6
-#define SB_BUF_SIZE 4096
+#define SB_BUF_SIZE 65536
 
 #ifdef WORDS_BIGENDIAN
 # define MBEDTLS_IS_BIG_ENDIAN 1
@@ -111,7 +111,7 @@ typedef struct nano_buf_s {
   size_t cur;
 } nano_buf;
 
-#define SB_INIT_BUFSIZE 8192
+#define SB_INIT_BUFSIZE 4096
 #define SB_SERIAL_VER 3
 #define SB_SERIAL_THR 134217728
 #define NANO_ALLOC(x, sz)                                      \
