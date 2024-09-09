@@ -13,8 +13,8 @@
 <link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Cryptographic Hash, Extendable-Output and Base64 Functions">
-<meta name="description" content="Fast and memory-efficient streaming hash functions and base64 encoding and decoding. Performs direct hashing of strings and raw vectors. Stream hashes files potentially larger than memory, as well as in-memory objects through Rs serialization mechanism. Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and SipHash' pseudo-random function.">
-<meta property="og:description" content="Fast and memory-efficient streaming hash functions and base64 encoding and decoding. Performs direct hashing of strings and raw vectors. Stream hashes files potentially larger than memory, as well as in-memory objects through Rs serialization mechanism. Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and SipHash' pseudo-random function.">
+<meta name="description" content="Fast and memory-efficient streaming hash functions and base64 encoding / decoding. Hashes strings and raw vectors directly. Stream hashes files potentially larger than memory, as well as in-memory objects through Rs serialization mechanism. Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and SipHash' pseudo-random function.">
+<meta property="og:description" content="Fast and memory-efficient streaming hash functions and base64 encoding / decoding. Hashes strings and raw vectors directly. Stream hashes files potentially larger than memory, as well as in-memory objects through Rs serialization mechanism. Implementations include the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), and SipHash' pseudo-random function.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="index.html">secretbase</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,8 +67,8 @@
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="sc">/</span>  \ ret   \</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>\  <span class="sc">/</span>  base <span class="sc">/</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a> \<span class="sc">/</span>_______<span class="sc">/</span></span></code></pre></div>
-<p>Fast and memory-efficient streaming hash functions and base64 encoding and decoding.</p>
-<p>Performs direct hashing of strings and raw vectors. Stream hashes files potentially larger than memory, as well as in-memory objects through R’s serialization mechanism.</p>
+<p>Fast and memory-efficient streaming hash functions and base64 encoding / decoding.</p>
+<p>Hashes strings and raw vectors directly. Stream hashes files potentially larger than memory, as well as in-memory objects through R’s serialization mechanism.</p>
 <p>Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’ pseudo-random function.</p>
 <div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
@@ -91,7 +91,7 @@
 <div class="section level4">
 <h4 id="hash-strings-and-raw-vectors">Hash strings and raw vectors<a class="anchor" aria-label="anchor" href="#hash-strings-and-raw-vectors"></a>
 </h4>
-<p>Character strings and raw vectors are hashed directly (as per the above).</p>
+<p>Character strings and raw vectors are hashed directly (as above).</p>
 </div>
 <div class="section level4">
 <h4 id="stream-hash-r-objects">Stream hash R objects<a class="anchor" aria-label="anchor" href="#stream-hash-r-objects"></a>
@@ -138,7 +138,7 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"</span></span></code></pre></div>
-<p>For a SHA-256 HMAC, pass a character string or raw vector to ‘key’:</p>
+<p>For SHA-256 HMAC, pass a character string or raw vector to ‘key’:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"</span></span></code></pre></div>
