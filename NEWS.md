@@ -1,3 +1,5 @@
+# secretbase 1.0.2.9000 (development)
+
 # secretbase 1.0.2
 
 * Improves hash performance in most situations, especially for large files, by optimizing buffer sizes.
