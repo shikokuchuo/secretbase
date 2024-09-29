@@ -340,19 +340,19 @@ static nano_buf sb_any_buf(const SEXP x) {
     if (XLENGTH(x) == 1 && !ANY_ATTRIB(x)) {
       const char *s = SB_STRING(x);
       NANO_INIT(&buf, (unsigned char *) s, strlen(s));
-      goto resume;
+      break;
     }
-    break;
+  if (0) {
   case RAWSXP:
     if (!ANY_ATTRIB(x)) {
       NANO_INIT(&buf, (unsigned char *) DATAPTR_RO(x), XLENGTH(x));
-      goto resume;
+      break;
     }
   }
+  default:
+    sb_serialize(&buf, x);
+  }
   
-  sb_serialize(&buf, x);
-  
-  resume:
   return buf;
   
 }
@@ -397,9 +397,10 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   size_t inlen, olen;
   
   switch (TYPEOF(x)) {
-  case STRSXP:
-    inbuf = (unsigned char *) SB_STRING(x);
-    inlen = XLENGTH(*((const SEXP *) DATAPTR_RO(x)));
+  case STRSXP: ;
+    const char *str = SB_STRING(x);
+    inbuf = (unsigned char *) str;
+    inlen = strlen(str);
     break;
   case RAWSXP:
     inbuf = RAW(x);
