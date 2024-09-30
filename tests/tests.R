@@ -1,9 +1,10 @@
-# minitest - a minimal testing framework ---------------------------------------
+# minitest - a minimal testing framework v0.0.1 --------------------------------
 test_library <- function(package) library(package = package, character.only = TRUE)
 test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
 test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
-test_error <- function(x, containing = "") inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("expected error message containing '", containing, "' was not generated")
+test_error <- function(x, containing = "") invisible(inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("expected error message containing '", containing, "' was not generated"))
 # ------------------------------------------------------------------------------
+
 test_library("secretbase")
 # Known SHA hashes from NIST:
 test_equal(sha3("", 224), "6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7")
@@ -126,7 +127,7 @@ test_type("character", base64enc(c("secret", "base")))
 test_type("raw", base64enc(data.frame(), convert = FALSE))
 test_type("raw", base64dec(base64enc(as.raw(c(1L, 2L)), convert = FALSE), convert = FALSE))
 test_type("integer", base64dec(base64enc(c(1L, 2L)), convert = NA))
-test_type("raw", base64dec(base64enc(data.frame())))
+test_type("raw", suppressWarnings(base64dec(base64enc(data.frame()))))
 test_error(base64enc("", convert = 0), "'convert' must be a logical value")
 test_error(base64dec("", convert = 1L), "'convert' must be a logical value")
 test_error(base64dec("__"), "input is not valid base64")

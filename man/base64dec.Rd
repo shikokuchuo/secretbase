@@ -15,7 +15,8 @@ unserialize back to the original object.}
 }
 \value{
 A character string, raw vector, or other object depending on the
-    value of \sQuote{convert}.
+    value of \sQuote{convert}. If conversion to a character string fails,
+    a raw vector will be returned instead (along with a warning).
 }
 \description{
 Decodes a character string, raw vector or other object from base64 encoding.
