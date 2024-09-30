@@ -1,9 +1,10 @@
-library(secretbase)
-test_that <- function(x, f) invisible(f(x) || stop("expectation is not TRUE"))
-test_equal <- function(x, y) invisible(x == y || stop("generated hash differs from known value"))
-test_error <- function(x, e = "")
-  invisible(grepl(e, tryCatch(x, error = identity)[["message"]], fixed = TRUE) || stop("expected error message '", e, "' not generated"))
-
+# minitest - a minimal testing framework ---------------------------------------
+test_library <- function(package) library(package = package, character.only = TRUE)
+test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
+test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
+test_error <- function(x, containing = "") inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("expected error message containing '", containing, "' was not generated")
+# ------------------------------------------------------------------------------
+test_library("secretbase")
 # Known SHA hashes from NIST:
 test_equal(sha3("", 224), "6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7")
 test_equal(sha3("", 256), "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a")
@@ -15,7 +16,7 @@ test_equal(sha3("secret base"), "a721d57570e7ce366adee2fccbe9770723c6e3622549c31
 test_equal(sha3("secret base", bits = 224), "5511b3469d3f1a87b62ce8f0d2dc9510ec5e4547579b8afb32052f99")
 test_equal(sha3("secret base", bits = 384L), "79e54f865df004dde10dc2f61baf47eb4637c68d87a2baeb7fe6bc0ac983c2154835ec7deb49b16c246c0dc1d43e32f9")
 test_equal(sha3("secret base", bits = "512"), "31076b4690961320a761be0951eeaa9efd0c75c37137a2a50877cbebb8afcc6d7927c41a120ae8fa73fdce8fff726fcbc51d448d020240bc7455963a16e639b1")
-test_that(sha3("secret base", convert = FALSE), is.raw)
+test_type("raw", sha3("secret base", convert = FALSE))
 # Streaming serialization tests:
 test_equal(sha3(data.frame(a = 1, b = 2)), "05d4308e79d029b4af5604739ecc6c4efa1f602a23add0ed2d247b7407d4832f")
 test_equal(sha3(c("secret", "base")), "d906024c71828a10e28865a80f5e81d2cb5cd74067d44852d7039813ba62b0b6")
@@ -38,10 +39,10 @@ if (.Platform[["OS.type"]] == "unix") test_error(sha3(file = "~/"), "file read e
 # SHAKE256 tests:
 test_equal(shake256("secret base"), "995ebac18dbfeb170606cbbc0f2accce85db4db0dcf4fbe4d3efaf8ccf4e0a94")
 test_equal(shake256("secret base", bits = 32, convert = NA), -1044750695L)
-test_that(shake256("secret base", convert = FALSE), is.raw)
+test_type("raw", shake256("secret base", convert = FALSE))
 test_equal(shake256("secret base", bits = 32), "995ebac1")
 test_equal(shake256(shake256("secret base", bits = 32, convert = FALSE), bits = 32), "4d872090")
-test_that(shake256(rnorm(1e5), bits = 8196), is.character)
+test_type("character", shake256(rnorm(1e5), bits = 8196))
 test_equal(shake256(`class<-`(shake256(character(), bits = 192, convert = FALSE), "hash"), bits = "32", convert = NA), -111175135L)
 hash_func <- function(file, string) {
   on.exit(unlink(file))
@@ -57,7 +58,7 @@ test_equal(keccak("secret base"), "3fc6092bbec5a434a9933b486a89fa466c1ca013d1e37
 test_equal(keccak("secret base", bits = 224), "1ddaa7776f138ff5bba898ca7530410a52d09da412c4276bda0682a8")
 test_equal(keccak("secret base", bits = 384L), "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203")
 test_equal(keccak("secret base", bits = "512"), "38297e891d9118e4cf6ff5ba6d6de8c2c3bfa790b425848da7b1d8dffcb4a6a3ca2e32ca0a66f36ce2882786ce2299642de8ffd3bae3b51a1ee145fad555a9d8")
-test_that(keccak("secret base", convert = FALSE), is.raw)
+test_type("raw", keccak("secret base", convert = FALSE))
 test_error(keccak("secret base", bits = 6), "'bits' must be 224, 256, 384 or 512")
 hash_func <- function(file, string) {
   on.exit(unlink(file))
@@ -121,11 +122,11 @@ test_error(hash_func("", ""), "file not found or no read permission")
 if (.Platform[["OS.type"]] == "unix") test_error(siphash13(file = "~/"), "file read error")
 test_equal(siphash13(paste(1:888, collapse = "")), "8337f50b05209c40")
 # Base64 tests:
-test_that(base64enc(c("secret", "base")), is.character)
-test_that(base64enc(data.frame(), convert = FALSE), is.raw)
-test_that(base64dec(base64enc(as.raw(c(1L, 2L)), convert = FALSE), convert = FALSE), is.raw)
-test_that(base64dec(base64enc(c(1L, 2L)), convert = NA), is.integer)
-test_that(base64dec(base64enc(data.frame())), is.raw)
+test_type("character", base64enc(c("secret", "base")))
+test_type("raw", base64enc(data.frame(), convert = FALSE))
+test_type("raw", base64dec(base64enc(as.raw(c(1L, 2L)), convert = FALSE), convert = FALSE))
+test_type("integer", base64dec(base64enc(c(1L, 2L)), convert = NA))
+test_type("raw", base64dec(base64enc(data.frame())))
 test_error(base64enc("", convert = 0), "'convert' must be a logical value")
 test_error(base64dec("", convert = 1L), "'convert' must be a logical value")
 test_error(base64dec("__"), "input is not valid base64")
