@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="index.html">secretbase</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
 <div class="section level4">
 <h4 id="sha-3">SHA-3<a class="anchor" aria-label="anchor" href="#sha-3"></a>
 </h4>
-<p>For the SHA-3 cryptographic hash algorithm, specify <code>bits</code> as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>:</p>
+<p>For the SHA-3 cryptographic hash algorithm, specify <code>bits</code> as one of <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span>
@@ -119,7 +119,7 @@
 <div class="section level4">
 <h4 id="hash-to-integer--shake256-xof">Hash to integer / SHAKE256 XOF<a class="anchor" aria-label="anchor" href="#hash-to-integer--shake256-xof"></a>
 </h4>
-<p>May be used as deterministic random seeds for R’s pseudo random number generators (RNGs). <br> Specify <code>convert = NA</code> (and <code>bits = 32</code> for a single integer value):</p>
+<p>May be used as deterministic random seeds for R’s pseudo random number generators (RNGs). <br> Specify <code>convert = NA</code> and <code>bits = 32</code> for a single integer value:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/shake256.html">shake256</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
