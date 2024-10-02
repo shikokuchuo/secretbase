@@ -78,7 +78,7 @@
 <div class="section level4">
 <h4 id="sha-3">SHA-3<a class="anchor" aria-label="anchor" href="#sha-3"></a>
 </h4>
-<p>For the SHA-3 cryptographic hash algorithm, specify ‘bits’ as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>:</p>
+<p>For the SHA-3 cryptographic hash algorithm, specify <code>bits</code> as <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span>
@@ -119,7 +119,7 @@
 <div class="section level4">
 <h4 id="hash-to-integer--shake256-xof">Hash to integer / SHAKE256 XOF<a class="anchor" aria-label="anchor" href="#hash-to-integer--shake256-xof"></a>
 </h4>
-<p>May be used as deterministic random seeds for R’s pseudo random number generators (RNGs). <br> Specify ‘convert’ as <code>NA</code> (and ‘bits’ as <code>32</code> for a single integer value):</p>
+<p>May be used as deterministic random seeds for R’s pseudo random number generators (RNGs). <br> Specify <code>convert = NA</code> (and <code>bits = 32</code> for a single integer value):</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/shake256.html">shake256</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
@@ -138,7 +138,7 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"</span></span></code></pre></div>
-<p>For SHA-256 HMAC, pass a character string or raw vector to ‘key’:</p>
+<p>For SHA-256 HMAC, pass to <code>key</code> a character string or raw vector:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"</span></span></code></pre></div>
@@ -146,7 +146,7 @@
 <div class="section level4">
 <h4 id="siphash">SipHash<a class="anchor" aria-label="anchor" href="#siphash"></a>
 </h4>
-<p>SipHash-1-3 is optimized for performance. <br> Pass a character string or raw vector of up to 16 bytes (128 bits) to ‘key’:</p>
+<p>SipHash-1-3 is optimized for performance. <br> Pass to <code>key</code> a character string or raw vector of up to 16 bytes (128 bits):</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a1f0a751892cc7dd"</span></span></code></pre></div>
