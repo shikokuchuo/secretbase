@@ -45,7 +45,7 @@ library(secretbase)
 
 #### SHA-3
  
-For the SHA-3 cryptographic hash algorithm, specify 'bits' as `224`, `256`, `384` or `512`:
+For the SHA-3 cryptographic hash algorithm, specify `bits` as `224`, `256`, `384` or `512`:
 
 ```{r sha3}
 sha3("secret base")
@@ -83,7 +83,7 @@ unlink(file)
 #### Hash to integer / SHAKE256 XOF
 
 May be used as deterministic random seeds for R's pseudo random number generators (RNGs). <br />
-Specify 'convert' as `NA` (and 'bits' as `32` for a single integer value):
+Specify `convert = NA` (and `bits = 32` for a single integer value):
 ```{r integer}
 shake256("秘密の基地の中", bits = 32L, convert = NA)
 ```
@@ -102,7 +102,7 @@ keccak("secret base", bits = 384L)
 sha256("secret base")
 ```
 
-For SHA-256 HMAC, pass a character string or raw vector to 'key':
+For SHA-256 HMAC, pass to `key` a character string or raw vector:
 ```{r hmac}
 sha256("secret base", key = "秘密の基地の中")
 ```
@@ -110,7 +110,7 @@ sha256("secret base", key = "秘密の基地の中")
 #### SipHash
 
 SipHash-1-3 is optimized for performance. <br />
-Pass a character string or raw vector of up to 16 bytes (128 bits) to 'key':
+Pass to `key` a character string or raw vector of up to 16 bytes (128 bits):
 ```{r siphash}
 siphash13("secret base", key = charToRaw("秘密の基地の中"))
 ```

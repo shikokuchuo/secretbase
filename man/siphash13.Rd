@@ -8,24 +8,26 @@ siphash13(x, key = NULL, convert = TRUE, file)
 }
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
-attributes) is hashed 'as is'. All other objects are stream hashed using
-R serialization (but without allocation of the serialized object).}
+attributes) is hashed \sQuote{as is}. All other objects are stream hashed
+using R serialization (but without allocation of the serialized object).}
 
 \item{key}{[default NULL] a character string or raw vector comprising the 16
 byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
 longer vector is supplied, only the first 16 bytes are used, and if
-shorter, padded with trailing '0'. Note: for character vectors only the
+shorter, padded with trailing '0'. Note: for character vectors, only the
 first element is used.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
 vector, or if NA, a vector of (32-bit) integer values.}
 
-\item{file}{character file name / path. If specified, 'x' is ignored. The
-file is stream hashed, thus capable of handling files larger than memory.}
+\item{file}{character file name / path. If specified, \sQuote{x} is ignored.
+The file is stream hashed, thus capable of handling files larger than
+memory.}
 }
 \value{
-A character string, raw or integer vector depending on 'convert'.
+A character string, raw or integer vector depending on
+    \sQuote{convert}.
 }
 \description{
 Returns a fast, cryptographically-strong SipHash keyed hash of the supplied

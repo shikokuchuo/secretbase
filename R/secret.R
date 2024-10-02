@@ -40,17 +40,19 @@
 #' Returns a SHA-3 hash of the supplied object or file.
 #'
 #' @param x object to hash. A character string or raw vector (without
-#'     attributes) is hashed 'as is'. All other objects are stream hashed using
-#'     R serialization (but without allocation of the serialized object).
+#'     attributes) is hashed \sQuote{as is}. All other objects are stream hashed
+#'     using R serialization (but without allocation of the serialized object).
 #' @param bits [default 256L] output size of the returned hash. Must be one of
 #'     224, 256, 384 or 512.
 #' @param convert [default TRUE] if TRUE, the hash is converted to its hex
 #'     representation as a character string, if FALSE, output directly as a raw
 #'     vector, or if NA, a vector of (32-bit) integer values.
-#' @param file character file name / path. If specified, 'x' is ignored. The
-#'     file is stream hashed, thus capable of handling files larger than memory.
+#' @param file character file name / path. If specified, \sQuote{x} is ignored.
+#'     The file is stream hashed, thus capable of handling files larger than
+#'     memory.
 #'
-#' @return A character string, raw or integer vector depending on 'convert'.
+#' @return A character string, raw or integer vector depending on
+#'     \sQuote{convert}.
 #'     
 #' @section R Serialization Stream Hashing:
 #'     
@@ -101,11 +103,12 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' @param bits [default 256L] output size of the returned hash. Must be between
 #'     8 and 2^24 and coercible to integer.
 #'
-#' @return A character string, raw or integer vector depending on 'convert'.
+#' @return A character string, raw or integer vector depending on
+#'     \sQuote{convert}.
 #' 
 #' @details To produce single integer values suitable for use as random seeds
-#'     for R's pseudo random number generators (RNGs), set 'bits' to 32 and
-#'     'convert' to NA.
+#'     for R's pseudo random number generators (RNGs), set \sQuote{bits} to 32
+#'     and \sQuote{convert} to NA.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #'
@@ -140,7 +143,8 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' @inheritParams sha3
 #'
-#' @return A character string, raw or integer vector depending on 'convert'.
+#' @return A character string, raw or integer vector depending on
+#'     \sQuote{convert}.
 #'
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
@@ -187,12 +191,13 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #'     key is supplied.
 #'
 #' @inheritParams sha3
-#' @param key [default NULL] If NULL, the SHA-256 hash of 'x' is returned.
-#'     Alternatively, supply a character string or raw vector as a secret key to
-#'     generate an HMAC. Note: for character vectors only the first element is
-#'     used.
+#' @param key [default NULL] If NULL, the SHA-256 hash of \sQuote{x} is
+#'     returned. Alternatively, supply a character string or raw vector as a
+#'     secret key to generate an HMAC. Note: for character vectors, only the
+#'     first element is used.
 #'
-#' @return A character string, raw or integer vector depending on 'convert'.
+#' @return A character string, raw or integer vector depending on
+#'     \sQuote{convert}.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
@@ -238,10 +243,11 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #' @param key [default NULL] a character string or raw vector comprising the 16
 #'     byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
 #'     longer vector is supplied, only the first 16 bytes are used, and if
-#'     shorter, padded with trailing '0'. Note: for character vectors only the
+#'     shorter, padded with trailing '0'. Note: for character vectors, only the
 #'     first element is used.
 #'
-#' @return A character string, raw or integer vector depending on 'convert'.
+#' @return A character string, raw or integer vector depending on
+#'     \sQuote{convert}.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 

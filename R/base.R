@@ -57,7 +57,7 @@ base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 #'
 #' @return A character string, raw vector, or other object depending on the
 #'     value of \sQuote{convert}. If conversion to a character string fails,
-#'     a raw vector will be returned instead (along with a warning).
+#'     a raw vector will be returned instead (accompanied by a warning).
 #'
 #' @details The value of \sQuote{convert} should be set to TRUE, FALSE or NA to
 #'     be the reverse of the 3 encoding operations (for strings, raw vectors and
