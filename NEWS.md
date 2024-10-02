@@ -1,4 +1,4 @@
-# secretbase 1.0.2.9000 (development)
+# secretbase 1.0.3
 
 * `base64dec()` now emits a suppressable warning when failing to convert back to a character string.
 

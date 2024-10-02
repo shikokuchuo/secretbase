@@ -41,8 +41,8 @@ library(secretbase)
 
 #### SHA-3
 
-For the SHA-3 cryptographic hash algorithm, specify `bits` as `224`,
-`256`, `384` or `512`:
+For the SHA-3 cryptographic hash algorithm, specify `bits` as one of
+`224`, `256`, `384` or `512`:
 
 ``` r
 sha3("secret base")
@@ -89,8 +89,8 @@ sha3(file = file)
 #### Hash to integer / SHAKE256 XOF
 
 May be used as deterministic random seeds for R’s pseudo random number
-generators (RNGs). <br /> Specify `convert = NA` (and `bits = 32` for a
-single integer value):
+generators (RNGs). <br /> Specify `convert = NA` and `bits = 32` for a
+single integer value:
 
 ``` r
 shake256("秘密の基地の中", bits = 32L, convert = NA)
