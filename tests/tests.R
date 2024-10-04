@@ -1,8 +1,8 @@
-# minitest - a minimal testing framework v0.0.1 --------------------------------
+# minitest - a minimal testing framework v0.0.2 --------------------------------
 test_library <- function(package) library(package = package, character.only = TRUE)
 test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
 test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
-test_error <- function(x, containing = "") invisible(inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("expected error message containing '", containing, "' was not generated"))
+test_error <- function(x, containing = "") invisible(inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("Expected error message containing: ", containing, "\nActual error message: ", x[["message"]]))
 # ------------------------------------------------------------------------------
 
 test_library("secretbase")
