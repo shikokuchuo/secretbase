@@ -24,22 +24,22 @@ memory.}
 }
 \value{
 A character string, raw or integer vector depending on
-    \sQuote{convert}.
+  \sQuote{convert}.
 }
 \description{
 Returns a SHAKE256 hash of the supplied object or file.
 }
 \details{
-To produce single integer values suitable for use as random seeds
-    for R's pseudo random number generators (RNGs), set \sQuote{bits} to 32
-    and \sQuote{convert} to NA.
+To produce single integer values suitable for use as random seeds for R's
+pseudo random number generators (RNGs), set \sQuote{bits} to 32 and
+\sQuote{convert} to NA.
 }
 \section{R Serialization Stream Hashing}{
 
-    
-    Where this is used, serialization is always version 3 big-endian
-    represenation and the headers (containing R version and native encoding
-    information) are skipped to ensure portability across platforms.
+
+Where this is used, serialization is always version 3 big-endian
+representation and the headers (containing R version and native encoding
+information) are skipped to ensure portability across platforms.
 }
 
 \examples{
@@ -59,7 +59,7 @@ unlink(file)
 
 }
 \references{
-This implementation is based on one by 'The Mbed TLS
-    Contributors' under the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+This implementation is based on one by 'The Mbed TLS Contributors' under the
+'Mbed TLS' Trusted Firmware Project at
+\url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }

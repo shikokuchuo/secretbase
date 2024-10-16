@@ -24,17 +24,17 @@ memory.}
 }
 \value{
 A character string, raw or integer vector depending on
-    \sQuote{convert}.
+  \sQuote{convert}.
 }
 \description{
 Returns a SHA-3 hash of the supplied object or file.
 }
 \section{R Serialization Stream Hashing}{
 
-    
-    Where this is used, serialization is always version 3 big-endian
-    represenation and the headers (containing R version and native encoding
-    information) are skipped to ensure portability across platforms.
+
+Where this is used, serialization is always version 3 big-endian
+representation and the headers (containing R version and native encoding
+information) are skipped to ensure portability across platforms.
 }
 
 \examples{
@@ -60,11 +60,10 @@ unlink(file)
 
 }
 \references{
-The SHA-3 Secure Hash Standard was published by the National
-    Institute of Standards and Technology (NIST) in 2015 at
-    \doi{doi:10.6028/NIST.FIPS.202}.
-    
-    This implementation is based on one by 'The Mbed TLS Contributors' under
-    the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+The SHA-3 Secure Hash Standard was published by the National Institute of
+Standards and Technology (NIST) in 2015 at \doi{doi:10.6028/NIST.FIPS.202}.
+
+This implementation is based on one by 'The Mbed TLS Contributors' under the
+'Mbed TLS' Trusted Firmware Project at
+\url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }

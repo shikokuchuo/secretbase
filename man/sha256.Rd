@@ -13,8 +13,8 @@ using R serialization (but without allocation of the serialized object).}
 
 \item{key}{[default NULL] If NULL, the SHA-256 hash of \sQuote{x} is
 returned. Alternatively, supply a character string or raw vector as a
-secret key to generate an HMAC. Note: for character vectors, only the
-first element is used.}
+secret key to generate an HMAC. Note: for character vectors, only the first
+element is used.}
 
 \item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
 representation as a character string, if FALSE, output directly as a raw
@@ -26,18 +26,18 @@ memory.}
 }
 \value{
 A character string, raw or integer vector depending on
-    \sQuote{convert}.
+  \sQuote{convert}.
 }
 \description{
 Returns a SHA-256 hash of the supplied object or file, or HMAC if a secret
-    key is supplied.
+key is supplied.
 }
 \section{R Serialization Stream Hashing}{
 
-    
-    Where this is used, serialization is always version 3 big-endian
-    represenation and the headers (containing R version and native encoding
-    information) are skipped to ensure portability across platforms.
+
+Where this is used, serialization is always version 3 big-endian
+representation and the headers (containing R version and native encoding
+information) are skipped to ensure portability across platforms.
 }
 
 \examples{
@@ -60,11 +60,11 @@ sha256("secret", key = charToRaw("base"))
 
 }
 \references{
-The SHA-256 Secure Hash Standard was published by the National
-    Institute of Standards and Technology (NIST) in 2002 at
-    \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
-    
-    This implementation is based on one by 'The Mbed TLS Contributors' under
-    the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+The SHA-256 Secure Hash Standard was published by the National Institute of
+Standards and Technology (NIST) in 2002 at
+\url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+
+This implementation is based on one by 'The Mbed TLS Contributors' under the
+'Mbed TLS' Trusted Firmware Project at
+\url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }

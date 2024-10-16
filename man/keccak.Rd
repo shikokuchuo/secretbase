@@ -24,17 +24,17 @@ memory.}
 }
 \value{
 A character string, raw or integer vector depending on
-    \sQuote{convert}.
+  \sQuote{convert}.
 }
 \description{
 Returns a Keccak hash of the supplied object or file.
 }
 \section{R Serialization Stream Hashing}{
 
-    
-    Where this is used, serialization is always version 3 big-endian
-    represenation and the headers (containing R version and native encoding
-    information) are skipped to ensure portability across platforms.
+
+Where this is used, serialization is always version 3 big-endian
+representation and the headers (containing R version and native encoding
+information) are skipped to ensure portability across platforms.
 }
 
 \examples{
@@ -60,13 +60,13 @@ unlink(file)
 
 }
 \references{
-Keccak is the underlying algorithm for SHA-3, and is identical
-    apart from the value of the padding parameter.
-    
-    The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters
-    and G. Van Assche.
-    
-    This implementation is based on one by 'The Mbed TLS Contributors' under
-    the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+Keccak is the underlying algorithm for SHA-3, and is identical apart from the
+value of the padding parameter.
+
+The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters and G.
+Van Assche.
+
+This implementation is based on one by 'The Mbed TLS Contributors' under the
+'Mbed TLS' Trusted Firmware Project at
+\url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }

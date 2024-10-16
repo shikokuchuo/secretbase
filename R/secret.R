@@ -19,11 +19,11 @@
 #' secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions
 #'
 #' Fast and memory-efficient streaming hash functions and base64 encoding /
-#'     decoding. Hashes strings and raw vectors directly. Stream hashes files
-#'     potentially larger than memory, as well as in-memory objects through R's
-#'     serialization mechanism. Implementations include the SHA-256, SHA-3 and
-#'     'Keccak' cryptographic hash functions, SHAKE256 extendable-output
-#'     function (XOF), and 'SipHash' pseudo-random function.
+#' decoding. Hashes strings and raw vectors directly. Stream hashes files
+#' potentially larger than memory, as well as in-memory objects through R's
+#' serialization mechanism. Implementations include the SHA-256, SHA-3 and
+#' 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function
+#' (XOF), and 'SipHash' pseudo-random function.
 #'
 #' @encoding UTF-8
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
@@ -40,33 +40,33 @@
 #' Returns a SHA-3 hash of the supplied object or file.
 #'
 #' @param x object to hash. A character string or raw vector (without
-#'     attributes) is hashed \sQuote{as is}. All other objects are stream hashed
-#'     using R serialization (but without allocation of the serialized object).
+#'   attributes) is hashed \sQuote{as is}. All other objects are stream hashed
+#'   using R serialization (but without allocation of the serialized object).
 #' @param bits [default 256L] output size of the returned hash. Must be one of
-#'     224, 256, 384 or 512.
+#'   224, 256, 384 or 512.
 #' @param convert [default TRUE] if TRUE, the hash is converted to its hex
-#'     representation as a character string, if FALSE, output directly as a raw
-#'     vector, or if NA, a vector of (32-bit) integer values.
+#'   representation as a character string, if FALSE, output directly as a raw
+#'   vector, or if NA, a vector of (32-bit) integer values.
 #' @param file character file name / path. If specified, \sQuote{x} is ignored.
-#'     The file is stream hashed, thus capable of handling files larger than
-#'     memory.
+#'   The file is stream hashed, thus capable of handling files larger than
+#'   memory.
 #'
 #' @return A character string, raw or integer vector depending on
-#'     \sQuote{convert}.
+#'   \sQuote{convert}.
 #'     
 #' @section R Serialization Stream Hashing:
+#' 
+#' Where this is used, serialization is always version 3 big-endian
+#' representation and the headers (containing R version and native encoding
+#' information) are skipped to ensure portability across platforms.
 #'     
-#'     Where this is used, serialization is always version 3 big-endian
-#'     represenation and the headers (containing R version and native encoding
-#'     information) are skipped to ensure portability across platforms.
-#'     
-#' @references The SHA-3 Secure Hash Standard was published by the National
-#'     Institute of Standards and Technology (NIST) in 2015 at
-#'     \doi{doi:10.6028/NIST.FIPS.202}.
-#'     
-#'     This implementation is based on one by 'The Mbed TLS Contributors' under
-#'     the 'Mbed TLS' Trusted Firmware Project at
-#'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' @references
+#' The SHA-3 Secure Hash Standard was published by the National Institute of
+#' Standards and Technology (NIST) in 2015 at \doi{doi:10.6028/NIST.FIPS.202}.
+#' 
+#' This implementation is based on one by 'The Mbed TLS Contributors' under the
+#' 'Mbed TLS' Trusted Firmware Project at
+#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 #'
 #' @examples
 #' # SHA3-256 hash as character string:
@@ -98,23 +98,24 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' SHAKE256 Extendable Output Function
 #'
 #' Returns a SHAKE256 hash of the supplied object or file.
+#' 
+#' To produce single integer values suitable for use as random seeds for R's
+#' pseudo random number generators (RNGs), set \sQuote{bits} to 32 and
+#' \sQuote{convert} to NA.
 #'
 #' @inheritParams sha3
 #' @param bits [default 256L] output size of the returned hash. Must be between
-#'     8 and 2^24 and coercible to integer.
+#'   8 and 2^24 and coercible to integer.
 #'
 #' @return A character string, raw or integer vector depending on
-#'     \sQuote{convert}.
+#'   \sQuote{convert}.
 #' 
-#' @details To produce single integer values suitable for use as random seeds
-#'     for R's pseudo random number generators (RNGs), set \sQuote{bits} to 32
-#'     and \sQuote{convert} to NA.
-#'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #'
-#' @references This implementation is based on one by 'The Mbed TLS
-#'     Contributors' under the 'Mbed TLS' Trusted Firmware Project at
-#'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' @references
+#' This implementation is based on one by 'The Mbed TLS Contributors' under the
+#' 'Mbed TLS' Trusted Firmware Project at
+#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 #'
 #' @examples
 #' # SHAKE256 hash as character string:
@@ -144,19 +145,20 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #' @inheritParams sha3
 #'
 #' @return A character string, raw or integer vector depending on
-#'     \sQuote{convert}.
+#'   \sQuote{convert}.
 #'
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
-#' @references Keccak is the underlying algorithm for SHA-3, and is identical
-#'     apart from the value of the padding parameter.
-#'     
-#'     The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters
-#'     and G. Van Assche.
-#'     
-#'     This implementation is based on one by 'The Mbed TLS Contributors' under
-#'     the 'Mbed TLS' Trusted Firmware Project at
-#'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' @references
+#' Keccak is the underlying algorithm for SHA-3, and is identical apart from the
+#' value of the padding parameter.
+#' 
+#' The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters and G.
+#' Van Assche.
+#' 
+#' This implementation is based on one by 'The Mbed TLS Contributors' under the
+#' 'Mbed TLS' Trusted Firmware Project at
+#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 #'
 #' @examples
 #' # Keccak-256 hash as character string:
@@ -188,26 +190,27 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #' SHA-256 Cryptographic Hash Algorithm
 #'
 #' Returns a SHA-256 hash of the supplied object or file, or HMAC if a secret
-#'     key is supplied.
+#' key is supplied.
 #'
 #' @inheritParams sha3
 #' @param key [default NULL] If NULL, the SHA-256 hash of \sQuote{x} is
-#'     returned. Alternatively, supply a character string or raw vector as a
-#'     secret key to generate an HMAC. Note: for character vectors, only the
-#'     first element is used.
+#'   returned. Alternatively, supply a character string or raw vector as a
+#'   secret key to generate an HMAC. Note: for character vectors, only the first
+#'   element is used.
 #'
 #' @return A character string, raw or integer vector depending on
-#'     \sQuote{convert}.
+#'   \sQuote{convert}.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
-#' @references The SHA-256 Secure Hash Standard was published by the National
-#'     Institute of Standards and Technology (NIST) in 2002 at
-#'     \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
-#'     
-#'     This implementation is based on one by 'The Mbed TLS Contributors' under
-#'     the 'Mbed TLS' Trusted Firmware Project at
-#'     \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' @references
+#' The SHA-256 Secure Hash Standard was published by the National Institute of
+#' Standards and Technology (NIST) in 2002 at
+#' \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+#' 
+#' This implementation is based on one by 'The Mbed TLS Contributors' under the
+#' 'Mbed TLS' Trusted Firmware Project at
+#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 #'
 #' @examples
 #' # SHA-256 hash as character string:
@@ -236,32 +239,33 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #' SipHash Pseudorandom Function
 #'
 #' Returns a fast, cryptographically-strong SipHash keyed hash of the supplied
-#'     object or file. SipHash-1-3 is optimised for performance. Note: SipHash
-#'     is not a cryptographic hash algorithm.
+#' object or file. SipHash-1-3 is optimised for performance. Note: SipHash is
+#' not a cryptographic hash algorithm.
 #'
 #' @inheritParams sha3
 #' @param key [default NULL] a character string or raw vector comprising the 16
-#'     byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
-#'     longer vector is supplied, only the first 16 bytes are used, and if
-#'     shorter, padded with trailing '0'. Note: for character vectors, only the
-#'     first element is used.
+#'   byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
+#'   longer vector is supplied, only the first 16 bytes are used, and if
+#'   shorter, padded with trailing '0'. Note: for character vectors, only the
+#'   first element is used.
 #'
 #' @return A character string, raw or integer vector depending on
-#'     \sQuote{convert}.
+#'   \sQuote{convert}.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
-#' @references The SipHash family of cryptographically-strong pseudorandom
-#'     functions (PRFs) are described in 'SipHash: a fast short-input PRF',
-#'     Jean-Philippe Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012,
-#'     Cryptology ePrint Archive at \url{https://ia.cr/2012/351}.
-#'     
-#'     This implementation is based on the SipHash streaming implementation by
-#'     Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
-#'     \url{https://github.com/c-util/c-siphash}. This is in turn based on the
-#'     SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
-#'     Bernstein released to the public domain at
-#'     \url{https://github.com/veorq/SipHash}.
+#' @references
+#' The SipHash family of cryptographically-strong pseudorandom functions (PRFs)
+#' are described in 'SipHash: a fast short-input PRF', Jean-Philippe Aumasson
+#' and Daniel J. Bernstein, Paper 2012/351, 2012, Cryptology ePrint Archive at
+#' \url{https://ia.cr/2012/351}.
+#' 
+#' This implementation is based on the SipHash streaming implementation by
+#' Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
+#' \url{https://github.com/c-util/c-siphash}. This is in turn based on the
+#' SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
+#' Bernstein released to the public domain at
+#' \url{https://github.com/veorq/SipHash}.
 #'
 #' @examples
 #' # SipHash-1-3 hash as character string:

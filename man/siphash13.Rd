@@ -27,19 +27,19 @@ memory.}
 }
 \value{
 A character string, raw or integer vector depending on
-    \sQuote{convert}.
+  \sQuote{convert}.
 }
 \description{
 Returns a fast, cryptographically-strong SipHash keyed hash of the supplied
-    object or file. SipHash-1-3 is optimised for performance. Note: SipHash
-    is not a cryptographic hash algorithm.
+object or file. SipHash-1-3 is optimised for performance. Note: SipHash is
+not a cryptographic hash algorithm.
 }
 \section{R Serialization Stream Hashing}{
 
-    
-    Where this is used, serialization is always version 3 big-endian
-    represenation and the headers (containing R version and native encoding
-    information) are skipped to ensure portability across platforms.
+
+Where this is used, serialization is always version 3 big-endian
+representation and the headers (containing R version and native encoding
+information) are skipped to ensure portability across platforms.
 }
 
 \examples{
@@ -62,15 +62,15 @@ unlink(file)
 
 }
 \references{
-The SipHash family of cryptographically-strong pseudorandom
-    functions (PRFs) are described in 'SipHash: a fast short-input PRF',
-    Jean-Philippe Aumasson and Daniel J. Bernstein, Paper 2012/351, 2012,
-    Cryptology ePrint Archive at \url{https://ia.cr/2012/351}.
-    
-    This implementation is based on the SipHash streaming implementation by
-    Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
-    \url{https://github.com/c-util/c-siphash}. This is in turn based on the
-    SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
-    Bernstein released to the public domain at
-    \url{https://github.com/veorq/SipHash}.
+The SipHash family of cryptographically-strong pseudorandom functions (PRFs)
+are described in 'SipHash: a fast short-input PRF', Jean-Philippe Aumasson
+and Daniel J. Bernstein, Paper 2012/351, 2012, Cryptology ePrint Archive at
+\url{https://ia.cr/2012/351}.
+
+This implementation is based on the SipHash streaming implementation by
+Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
+\url{https://github.com/c-util/c-siphash}. This is in turn based on the
+SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
+Bernstein released to the public domain at
+\url{https://github.com/veorq/SipHash}.
 }

@@ -15,16 +15,16 @@ unserialize back to the original object.}
 }
 \value{
 A character string, raw vector, or other object depending on the
-    value of \sQuote{convert}. If conversion to a character string fails,
-    a raw vector will be returned instead (accompanied by a warning).
+  value of \sQuote{convert}. If conversion to a character string fails, a raw
+  vector will be returned instead (accompanied by a warning).
 }
 \description{
 Decodes a character string, raw vector or other object from base64 encoding.
 }
 \details{
-The value of \sQuote{convert} should be set to TRUE, FALSE or NA to
-    be the reverse of the 3 encoding operations (for strings, raw vectors and
-    arbitrary objects), in order to return the original object.
+The value of \sQuote{convert} should be set to TRUE, FALSE or NA to be the
+reverse of the 3 encoding operations (for strings, raw vectors and arbitrary
+objects), in order to return the original object.
 }
 \examples{
 base64dec(base64enc("secret base"))
@@ -33,9 +33,9 @@ base64dec(base64enc(data.frame()), convert = NA)
 
 }
 \references{
-This implementation is based that by 'The Mbed TLS Contributors'
-    under the 'Mbed TLS' Trusted Firmware Project at
-    \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+This implementation is based that by 'The Mbed TLS Contributors' under the
+'Mbed TLS' Trusted Firmware Project at
+\url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }
 \seealso{
 \code{\link{base64enc}}
