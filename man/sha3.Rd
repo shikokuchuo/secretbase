@@ -11,20 +11,19 @@ sha3(x, bits = 256L, convert = TRUE, file)
 attributes) is hashed \sQuote{as is}. All other objects are stream hashed
 using R serialization (but without allocation of the serialized object).}
 
-\item{bits}{[default 256L] output size of the returned hash. Must be one of
-224, 256, 384 or 512.}
+\item{bits}{integer output size of the returned hash. Must be one of 224,
+256, 384 or 512.}
 
-\item{convert}{[default TRUE] if TRUE, the hash is converted to its hex
-representation as a character string, if FALSE, output directly as a raw
-vector, or if NA, a vector of (32-bit) integer values.}
+\item{convert}{logical TRUE to convert the hash to its hex representation as
+a character string, FALSE to return directly as a raw vector, or NA to
+return as a vector of (32-bit) integers.}
 
 \item{file}{character file name / path. If specified, \sQuote{x} is ignored.
-The file is stream hashed, thus capable of handling files larger than
-memory.}
+The file is stream hashed, hence files larger than memory are permitted.}
 }
 \value{
 A character string, raw or integer vector depending on
-  \sQuote{convert}.
+\sQuote{convert}.
 }
 \description{
 Returns a SHA-3 hash of the supplied object or file.

@@ -9,14 +9,14 @@ base64dec(x, convert = TRUE)
 \arguments{
 \item{x}{an object.}
 
-\item{convert}{[default TRUE] logical TRUE to convert back to a character
-string, FALSE to convert back to a raw vector or NA to decode and then
-unserialize back to the original object.}
+\item{convert}{logical TRUE to convert back to a character string, FALSE to
+convert back to a raw vector or NA to decode and then unserialize back to
+the original object.}
 }
 \value{
 A character string, raw vector, or other object depending on the
-  value of \sQuote{convert}. If conversion to a character string fails, a raw
-  vector will be returned instead (accompanied by a warning).
+value of \sQuote{convert}. If conversion to a character string fails, a raw
+vector will be returned instead (accompanied by a warning).
 }
 \description{
 Decodes a character string, raw vector or other object from base64 encoding.
@@ -38,5 +38,5 @@ This implementation is based that by 'The Mbed TLS Contributors' under the
 \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }
 \seealso{
-\code{\link{base64enc}}
+\code{\link[=base64enc]{base64enc()}}
 }

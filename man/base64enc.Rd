@@ -9,20 +9,20 @@ base64enc(x, convert = TRUE)
 \arguments{
 \item{x}{an object.}
 
-\item{convert}{[default TRUE] logical TRUE to encode to a character string or
-FALSE to a raw vector.}
+\item{convert}{logical TRUE to encode to a character string or FALSE to a raw
+vector.}
 }
 \value{
 A character string or raw vector depending on the value of
-  \sQuote{convert}.
+\sQuote{convert}.
 }
 \description{
 Encodes a character string, raw vector or other object to base64 encoding.
 }
 \details{
-A character string or raw vector (with no attributes) is encoded
-\emph{as is}, whilst all other objects are first serialized (using R
-serialisation version 3, big-endian representation).
+A character string or raw vector (with no attributes) is encoded \emph{as is},
+whilst all other objects are first serialized (using R serialisation version
+3, big-endian representation).
 }
 \examples{
 base64enc("secret base")
@@ -36,5 +36,5 @@ This implementation is based that by 'The Mbed TLS Contributors' under the
 \url{https://www.trustedfirmware.org/projects/mbed-tls}.
 }
 \seealso{
-\code{\link{base64dec}}
+\code{\link[=base64dec]{base64dec()}}
 }

@@ -27,7 +27,7 @@
 #'
 #' @encoding UTF-8
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
-#'     (\href{https://orcid.org/0000-0002-0750-061X}{ORCID})
+#'     ([ORCID](https://orcid.org/0000-0002-0750-061X))
 #'
 #' @useDynLib secretbase, .registration = TRUE
 #'
@@ -42,14 +42,13 @@
 #' @param x object to hash. A character string or raw vector (without
 #'   attributes) is hashed \sQuote{as is}. All other objects are stream hashed
 #'   using R serialization (but without allocation of the serialized object).
-#' @param bits [default 256L] output size of the returned hash. Must be one of
-#'   224, 256, 384 or 512.
-#' @param convert [default TRUE] if TRUE, the hash is converted to its hex
-#'   representation as a character string, if FALSE, output directly as a raw
-#'   vector, or if NA, a vector of (32-bit) integer values.
+#' @param bits integer output size of the returned hash. Must be one of 224,
+#'   256, 384 or 512.
+#' @param convert logical TRUE to convert the hash to its hex representation as
+#'   a character string, FALSE to return directly as a raw vector, or NA to
+#'   return as a vector of (32-bit) integers.
 #' @param file character file name / path. If specified, \sQuote{x} is ignored.
-#'   The file is stream hashed, thus capable of handling files larger than
-#'   memory.
+#'   The file is stream hashed, hence files larger than memory are permitted.
 #'
 #' @return A character string, raw or integer vector depending on
 #'   \sQuote{convert}.
@@ -66,7 +65,7 @@
 #' 
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
-#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' <https://www.trustedfirmware.org/projects/mbed-tls>.
 #'
 #' @examples
 #' # SHA3-256 hash as character string:
@@ -104,8 +103,8 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' \sQuote{convert} to NA.
 #'
 #' @inheritParams sha3
-#' @param bits [default 256L] output size of the returned hash. Must be between
-#'   8 and 2^24 and coercible to integer.
+#' @param bits integer output size of the returned hash. Value must be between 8
+#'   and 2^24.
 #'
 #' @return A character string, raw or integer vector depending on
 #'   \sQuote{convert}.
@@ -115,7 +114,7 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' @references
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
-#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' <https://www.trustedfirmware.org/projects/mbed-tls>.
 #'
 #' @examples
 #' # SHAKE256 hash as character string:
@@ -158,7 +157,7 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #' 
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
-#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' <https://www.trustedfirmware.org/projects/mbed-tls>.
 #'
 #' @examples
 #' # Keccak-256 hash as character string:
@@ -193,10 +192,9 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #' key is supplied.
 #'
 #' @inheritParams sha3
-#' @param key [default NULL] If NULL, the SHA-256 hash of \sQuote{x} is
-#'   returned. Alternatively, supply a character string or raw vector as a
-#'   secret key to generate an HMAC. Note: for character vectors, only the first
-#'   element is used.
+#' @param key if NULL, the SHA-256 hash of \sQuote{x} is returned. If a
+#'   character string or raw vector, this is used as a secret key to generate an
+#'   HMAC. Note: for character vectors, only the first element is used.
 #'
 #' @return A character string, raw or integer vector depending on
 #'   \sQuote{convert}.
@@ -206,11 +204,11 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #' @references
 #' The SHA-256 Secure Hash Standard was published by the National Institute of
 #' Standards and Technology (NIST) in 2002 at
-#' \url{https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf}.
+#' <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
 #' 
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
-#' \url{https://www.trustedfirmware.org/projects/mbed-tls}.
+#' <https://www.trustedfirmware.org/projects/mbed-tls>.
 #'
 #' @examples
 #' # SHA-256 hash as character string:
@@ -243,11 +241,10 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #' not a cryptographic hash algorithm.
 #'
 #' @inheritParams sha3
-#' @param key [default NULL] a character string or raw vector comprising the 16
-#'   byte (128 bit) key data, or else NULL which is equivalent to '0'. If a
-#'   longer vector is supplied, only the first 16 bytes are used, and if
-#'   shorter, padded with trailing '0'. Note: for character vectors, only the
-#'   first element is used.
+#' @param key a character string or raw vector comprising the 16 byte (128 bit)
+#'   key data, or else NULL which is equivalent to '0'. If a longer vector is
+#'   supplied, only the first 16 bytes are used, and if shorter, padded with
+#'   trailing '0'. Note: for character vectors, only the first element is used.
 #'
 #' @return A character string, raw or integer vector depending on
 #'   \sQuote{convert}.
@@ -258,14 +255,14 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #' The SipHash family of cryptographically-strong pseudorandom functions (PRFs)
 #' are described in 'SipHash: a fast short-input PRF', Jean-Philippe Aumasson
 #' and Daniel J. Bernstein, Paper 2012/351, 2012, Cryptology ePrint Archive at
-#' \url{https://ia.cr/2012/351}.
+#' <https://ia.cr/2012/351>.
 #' 
 #' This implementation is based on the SipHash streaming implementation by
 #' Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
-#' \url{https://github.com/c-util/c-siphash}. This is in turn based on the
+#' <https://github.com/c-util/c-siphash>. This is in turn based on the
 #' SipHash reference implementation by Jean-Philippe Aumasson and Daniel J.
 #' Bernstein released to the public domain at
-#' \url{https://github.com/veorq/SipHash}.
+#' <https://github.com/veorq/SipHash>.
 #'
 #' @examples
 #' # SipHash-1-3 hash as character string:
