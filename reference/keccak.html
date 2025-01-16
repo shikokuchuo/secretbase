@@ -55,8 +55,8 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>object to hash. A character string or raw vector (without
-attributes) is hashed ‘as is’. All other objects are stream hashed
-using R serialization (but without allocation of the serialized object).</p></dd>
+attributes) is hashed <em>as is</em>. All other objects are stream hashed
+using R serialization (without allocation of the serialized object).</p></dd>
 
 
 <dt id="arg-bits">bits<a class="anchor" aria-label="anchor" href="#arg-bits"></a></dt>
@@ -65,20 +65,19 @@ using R serialization (but without allocation of the serialized object).</p></dd
 
 
 <dt id="arg-convert">convert<a class="anchor" aria-label="anchor" href="#arg-convert"></a></dt>
-<dd><p>logical TRUE to convert the hash to its hex representation as
-a character string, FALSE to return directly as a raw vector, or NA to
-return as a vector of (32-bit) integers.</p></dd>
+<dd><p>logical <code>TRUE</code> to convert the hash to its hex representation
+as a character string, <code>FALSE</code> to return directly as a raw vector, or <code>NA</code>
+to return as a vector of (32-bit) integers.</p></dd>
 
 
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
-<dd><p>character file name / path. If specified, ‘x’ is ignored.
-The file is stream hashed, hence files larger than memory are permitted.</p></dd>
+<dd><p>character file name / path. If specified, <code>x</code> is ignored. The
+file is stream hashed, and the file can be larger than memory.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A character string, raw or integer vector depending on
-‘convert’.</p>
+    <p>A character string, raw or integer vector depending on <code>convert</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="r-serialization-stream-hashing">R Serialization Stream Hashing<a class="anchor" aria-label="anchor" href="#r-serialization-stream-hashing"></a></h2>
