@@ -1,7 +1,7 @@
 Package: secretbase
 Type: Package
 Title: Cryptographic Hash, Extendable-Output and Base64 Functions
-Version: 1.0.3.9000
+Version: 1.0.4
 Description: Fast and memory-efficient streaming hash functions and base64
     encoding / decoding. Hashes strings and raw vectors directly. Stream hashes
     files which can be larger than memory, as well as in-memory objects through
