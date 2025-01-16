@@ -60,26 +60,25 @@ using R serialization (but without allocation of the serialized object).</p></dd
 
 
 <dt id="arg-bits">bits<a class="anchor" aria-label="anchor" href="#arg-bits"></a></dt>
-<dd><p>[default 256L] output size of the returned hash. Must be one of
-224, 256, 384 or 512.</p></dd>
+<dd><p>integer output size of the returned hash. Must be one of 224,
+256, 384 or 512.</p></dd>
 
 
 <dt id="arg-convert">convert<a class="anchor" aria-label="anchor" href="#arg-convert"></a></dt>
-<dd><p>[default TRUE] if TRUE, the hash is converted to its hex
-representation as a character string, if FALSE, output directly as a raw
-vector, or if NA, a vector of (32-bit) integer values.</p></dd>
+<dd><p>logical TRUE to convert the hash to its hex representation as
+a character string, FALSE to return directly as a raw vector, or NA to
+return as a vector of (32-bit) integers.</p></dd>
 
 
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
 <dd><p>character file name / path. If specified, ‘x’ is ignored.
-The file is stream hashed, thus capable of handling files larger than
-memory.</p></dd>
+The file is stream hashed, hence files larger than memory are permitted.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A character string, raw or integer vector depending on
-  ‘convert’.</p>
+‘convert’.</p>
     </div>
     <div class="section level2">
     <h2 id="r-serialization-stream-hashing">R Serialization Stream Hashing<a class="anchor" aria-label="anchor" href="#r-serialization-stream-hashing"></a></h2>
