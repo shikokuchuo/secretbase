@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Hibiki AI Limited <info@hibiki-ai.com>
+// Copyright (C) 2024-2025 Hibiki AI Limited <info@hibiki-ai.com>
 //
 // This file is part of secretbase.
 //
@@ -250,7 +250,7 @@ static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
 static void hash_file(mbedtls_sha3_context *ctx, const SEXP x) {
   
   SB_ASSERT_STR(x);
-  const char *file = R_ExpandFileName(SB_STRING(x));
+  const char *file = R_ExpandFileName(CHAR(*STRING_PTR_RO(x)));
   unsigned char buf[SB_BUF_SIZE];
   FILE *f;
   size_t cur;
@@ -277,7 +277,7 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && !ANY_ATTRIB(x)) {
-      const char *s = SB_STRING(x);
+      const char *s = CHAR(*STRING_PTR_RO(x));
       mbedtls_sha3_update(ctx, (uint8_t *) s, strlen(s));
       return;
     }

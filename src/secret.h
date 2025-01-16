@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Hibiki AI Limited <info@hibiki-ai.com>
+// Copyright (C) 2024-2025 Hibiki AI Limited <info@hibiki-ai.com>
 //
 // This file is part of secretbase.
 //
@@ -104,7 +104,6 @@ typedef struct nano_buf_s {
 #define ANY_ATTRIB(x) (ATTRIB(x) != R_NilValue)
 #endif
 #define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
-#define SB_STRING(x) CHAR(*((const SEXP *) DATAPTR_RO(x)))
 #define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
 #define SB_ASSERT_LOGICAL(x) if (TYPEOF(x) != LGLSXP)          \
 Rf_error("'convert' must be a logical value")

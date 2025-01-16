@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Hibiki AI Limited <info@hibiki-ai.com>
+// Copyright (C) 2024-2025 Hibiki AI Limited <info@hibiki-ai.com>
 //
 // This file is part of secretbase.
 //
@@ -338,7 +338,7 @@ static nano_buf sb_any_buf(const SEXP x) {
   switch (TYPEOF(x)) {
   case STRSXP:
     if (XLENGTH(x) == 1 && !ANY_ATTRIB(x)) {
-      const char *s = SB_STRING(x);
+      const char *s = CHAR(*STRING_PTR_RO(x));
       NANO_INIT(&buf, (unsigned char *) s, strlen(s));
       break;
     }
@@ -398,7 +398,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   
   switch (TYPEOF(x)) {
   case STRSXP: ;
-    const char *str = SB_STRING(x);
+    const char *str = CHAR(*STRING_PTR_RO(x));
     inbuf = (unsigned char *) str;
     inlen = strlen(str);
     break;
