@@ -20,7 +20,7 @@
 #'
 #' Encodes a character string, raw vector or other object to base64 encoding.
 #' 
-#' A character string or raw vector (with no attributes) is encoded *as is*,
+#' A character string or raw vector (with no attributes) is encoded as is,
 #' whilst all other objects are first serialized (using R serialisation version
 #' 3, big-endian representation).
 #'
@@ -60,8 +60,7 @@ base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 #'   to the original object.
 #'
 #' @return A character string, raw vector, or other object depending on the
-#'   value of `convert`. If conversion to a character string fails, a raw vector
-#'   will be returned instead (accompanied by a warning).
+#'   value of `convert`.
 #'   
 #' @references
 #' This implementation is based that by 'The Mbed TLS Contributors' under the

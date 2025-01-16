@@ -8,8 +8,8 @@ keccak(x, bits = 256L, convert = TRUE, file)
 }
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
-attributes) is hashed \emph{as is}. All other objects are stream hashed
-using R serialization (without allocation of the serialized object).}
+attributes) is hashed as is. All other objects are stream hashed using
+native R serialization.}
 
 \item{bits}{integer output size of the returned hash. Must be one of 224,
 256, 384 or 512.}
@@ -33,6 +33,9 @@ Returns a Keccak hash of the supplied object or file.
 Where this is used, serialization is always version 3 big-endian
 representation and the headers (containing R version and native encoding
 information) are skipped to ensure portability across platforms.
+
+As hashing is performed in a streaming fashion, there is no materialization
+of, or memory allocation for, the serialized object.
 }
 
 \examples{

@@ -15,8 +15,7 @@ to the original object.}
 }
 \value{
 A character string, raw vector, or other object depending on the
-value of \code{convert}. If conversion to a character string fails, a raw vector
-will be returned instead (accompanied by a warning).
+value of \code{convert}.
 }
 \description{
 Decodes a character string, raw vector or other object from base64 encoding.

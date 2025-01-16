@@ -40,8 +40,8 @@
 #' Returns a SHA-3 hash of the supplied object or file.
 #'
 #' @param x object to hash. A character string or raw vector (without
-#'   attributes) is hashed *as is*. All other objects are stream hashed
-#'   using R serialization (without allocation of the serialized object).
+#'   attributes) is hashed as is. All other objects are stream hashed using
+#'   native R serialization.
 #' @param bits integer output size of the returned hash. Must be one of 224,
 #'   256, 384 or 512.
 #' @param convert logical `TRUE` to convert the hash to its hex representation
@@ -57,6 +57,9 @@
 #' Where this is used, serialization is always version 3 big-endian
 #' representation and the headers (containing R version and native encoding
 #' information) are skipped to ensure portability across platforms.
+#' 
+#' As hashing is performed in a streaming fashion, there is no materialization
+#' of, or memory allocation for, the serialized object.
 #'     
 #' @references
 #' The SHA-3 Secure Hash Standard was published by the National Institute of

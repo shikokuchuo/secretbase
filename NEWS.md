@@ -1,5 +1,7 @@
 # secretbase 1.0.3.9000 (development)
 
+* `base64dec()` now errors if `convert = TRUE` and conversion to a character string fails, no longer returning a raw vector (accompanied by a warning).
+
 # secretbase 1.0.3
 
 * `base64dec()` now emits a suppressable warning when failing to convert back to a character string.

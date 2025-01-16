@@ -19,7 +19,7 @@ A character string or raw vector depending on the value of \code{convert}.
 Encodes a character string, raw vector or other object to base64 encoding.
 }
 \details{
-A character string or raw vector (with no attributes) is encoded \emph{as is},
+A character string or raw vector (with no attributes) is encoded as is,
 whilst all other objects are first serialized (using R serialisation version
 3, big-endian representation).
 }

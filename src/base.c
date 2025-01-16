@@ -243,10 +243,7 @@ static SEXP rawToChar(const unsigned char *buf, const size_t sz) {
   int i, j;
   for (i = 0, j = -1; i < sz; i++) if (buf[i]) j = i; else break;
   if (sz - i > 1) {
-    Rf_warningcall_immediate(R_NilValue, "data could not be converted to a character string");
-    out = Rf_allocVector(RAWSXP, sz);
-    memcpy(SB_DATAPTR(out), buf, sz);
-    return out;
+    Rf_error("data could not be converted to a character string");
   }
   
   PROTECT(out = Rf_allocVector(STRSXP, 1));
