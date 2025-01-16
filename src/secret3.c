@@ -184,8 +184,9 @@ static inline uint64_t c_siphash_finalize(CSipHash *state) {
 
 static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
-  secretbase_siphash_context *sctx = (secretbase_siphash_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : c_siphash_append(sctx->ctx, (uint8_t *) src, (size_t) len);
+  secretbase_context *sctx = (secretbase_context *) stream->data;
+  sctx->skip ? (void) sctx->skip-- :
+    c_siphash_append((CSipHash *) sctx->ctx, (uint8_t *) src, (size_t) len);
   
 }
 
@@ -230,7 +231,7 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
     break;
   }
   
-  secretbase_siphash_context sctx;
+  secretbase_context sctx;
   sctx.skip = SB_SERIAL_HEADERS;
   sctx.ctx = ctx;
   

@@ -93,9 +93,7 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
   
   n = slen / 3 + (slen % 3 != 0);
   
-  if (n > (SIZE_MAX - 1) / 4) {
-    *olen = SIZE_MAX; return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
-  }
+  if (n > (SIZE_MAX - 1) / 4) { *olen = SIZE_MAX; return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL; }
   
   n *= 4;
   

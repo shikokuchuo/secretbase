@@ -215,16 +215,7 @@ static void mbedtls_sha3_finish(mbedtls_sha3_context *ctx, uint8_t *output, size
 // secretbase - internals ------------------------------------------------------
 
 static inline int sb_integer(SEXP x) {
-  int out;
-  switch (TYPEOF(x)) {
-  case INTSXP:
-  case LGLSXP:
-    out = *(int * ) DATAPTR_RO(x);
-    break;
-  default:
-    out = Rf_asInteger(x);
-  }
-  return out;
+  return (TYPEOF(x) == INTSXP || TYPEOF(x) == LGLSXP) ? SB_LOGICAL(x) : Rf_asInteger(x); 
 }
 
 #if !defined(MBEDTLS_CT_ASM)
@@ -242,8 +233,9 @@ inline void sb_clear_buffer(void *buf, const size_t sz) {
 
 static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
-  secretbase_sha3_context *sctx = (secretbase_sha3_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : mbedtls_sha3_update(sctx->ctx, (uint8_t *) src, (size_t) len);
+  secretbase_context *sctx = (secretbase_context *) stream->data;
+  sctx->skip ? (void) sctx->skip-- :
+    mbedtls_sha3_update((mbedtls_sha3_context *) sctx->ctx, (uint8_t *) src, (size_t) len);
   
 }
 
@@ -290,7 +282,7 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
     break;
   }
   
-  secretbase_sha3_context sctx;
+  secretbase_context sctx;
   sctx.skip = SB_SERIAL_HEADERS;
   sctx.ctx = ctx;
   

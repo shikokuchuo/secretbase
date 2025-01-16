@@ -377,8 +377,9 @@ static void mbedtls_sha256_finish(mbedtls_sha256_context *ctx,
 
 static inline void hash_bytes(R_outpstream_t stream, void *src, int len) {
   
-  secretbase_sha256_context *sctx = (secretbase_sha256_context *) stream->data;
-  sctx->skip ? (void) sctx->skip-- : mbedtls_sha256_update(sctx->ctx, (uint8_t *) src, (size_t) len);
+  secretbase_context *sctx = (secretbase_context *) stream->data;
+  sctx->skip ? (void) sctx->skip-- :
+    mbedtls_sha256_update((mbedtls_sha256_context *) sctx->ctx, (uint8_t *) src, (size_t) len);
   
 }
 
@@ -425,7 +426,7 @@ static void hash_object(mbedtls_sha256_context *ctx, const SEXP x) {
     break;
   }
   
-  secretbase_sha256_context sctx;
+  secretbase_context sctx;
   sctx.skip = SB_SERIAL_HEADERS;
   sctx.ctx = ctx;
   

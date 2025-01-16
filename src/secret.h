@@ -69,20 +69,10 @@ typedef struct CSipHash {
   size_t n_bytes;
 } CSipHash;
 
-typedef struct secretbase_sha3_context {
+typedef struct secretbase_context {
   int skip;
-  mbedtls_sha3_context *ctx;
-} secretbase_sha3_context;
-
-typedef struct secretbase_sha256_context {
-  int skip;
-  mbedtls_sha256_context *ctx;
-} secretbase_sha256_context;
-
-typedef struct secretbase_siphash_context {
-  int skip;
-  CSipHash *ctx;
-} secretbase_siphash_context;
+  void *ctx;
+} secretbase_context;
 
 typedef struct nano_buf_s {
   unsigned char *buf;
