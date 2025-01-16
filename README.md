@@ -25,8 +25,8 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=ff803d)](https
 Fast and memory-efficient streaming hash functions and base64 encoding /
 decoding.
 
-Hashes strings and raw vectors directly. Stream hashes files potentially
-larger than memory, as well as in-memory objects through R’s
+Hashes strings and raw vectors directly. Stream hashes files which can
+be larger than memory, as well as in-memory objects through R’s
 serialization mechanism.
 
 Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
@@ -130,7 +130,7 @@ SipHash-1-3 is optimized for performance. <br /> Pass to `key` a
 character string or raw vector of up to 16 bytes (128 bits):
 
 ``` r
-siphash13("secret base", key = charToRaw("秘密の基地の中"))
+siphash13("secret base", key = "秘密の基地の中")
 #> [1] "a1f0a751892cc7dd"
 ```
 

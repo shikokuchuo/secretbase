@@ -19,8 +19,8 @@
 #' secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions
 #'
 #' Fast and memory-efficient streaming hash functions and base64 encoding /
-#' decoding. Hashes strings and raw vectors directly. Stream hashes files
-#' potentially larger than memory, as well as in-memory objects through R's
+#' decoding. Hashes strings and raw vectors directly. Stream hashes files which
+#' can be larger than memory, as well as in-memory objects through R's
 #' serialization mechanism. Implementations include the SHA-256, SHA-3 and
 #' 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function
 #' (XOF), and 'SipHash' pseudo-random function.
@@ -40,18 +40,17 @@
 #' Returns a SHA-3 hash of the supplied object or file.
 #'
 #' @param x object to hash. A character string or raw vector (without
-#'   attributes) is hashed \sQuote{as is}. All other objects are stream hashed
-#'   using R serialization (but without allocation of the serialized object).
+#'   attributes) is hashed *as is*. All other objects are stream hashed
+#'   using R serialization (without allocation of the serialized object).
 #' @param bits integer output size of the returned hash. Must be one of 224,
 #'   256, 384 or 512.
-#' @param convert logical TRUE to convert the hash to its hex representation as
-#'   a character string, FALSE to return directly as a raw vector, or NA to
-#'   return as a vector of (32-bit) integers.
-#' @param file character file name / path. If specified, \sQuote{x} is ignored.
-#'   The file is stream hashed, hence files larger than memory are permitted.
+#' @param convert logical `TRUE` to convert the hash to its hex representation
+#'   as a character string, `FALSE` to return directly as a raw vector, or `NA`
+#'   to return as a vector of (32-bit) integers.
+#' @param file character file name / path. If specified, `x` is ignored. The
+#'   file is stream hashed, and the file can be larger than memory.
 #'
-#' @return A character string, raw or integer vector depending on
-#'   \sQuote{convert}.
+#' @return A character string, raw or integer vector depending on `convert`.
 #'     
 #' @section R Serialization Stream Hashing:
 #' 
@@ -106,8 +105,7 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' @param bits integer output size of the returned hash. Value must be between 8
 #'   and 2^24.
 #'
-#' @return A character string, raw or integer vector depending on
-#'   \sQuote{convert}.
+#' @return A character string, raw or integer vector depending on `convert`.
 #' 
 #' @inheritSection sha3 R Serialization Stream Hashing
 #'
@@ -143,8 +141,7 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' @inheritParams sha3
 #'
-#' @return A character string, raw or integer vector depending on
-#'   \sQuote{convert}.
+#' @return A character string, raw or integer vector depending on `convert`.
 #'
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
@@ -192,12 +189,11 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #' key is supplied.
 #'
 #' @inheritParams sha3
-#' @param key if NULL, the SHA-256 hash of \sQuote{x} is returned. If a
-#'   character string or raw vector, this is used as a secret key to generate an
-#'   HMAC. Note: for character vectors, only the first element is used.
+#' @param key if `NULL`, the SHA-256 hash of `x` is returned. If a character
+#'   string or raw vector, this is used as a secret key to generate an HMAC.
+#'   Note: for character vectors, only the first element is used.
 #'
-#' @return A character string, raw or integer vector depending on
-#'   \sQuote{convert}.
+#' @return A character string, raw or integer vector depending on `convert`.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 
@@ -242,12 +238,11 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #'
 #' @inheritParams sha3
 #' @param key a character string or raw vector comprising the 16 byte (128 bit)
-#'   key data, or else NULL which is equivalent to '0'. If a longer vector is
+#'   key data, or else `NULL` which is equivalent to '0'. If a longer vector is
 #'   supplied, only the first 16 bytes are used, and if shorter, padded with
 #'   trailing '0'. Note: for character vectors, only the first element is used.
 #'
-#' @return A character string, raw or integer vector depending on
-#'   \sQuote{convert}.
+#' @return A character string, raw or integer vector depending on `convert`.
 #'     
 #' @inheritSection sha3 R Serialization Stream Hashing
 #' 

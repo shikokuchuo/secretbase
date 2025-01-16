@@ -9,20 +9,20 @@ base64dec(x, convert = TRUE)
 \arguments{
 \item{x}{an object.}
 
-\item{convert}{logical TRUE to convert back to a character string, FALSE to
-convert back to a raw vector or NA to decode and then unserialize back to
-the original object.}
+\item{convert}{logical \code{TRUE} to convert back to a character string, \code{FALSE}
+to convert back to a raw vector or \code{NA} to decode and then unserialize back
+to the original object.}
 }
 \value{
 A character string, raw vector, or other object depending on the
-value of \sQuote{convert}. If conversion to a character string fails, a raw
-vector will be returned instead (accompanied by a warning).
+value of \code{convert}. If conversion to a character string fails, a raw vector
+will be returned instead (accompanied by a warning).
 }
 \description{
 Decodes a character string, raw vector or other object from base64 encoding.
 }
 \details{
-The value of \sQuote{convert} should be set to TRUE, FALSE or NA to be the
+The value of \code{convert} should be set to \code{TRUE}, \code{FALSE} or \code{NA} to be the
 reverse of the 3 encoding operations (for strings, raw vectors and arbitrary
 objects), in order to return the original object.
 }

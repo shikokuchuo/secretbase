@@ -25,11 +25,10 @@
 #' 3, big-endian representation).
 #'
 #' @param x an object.
-#' @param convert logical TRUE to encode to a character string or FALSE to a raw
-#'   vector.
+#' @param convert logical `TRUE` to encode to a character string or `FALSE` to a
+#'   raw vector.
 #'
-#' @return A character string or raw vector depending on the value of
-#'   \sQuote{convert}.
+#' @return A character string or raw vector depending on the value of `convert`.
 #'   
 #' @references
 #' This implementation is based that by 'The Mbed TLS Contributors' under the
@@ -51,18 +50,18 @@ base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 #'
 #' Decodes a character string, raw vector or other object from base64 encoding.
 #' 
-#' The value of \sQuote{convert} should be set to TRUE, FALSE or NA to be the
+#' The value of `convert` should be set to `TRUE`, `FALSE` or `NA` to be the
 #' reverse of the 3 encoding operations (for strings, raw vectors and arbitrary
 #' objects), in order to return the original object.
 #'
 #' @param x an object.
-#' @param convert logical TRUE to convert back to a character string, FALSE to
-#'   convert back to a raw vector or NA to decode and then unserialize back to
-#'   the original object.
+#' @param convert logical `TRUE` to convert back to a character string, `FALSE`
+#'   to convert back to a raw vector or `NA` to decode and then unserialize back
+#'   to the original object.
 #'
 #' @return A character string, raw vector, or other object depending on the
-#'   value of \sQuote{convert}. If conversion to a character string fails, a raw
-#'   vector will be returned instead (accompanied by a warning).
+#'   value of `convert`. If conversion to a character string fails, a raw vector
+#'   will be returned instead (accompanied by a warning).
 #'   
 #' @references
 #' This implementation is based that by 'The Mbed TLS Contributors' under the

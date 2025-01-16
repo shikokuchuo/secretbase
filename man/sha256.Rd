@@ -8,23 +8,22 @@ sha256(x, key = NULL, convert = TRUE, file)
 }
 \arguments{
 \item{x}{object to hash. A character string or raw vector (without
-attributes) is hashed \sQuote{as is}. All other objects are stream hashed
-using R serialization (but without allocation of the serialized object).}
+attributes) is hashed \emph{as is}. All other objects are stream hashed
+using R serialization (without allocation of the serialized object).}
 
-\item{key}{if NULL, the SHA-256 hash of \sQuote{x} is returned. If a
-character string or raw vector, this is used as a secret key to generate an
-HMAC. Note: for character vectors, only the first element is used.}
+\item{key}{if \code{NULL}, the SHA-256 hash of \code{x} is returned. If a character
+string or raw vector, this is used as a secret key to generate an HMAC.
+Note: for character vectors, only the first element is used.}
 
-\item{convert}{logical TRUE to convert the hash to its hex representation as
-a character string, FALSE to return directly as a raw vector, or NA to
-return as a vector of (32-bit) integers.}
+\item{convert}{logical \code{TRUE} to convert the hash to its hex representation
+as a character string, \code{FALSE} to return directly as a raw vector, or \code{NA}
+to return as a vector of (32-bit) integers.}
 
-\item{file}{character file name / path. If specified, \sQuote{x} is ignored.
-The file is stream hashed, hence files larger than memory are permitted.}
+\item{file}{character file name / path. If specified, \code{x} is ignored. The
+file is stream hashed, and the file can be larger than memory.}
 }
 \value{
-A character string, raw or integer vector depending on
-\sQuote{convert}.
+A character string, raw or integer vector depending on \code{convert}.
 }
 \description{
 Returns a SHA-256 hash of the supplied object or file, or HMAC if a secret

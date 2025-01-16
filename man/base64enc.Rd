@@ -9,12 +9,11 @@ base64enc(x, convert = TRUE)
 \arguments{
 \item{x}{an object.}
 
-\item{convert}{logical TRUE to encode to a character string or FALSE to a raw
-vector.}
+\item{convert}{logical \code{TRUE} to encode to a character string or \code{FALSE} to a
+raw vector.}
 }
 \value{
-A character string or raw vector depending on the value of
-\sQuote{convert}.
+A character string or raw vector depending on the value of \code{convert}.
 }
 \description{
 Encodes a character string, raw vector or other object to base64 encoding.
