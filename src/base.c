@@ -242,9 +242,7 @@ static SEXP rawToChar(const unsigned char *buf, const size_t sz) {
   SEXP out;
   int i, j;
   for (i = 0, j = -1; i < sz; i++) if (buf[i]) j = i; else break;
-  if (sz - i > 1) {
-    Rf_error("data could not be converted to a character string");
-  }
+  if (sz - i > 1) { ERROR_CONVERT(buf); }
   
   PROTECT(out = Rf_allocVector(STRSXP, 1));
   SET_STRING_ELT(out, 0, Rf_mkCharLenCE((const char *) buf, j + 1, CE_NATIVE));
@@ -367,7 +365,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur);
   NANO_FREE(hash);
-  CHECK_ERROR(xc);
+  CHECK_ERROR(xc, buf);
   
   if (conv) {
     out = rawToChar(buf, olen);
@@ -410,7 +408,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
     Rf_error("input is not valid base64");
   unsigned char *buf = R_Calloc(olen, unsigned char);
   xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen);
-  CHECK_ERROR(xc);
+  CHECK_ERROR(xc, buf);
   
   switch (conv) {
   case 0:
