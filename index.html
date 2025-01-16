@@ -89,14 +89,10 @@
 <span><span class="co">#&gt; [1] "e30cdc73f6575c40d55b5edc8eb4f97940f5ca491640b41612e02a05f3e59dd9c6c33f601d8d7a8e2ca0504b8c22f7bc69fa8f10d7c01aab392781ff4ae1e610"</span></span></code></pre></div>
 </div>
 <div class="section level4">
-<h4 id="hash-strings-and-raw-vectors">Hash strings and raw vectors<a class="anchor" aria-label="anchor" href="#hash-strings-and-raw-vectors"></a>
-</h4>
-<p>Character strings and raw vectors are hashed directly (as above).</p>
-</div>
-<div class="section level4">
 <h4 id="stream-hash-r-objects">Stream hash R objects<a class="anchor" aria-label="anchor" href="#stream-hash-r-objects"></a>
 </h4>
-<p>All other objects are stream hashed using R serialization</p>
+<p>Character strings and raw vectors are hashed directly.</p>
+<p>All other objects are stream hashed using R serialization.</p>
 <ul>
 <li>memory-efficient as performed without allocation of the serialized object</li>
 <li>portable as always uses R serialization version 3, big-endian representation, skipping headers (which contain R version and native encoding information)</li>
@@ -146,7 +142,7 @@
 <div class="section level4">
 <h4 id="siphash">SipHash<a class="anchor" aria-label="anchor" href="#siphash"></a>
 </h4>
-<p>SipHash-1-3 is optimized for performance. <br> Pass to <code>key</code> a character string or raw vector of up to 16 bytes (128 bits):</p>
+<p>SipHash-1-3 is optimized for performance. Pass to <code>key</code> a character string or raw vector of up to 16 bytes (128 bits):</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a1f0a751892cc7dd"</span></span></code></pre></div>
@@ -177,7 +173,7 @@
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<p>Install the latest release from CRAN or R-multiverse:</p>
+<p>Install the latest release from CRAN:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"secretbase"</span><span class="op">)</span></span></code></pre></div>
 <p>The current development version is available from R-universe:</p>

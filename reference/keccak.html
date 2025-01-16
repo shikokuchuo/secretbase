@@ -55,8 +55,8 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>object to hash. A character string or raw vector (without
-attributes) is hashed <em>as is</em>. All other objects are stream hashed
-using R serialization (without allocation of the serialized object).</p></dd>
+attributes) is hashed as is. All other objects are stream hashed using
+native R serialization.</p></dd>
 
 
 <dt id="arg-bits">bits<a class="anchor" aria-label="anchor" href="#arg-bits"></a></dt>
@@ -87,6 +87,8 @@ file is stream hashed, and the file can be larger than memory.</p></dd>
 <p>Where this is used, serialization is always version 3 big-endian
 representation and the headers (containing R version and native encoding
 information) are skipped to ensure portability across platforms.</p>
+<p>As hashing is performed in a streaming fashion, there is no materialization
+of, or memory allocation for, the serialized object.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
