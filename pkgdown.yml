@@ -2,7 +2,7 @@ pandoc: 3.1.11
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-01-17T09:56Z
+last_built: 2025-01-17T12:35Z
 urls:
   reference: https://shikokuchuo.net/secretbase/reference
   article: https://shikokuchuo.net/secretbase/articles
