@@ -7,10 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/secretbase?color=17411d)](https://CRAN.R-project.org/package=secretbase)
-[![R-multiverse
-status](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcommunity.r-multiverse.org%2Fapi%2Fpackages%2Fsecretbase&query=%24.Version&label=r-multiverse&color=17411d)](https://community.r-multiverse.org/secretbase)
 [![secretbase status
-badge](https://shikokuchuo.r-universe.dev/badges/secretbase?color=ff803d)](https://shikokuchuo.r-universe.dev/secretbase)
+badge](https://shikokuchuo.r-universe.dev/badges/secretbase)](https://shikokuchuo.r-universe.dev/secretbase)
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg)](https://github.com/shikokuchuo/secretbase/actions)
 [![codecov](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
 [![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
@@ -32,6 +30,14 @@ serialization mechanism.
 Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic
 hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’
 pseudo-random function.
+
+### Installation
+
+Install secretbase from CRAN:
+
+``` r
+install.packages("secretbase")
+```
 
 ### Overview
 
@@ -159,20 +165,6 @@ base64enc(data.frame())
 #> [1] "WAoAAAADAAQEAgADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
-```
-
-### Installation
-
-Install the latest release from CRAN:
-
-``` r
-install.packages("secretbase")
-```
-
-The current development version is available from R-universe:
-
-``` r
-install.packages("secretbase", repos = "https://shikokuchuo.r-universe.dev")
 ```
 
 ### Implementation
