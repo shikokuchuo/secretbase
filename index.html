@@ -71,15 +71,22 @@
 <p>Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R’s serialization mechanism.</p>
 <p>Implementations include the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions, SHAKE256 extendable-output function (XOF), and ‘SipHash’ pseudo-random function.</p>
 <div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<p>Install secretbase from CRAN:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"secretbase"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shikokuchuo.net/secretbase/">secretbase</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="sha-3">SHA-3<a class="anchor" aria-label="anchor" href="#sha-3"></a>
 </h4>
 <p>For the SHA-3 cryptographic hash algorithm, specify <code>bits</code> as one of <code>224</code>, <code>256</code>, <code>384</code> or <code>512</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="st">"secret base"</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -97,7 +104,7 @@
 <li>memory-efficient as performed without allocation of the serialized object</li>
 <li>portable as always uses R serialization version 3, big-endian representation, skipping headers (which contain R version and native encoding information)</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1</span>, b <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, bits <span class="op">=</span> <span class="fl">224L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "03778aad53bff7dd68caab94374bba6f07cea235fb97b3c52cf612e9"</span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
@@ -107,7 +114,7 @@
 <h4 id="stream-hash-files">Stream hash files<a class="anchor" aria-label="anchor" href="#stream-hash-files"></a>
 </h4>
 <p>Files are read and hashed incrementally, accepting files larger than memory:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"secret base"</span>, file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/sha3.html">sha3</a></span><span class="op">(</span>file <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"</span></span></code></pre></div>
@@ -116,7 +123,7 @@
 <h4 id="hash-to-integer--shake256-xof">Hash to integer / SHAKE256 XOF<a class="anchor" aria-label="anchor" href="#hash-to-integer--shake256-xof"></a>
 </h4>
 <p>May be used as deterministic random seeds for R’s pseudo random number generators (RNGs). <br> Specify <code>convert = NA</code> and <code>bits = 32</code> for a single integer value:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/shake256.html">shake256</a></span><span class="op">(</span><span class="st">"秘密の基地の中"</span>, bits <span class="op">=</span> <span class="fl">32L</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 2000208511</span></span></code></pre></div>
 <p>For use in parallel computing, this is a valid method for reducing to a negligible probability that RNGs in each process may overlap. This may be especially suitable when first-best alternatives such as using recursive streams are too expensive or unable to preserve reproducibility. <sup>[1]</sup></p>
@@ -124,18 +131,18 @@
 <div class="section level4">
 <h4 id="keccak">Keccak<a class="anchor" aria-label="anchor" href="#keccak"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/keccak.html">keccak</a></span><span class="op">(</span><span class="st">"secret base"</span>, bits <span class="op">=</span> <span class="fl">384L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203"</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="sha-256">SHA-256<a class="anchor" aria-label="anchor" href="#sha-256"></a>
 </h4>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"</span></span></code></pre></div>
 <p>For SHA-256 HMAC, pass to <code>key</code> a character string or raw vector:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/sha256.html">sha256</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"</span></span></code></pre></div>
 </div>
@@ -143,7 +150,7 @@
 <h4 id="siphash">SipHash<a class="anchor" aria-label="anchor" href="#siphash"></a>
 </h4>
 <p>SipHash-1-3 is optimized for performance. Pass to <code>key</code> a character string or raw vector of up to 16 bytes (128 bits):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/siphash13.html">siphash13</a></span><span class="op">(</span><span class="st">"secret base"</span>, key <span class="op">=</span> <span class="st">"秘密の基地の中"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "a1f0a751892cc7dd"</span></span></code></pre></div>
 </div>
@@ -151,34 +158,24 @@
 <h4 id="base64-encoding--decoding">Base64 Encoding / Decoding<a class="anchor" aria-label="anchor" href="#base64-encoding--decoding"></a>
 </h4>
 <p>Strings:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "c2VjcmV0IGJhc2U="</span></span>
 <span><span class="fu"><a href="reference/base64dec.html">base64dec</a></span><span class="op">(</span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "secret base"</span></span></code></pre></div>
 <p>Raw vectors:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/raw.html" class="external-link">as.raw</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">4L</span><span class="op">)</span><span class="op">)</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 41 51 49 45</span></span>
 <span><span class="fu"><a href="reference/base64dec.html">base64dec</a></span><span class="op">(</span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/raw.html" class="external-link">as.raw</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1L</span>, <span class="fl">2L</span>, <span class="fl">4L</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>, convert <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 01 02 04</span></span></code></pre></div>
 <p>Serialized objects:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "WAoAAAADAAQEAgADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"</span></span>
 <span><span class="fu"><a href="reference/base64dec.html">base64dec</a></span><span class="op">(</span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; data frame with 0 columns and 0 rows</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level3">
-<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h3>
-<p>Install the latest release from CRAN:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"secretbase"</span><span class="op">)</span></span></code></pre></div>
-<p>The current development version is available from R-universe:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"secretbase"</span>, repos <span class="op">=</span> <span class="st">"https://shikokuchuo.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
@@ -247,8 +244,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=secretbase" class="external-link"><img src="https://www.r-pkg.org/badges/version/secretbase?color=17411d" alt="CRAN status"></a></li>
-<li><a href="https://community.r-multiverse.org/secretbase" class="external-link"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcommunity.r-multiverse.org%2Fapi%2Fpackages%2Fsecretbase&amp;query=%24.Version&amp;label=r-multiverse&amp;color=17411d" alt="R-multiverse status"></a></li>
-<li><a href="https://shikokuchuo.r-universe.dev/secretbase" class="external-link"><img src="https://shikokuchuo.r-universe.dev/badges/secretbase?color=ff803d" alt="secretbase status badge"></a></li>
+<li><a href="https://shikokuchuo.r-universe.dev/secretbase" class="external-link"><img src="https://shikokuchuo.r-universe.dev/badges/secretbase" alt="secretbase status badge"></a></li>
 <li><a href="https://github.com/shikokuchuo/secretbase/actions" class="external-link"><img src="https://github.com/shikokuchuo/secretbase/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://app.codecov.io/gh/shikokuchuo/secretbase" class="external-link"><img src="https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://zenodo.org/doi/10.5281/zenodo.10553139" class="external-link"><img src="https://zenodo.org/badge/745691432.svg" alt="DOI"></a></li>
