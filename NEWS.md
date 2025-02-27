@@ -1,4 +1,6 @@
-# secretbase 1.0.4.9000 (development)
+# secretbase (development version)
+
+* This package is re-licensed under the MIT licence. Dual-licensed code incorporated from external projects is taken under the Apache 2.0 licence.
 
 # secretbase 1.0.4
 
