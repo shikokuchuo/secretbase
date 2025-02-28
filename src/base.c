@@ -237,15 +237,11 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
 // secretbase - internals ------------------------------------------------------
 
-static SEXP rawToChar(const unsigned char *buf, const size_t sz) {
-  
+static SEXP sb_raw_char(const unsigned char *buf, const size_t sz) {
+
   SEXP out;
-  int i, j;
-  for (i = 0, j = -1; i < sz; i++) if (buf[i]) j = i; else break;
-  if (sz - i > 1) { ERROR_CONVERT(buf); }
-  
   PROTECT(out = Rf_allocVector(STRSXP, 1));
-  SET_STRING_ELT(out, 0, Rf_mkCharLenCE((const char *) buf, j + 1, CE_NATIVE));
+  SET_STRING_ELT(out, 0, sz ? Rf_mkCharLenCE((const char *) buf, buf[sz - 1] == '\0' ? sz - 1 : sz, CE_NATIVE) : R_BlankString);
   
   UNPROTECT(1);
   return out;
@@ -368,7 +364,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   CHECK_ERROR(xc, buf);
   
   if (conv) {
-    out = rawToChar(buf, olen);
+    out = sb_raw_char(buf, olen);
   } else {
     out = Rf_allocVector(RAWSXP, olen);
     memcpy(SB_DATAPTR(out), buf, olen);
@@ -416,7 +412,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
     memcpy(SB_DATAPTR(out), buf, olen);
     break;
   case 1:
-    out = rawToChar(buf, olen);
+    out = sb_raw_char(buf, olen);
     break;
   default:
     out = sb_unserialize(buf, olen);

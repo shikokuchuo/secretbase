@@ -112,8 +112,6 @@ Rf_error("'file' must be a character string")
 Rf_error("write buffer insufficient"); }
 #define ERROR_OUT(x) if (x->len) R_Free(x->buf);               \
 Rf_error("serialization exceeds max length of raw vector")
-#define ERROR_CONVERT(x) R_Free(x);                            \
-Rf_error("data could not be converted to a character string")
 #define ERROR_FOPEN(x) Rf_error("file not found or no read permission at '%s'", x)
 #define ERROR_FREAD(x) Rf_error("file read error at '%s'", x)
 
