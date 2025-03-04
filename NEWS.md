@@ -1,4 +1,4 @@
-# secretbase (development version)
+# secretbase 1.0.5
 
 * Package is re-licensed under the MIT licence.
 
