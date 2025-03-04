@@ -223,9 +223,16 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
 static SEXP sb_raw_char(const unsigned char *buf, const size_t sz) {
 
+  int i;
+  for (i = 0; i < sz; i++) if (!buf[i]) break;
+  if (sz - i > 1) {
+    R_Free(buf);
+    Rf_error("data could not be converted to a character string");
+  }
+  
   SEXP out;
   PROTECT(out = Rf_allocVector(STRSXP, 1));
-  SET_STRING_ELT(out, 0, sz ? Rf_mkCharLenCE((const char *) buf, buf[sz - 1] == '\0' ? sz - 1 : sz, CE_NATIVE) : R_BlankString);
+  SET_STRING_ELT(out, 0, Rf_mkCharLenCE((const char *) buf, i, CE_NATIVE));
   
   UNPROTECT(1);
   return out;
