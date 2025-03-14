@@ -12,7 +12,7 @@ attributes) is hashed as is. All other objects are stream hashed using
 native R serialization.}
 
 \item{key}{a character string or raw vector comprising the 16 byte (128 bit)
-key data, or else \code{NULL} which is equivalent to '0'. If a longer vector is
+key data, or else \code{NULL} which is equivalent to \code{0}. If a longer vector is
 supplied, only the first 16 bytes are used, and if shorter, padded with
 trailing '0'. Note: for character vectors, only the first element is used.}
 

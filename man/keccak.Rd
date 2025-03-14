@@ -11,8 +11,8 @@ keccak(x, bits = 256L, convert = TRUE, file)
 attributes) is hashed as is. All other objects are stream hashed using
 native R serialization.}
 
-\item{bits}{integer output size of the returned hash. Must be one of 224,
-256, 384 or 512.}
+\item{bits}{integer output size of the returned hash. Must be one of \code{224},
+\code{256}, \code{384} or \code{512}.}
 
 \item{convert}{logical \code{TRUE} to convert the hash to its hex representation
 as a character string, \code{FALSE} to return directly as a raw vector, or \code{NA}

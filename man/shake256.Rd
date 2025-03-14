@@ -11,8 +11,8 @@ shake256(x, bits = 256L, convert = TRUE, file)
 attributes) is hashed as is. All other objects are stream hashed using
 native R serialization.}
 
-\item{bits}{integer output size of the returned hash. Value must be between 8
-and 2^24.}
+\item{bits}{integer output size of the returned hash. Value must be between
+\code{8} and \code{2^24}.}
 
 \item{convert}{logical \code{TRUE} to convert the hash to its hex representation
 as a character string, \code{FALSE} to return directly as a raw vector, or \code{NA}
@@ -29,8 +29,8 @@ Returns a SHAKE256 hash of the supplied object or file.
 }
 \details{
 To produce single integer values suitable for use as random seeds for R's
-pseudo random number generators (RNGs), set \sQuote{bits} to 32 and
-\sQuote{convert} to NA.
+pseudo random number generators (RNGs), set \code{bits} to \code{32} and \code{convert} to
+\code{NA}.
 }
 \section{R Serialization Stream Hashing}{
 

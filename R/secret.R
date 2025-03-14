@@ -26,8 +26,8 @@
 #' @param x object to hash. A character string or raw vector (without
 #'   attributes) is hashed as is. All other objects are stream hashed using
 #'   native R serialization.
-#' @param bits integer output size of the returned hash. Must be one of 224,
-#'   256, 384 or 512.
+#' @param bits integer output size of the returned hash. Must be one of `224`,
+#'   `256`, `384` or `512`.
 #' @param convert logical `TRUE` to convert the hash to its hex representation
 #'   as a character string, `FALSE` to return directly as a raw vector, or `NA`
 #'   to return as a vector of (32-bit) integers.
@@ -85,12 +85,12 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #' Returns a SHAKE256 hash of the supplied object or file.
 #' 
 #' To produce single integer values suitable for use as random seeds for R's
-#' pseudo random number generators (RNGs), set \sQuote{bits} to 32 and
-#' \sQuote{convert} to NA.
+#' pseudo random number generators (RNGs), set `bits` to `32` and `convert` to
+#' `NA`.
 #'
 #' @inheritParams sha3
-#' @param bits integer output size of the returned hash. Value must be between 8
-#'   and 2^24.
+#' @param bits integer output size of the returned hash. Value must be between
+#'   `8` and `2^24`.
 #'
 #' @return A character string, raw or integer vector depending on `convert`.
 #' 
@@ -225,7 +225,7 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #'
 #' @inheritParams sha3
 #' @param key a character string or raw vector comprising the 16 byte (128 bit)
-#'   key data, or else `NULL` which is equivalent to '0'. If a longer vector is
+#'   key data, or else `NULL` which is equivalent to `0`. If a longer vector is
 #'   supplied, only the first 16 bytes are used, and if shorter, padded with
 #'   trailing '0'. Note: for character vectors, only the first element is used.
 #'
