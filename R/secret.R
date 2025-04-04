@@ -13,6 +13,7 @@
 #' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
 #'     ([ORCID](https://orcid.org/0000-0002-0750-061X))
 #'
+#' @import watcher
 #' @useDynLib secretbase, .registration = TRUE
 #'
 "_PACKAGE"
@@ -269,3 +270,5 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 siphash13 <- function(x, key = NULL, convert = TRUE, file)
   if (missing(file)) .Call(secretbase_siphash13, x, key, convert) else
     .Call(secretbase_siphash13_file, file, key, convert)
+
+func <- function() watcher()

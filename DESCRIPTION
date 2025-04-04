@@ -23,6 +23,8 @@ URL: https://shikokuchuo.net/secretbase/,
 Encoding: UTF-8
 Depends: 
     R (>= 3.5)
+Imports:
+    watcher
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Config/build/compilation-database: true
