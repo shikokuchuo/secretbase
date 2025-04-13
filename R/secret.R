@@ -9,10 +9,6 @@
 #' 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function
 #' (XOF), and 'SipHash' pseudo-random function.
 #'
-#' @encoding UTF-8
-#' @author Charlie Gao \email{charlie.gao@@shikokuchuo.net}
-#'     ([ORCID](https://orcid.org/0000-0002-0750-061X))
-#'
 #' @useDynLib secretbase, .registration = TRUE
 #'
 "_PACKAGE"
