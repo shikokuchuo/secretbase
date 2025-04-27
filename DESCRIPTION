@@ -1,28 +1,26 @@
-Package: secretbase
 Type: Package
+Package: secretbase
 Title: Cryptographic Hash, Extendable-Output and Base64 Functions
 Version: 1.0.5.9000
+Authors@R: c(
+    person("Charlie", "Gao", , "charlie.gao@shikokuchuo.net", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0750-061X")),
+    person("Hibiki AI Limited", role = "cph")
+  )
 Description: Fast and memory-efficient streaming hash functions and base64
-    encoding / decoding. Hashes strings and raw vectors directly. Stream hashes
-    files which can be larger than memory, as well as in-memory objects through
-    R's serialization mechanism. Implementations include the SHA-256, SHA-3 and
-    'Keccak' cryptographic hash functions, SHAKE256 extendable-output function
-    (XOF), and 'SipHash' pseudo-random function.
-Authors@R: 
-    c(person(given = "Charlie",
-             family = "Gao",
-             role = c("aut", "cre"),
-             email = "charlie.gao@shikokuchuo.net",
-             comment = c(ORCID = "0000-0002-0750-061X")),
-      person(given = "Hibiki AI Limited",
-             role = "cph"))
+    encoding / decoding. Hashes strings and raw vectors directly. Stream
+    hashes files which can be larger than memory, as well as in-memory
+    objects through R's serialization mechanism. Implementations include
+    the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256
+    extendable-output function (XOF), and 'SipHash' pseudo-random
+    function.
 License: MIT + file LICENSE
-BugReports: https://github.com/shikokuchuo/secretbase/issues
 URL: https://shikokuchuo.net/secretbase/,
-     https://github.com/shikokuchuo/secretbase/
-Encoding: UTF-8
+    https://github.com/shikokuchuo/secretbase/
+BugReports: https://github.com/shikokuchuo/secretbase/issues
 Depends: 
     R (>= 3.5)
-RoxygenNote: 7.3.2
-Roxygen: list(markdown = TRUE)
 Config/build/compilation-database: true
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2.9000
