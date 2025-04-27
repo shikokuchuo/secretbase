@@ -18,3 +18,5 @@ reference:
 - contents:
   - secretbase-package
   - matches("^[a-zA-Z]*")
+development:
+  mode: auto
