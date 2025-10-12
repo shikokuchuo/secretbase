@@ -31,20 +31,20 @@
 #'   file is stream hashed, and the file can be larger than memory.
 #'
 #' @return A character string, raw or integer vector depending on `convert`.
-#'     
+#'
 #' @section R Serialization Stream Hashing:
-#' 
+#'
 #' Where this is used, serialization is always version 3 big-endian
 #' representation and the headers (containing R version and native encoding
 #' information) are skipped to ensure portability across platforms.
-#' 
+#'
 #' As hashing is performed in a streaming fashion, there is no materialization
 #' of, or memory allocation for, the serialized object.
-#'     
+#'
 #' @references
 #' The SHA-3 Secure Hash Standard was published by the National Institute of
 #' Standards and Technology (NIST) in 2015 at \doi{doi:10.6028/NIST.FIPS.202}.
-#' 
+#'
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
 #' <https://www.trustedfirmware.org/projects/mbed-tls>.
@@ -55,13 +55,13 @@
 #'
 #' # SHA3-256 hash as raw vector:
 #' sha3("secret base", convert = FALSE)
-#' 
+#'
 #' # SHA3-224 hash as character string:
 #' sha3("secret base", bits = 224)
-#' 
+#'
 #' # SHA3-384 hash as character string:
 #' sha3("secret base", bits = 384)
-#' 
+#'
 #' # SHA3-512 hash as character string:
 #' sha3("secret base", bits = 512)
 #'
@@ -72,14 +72,15 @@
 #'
 #' @export
 #'
-sha3 <- function(x, bits = 256L, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_sha3, x, bits, convert) else
-    .Call(secretbase_sha3_file, file, bits, convert)
+sha3 <- function(x, bits = 256L, convert = TRUE, file) {
+  missing(file) || return(.Call(secretbase_sha3_file, file, bits, convert))
+  .Call(secretbase_sha3, x, bits, convert)
+}
 
 #' SHAKE256 Extendable Output Function
 #'
 #' Returns a SHAKE256 hash of the supplied object or file.
-#' 
+#'
 #' To produce single integer values suitable for use as random seeds for R's
 #' pseudo random number generators (RNGs), set `bits` to `32` and `convert` to
 #' `NA`.
@@ -89,7 +90,7 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #'   `8` and `2^24`.
 #'
 #' @return A character string, raw or integer vector depending on `convert`.
-#' 
+#'
 #' @inheritSection sha3 R Serialization Stream Hashing
 #'
 #' @references
@@ -103,7 +104,7 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' # SHAKE256 hash as raw vector:
 #' shake256("secret base", convert = FALSE)
-#' 
+#'
 #' # SHAKE256 hash to integer:
 #' shake256("secret base", bits = 32L, convert = NA)
 #'
@@ -114,9 +115,10 @@ sha3 <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' @export
 #'
-shake256 <- function(x, bits = 256L, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_shake256, x, bits, convert) else
-    .Call(secretbase_shake256_file, file, bits, convert)
+shake256 <- function(x, bits = 256L, convert = TRUE, file) {
+  missing(file) || return(.Call(secretbase_shake256_file, file, bits, convert))
+  .Call(secretbase_shake256, x, bits, convert)
+}
 
 #' Keccak Cryptographic Hash Algorithms
 #'
@@ -127,14 +129,14 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #' @return A character string, raw or integer vector depending on `convert`.
 #'
 #' @inheritSection sha3 R Serialization Stream Hashing
-#' 
+#'
 #' @references
 #' Keccak is the underlying algorithm for SHA-3, and is identical apart from the
 #' value of the padding parameter.
-#' 
+#'
 #' The Keccak algorithm was designed by G. Bertoni, J. Daemen, M. Peeters and G.
 #' Van Assche.
-#' 
+#'
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
 #' <https://www.trustedfirmware.org/projects/mbed-tls>.
@@ -145,16 +147,16 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' # Keccak-256 hash as raw vector:
 #' keccak("secret base", convert = FALSE)
-#' 
+#'
 #' # Keccak-224 hash as character string:
 #' keccak("secret base", bits = 224)
-#' 
+#'
 #' # Keccak-384 hash as character string:
 #' keccak("secret base", bits = 384)
-#' 
+#'
 #' # Keccak-512 hash as character string:
 #' keccak("secret base", bits = 512)
-#' 
+#'
 #' # Keccak-256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
 #' keccak(file = file)
@@ -162,9 +164,10 @@ shake256 <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' @export
 #'
-keccak <- function(x, bits = 256L, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_keccak, x, bits, convert) else
-    .Call(secretbase_keccak_file, file, bits, convert)
+keccak <- function(x, bits = 256L, convert = TRUE, file) {
+  missing(file) || return(.Call(secretbase_keccak_file, file, bits, convert))
+  .Call(secretbase_keccak, x, bits, convert)
+}
 
 #' SHA-256 Cryptographic Hash Algorithm
 #'
@@ -177,14 +180,14 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #'   Note: for character vectors, only the first element is used.
 #'
 #' @return A character string, raw or integer vector depending on `convert`.
-#'     
+#'
 #' @inheritSection sha3 R Serialization Stream Hashing
-#' 
+#'
 #' @references
 #' The SHA-256 Secure Hash Standard was published by the National Institute of
 #' Standards and Technology (NIST) in 2002 at
 #' <https://csrc.nist.gov/publications/fips/fips180-2/fips180-2.pdf>.
-#' 
+#'
 #' This implementation is based on one by 'The Mbed TLS Contributors' under the
 #' 'Mbed TLS' Trusted Firmware Project at
 #' <https://www.trustedfirmware.org/projects/mbed-tls>.
@@ -195,23 +198,24 @@ keccak <- function(x, bits = 256L, convert = TRUE, file)
 #'
 #' # SHA-256 hash as raw vector:
 #' sha256("secret base", convert = FALSE)
-#' 
+#'
 #' # SHA-256 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
 #' sha256(file = file)
 #' unlink(file)
-#' 
+#'
 #' # SHA-256 HMAC using a character string secret key:
 #' sha256("secret", key = "base")
-#' 
+#'
 #' # SHA-256 HMAC using a raw vector secret key:
 #' sha256("secret", key = charToRaw("base"))
 #'
 #' @export
 #'
-sha256 <- function(x, key = NULL, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_sha256, x, key, convert) else
-    .Call(secretbase_sha256_file, file, key, convert)
+sha256 <- function(x, key = NULL, convert = TRUE, file) {
+  missing(file) || return(.Call(secretbase_sha256_file, file, key, convert))
+  .Call(secretbase_sha256, x, key, convert)
+}
 
 #' SipHash Pseudorandom Function
 #'
@@ -226,15 +230,15 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #'   trailing '0'. Note: for character vectors, only the first element is used.
 #'
 #' @return A character string, raw or integer vector depending on `convert`.
-#'     
+#'
 #' @inheritSection sha3 R Serialization Stream Hashing
-#' 
+#'
 #' @references
 #' The SipHash family of cryptographically-strong pseudorandom functions (PRFs)
 #' are described in 'SipHash: a fast short-input PRF', Jean-Philippe Aumasson
 #' and Daniel J. Bernstein, Paper 2012/351, 2012, Cryptology ePrint Archive at
 #' <https://ia.cr/2012/351>.
-#' 
+#'
 #' This implementation is based on the SipHash streaming implementation by
 #' Daniele Nicolodi, David Rheinsberg and Tom Gundersen at
 #' <https://github.com/c-util/c-siphash>. This is in turn based on the
@@ -248,13 +252,13 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #'
 #' # SipHash-1-3 hash as raw vector:
 #' siphash13("secret base", convert = FALSE)
-#' 
+#'
 #' # SipHash-1-3 hash using a character string key:
 #' siphash13("secret", key = "base")
-#' 
+#'
 #' # SipHash-1-3 hash using a raw vector key:
 #' siphash13("secret", key = charToRaw("base"))
-#' 
+#'
 #' # SipHash-1-3 hash a file:
 #' file <- tempfile(); cat("secret base", file = file)
 #' siphash13(file = file)
@@ -262,6 +266,7 @@ sha256 <- function(x, key = NULL, convert = TRUE, file)
 #'
 #' @export
 #'
-siphash13 <- function(x, key = NULL, convert = TRUE, file)
-  if (missing(file)) .Call(secretbase_siphash13, x, key, convert) else
-    .Call(secretbase_siphash13_file, file, key, convert)
+siphash13 <- function(x, key = NULL, convert = TRUE, file) {
+  missing(file) || return(.Call(secretbase_siphash13_file, file, key, convert))
+  .Call(secretbase_siphash13, x, key, convert)
+}
