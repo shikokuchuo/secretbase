@@ -1,0 +1,54 @@
+# Base64 Decode
+
+Decodes a character string, raw vector or other object from base64
+encoding.
+
+## Usage
+
+``` r
+base64dec(x, convert = TRUE)
+```
+
+## Arguments
+
+- x:
+
+  an object.
+
+- convert:
+
+  logical `TRUE` to convert back to a character string, `FALSE` to
+  convert back to a raw vector or `NA` to decode and then unserialize
+  back to the original object.
+
+## Value
+
+A character string, raw vector, or other object depending on the value
+of `convert`.
+
+## Details
+
+The value of `convert` should be set to `TRUE`, `FALSE` or `NA` to be
+the reverse of the 3 encoding operations (for strings, raw vectors and
+arbitrary objects), in order to return the original object.
+
+## References
+
+This implementation is based that by 'The Mbed TLS Contributors' under
+the 'Mbed TLS' Trusted Firmware Project at
+<https://www.trustedfirmware.org/projects/mbed-tls>.
+
+## See also
+
+[`base64enc()`](https://shikokuchuo.net/secretbase/dev/reference/base64enc.md)
+
+## Examples
+
+``` r
+base64dec(base64enc("secret base"))
+#> [1] "secret base"
+base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
+#> [1] 01 02 04
+base64dec(base64enc(data.frame()), convert = NA)
+#> data frame with 0 columns and 0 rows
+```
