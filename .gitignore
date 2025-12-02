@@ -2,7 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-docs
+/docs/
 inst/doc
 compile_commands.json
 .cache
+.DS_Store

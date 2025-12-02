@@ -12,7 +12,6 @@ badge](https://shikokuchuo.r-universe.dev/badges/secretbase)](https://shikokuchu
 [![R-CMD-check](https://github.com/shikokuchuo/secretbase/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shikokuchuo/secretbase/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https://app.codecov.io/gh/shikokuchuo/secretbase)
-[![DOI](https://zenodo.org/badge/745691432.svg)](https://zenodo.org/doi/10.5281/zenodo.10553139)
 <!-- badges: end -->
 
       ________  
@@ -163,7 +162,7 @@ Serialized objects:
 
 ``` r
 base64enc(data.frame())
-#> [1] "WAoAAAADAAQFAAADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
+#> [1] "WAoAAAADAAQFAgADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
 ```
