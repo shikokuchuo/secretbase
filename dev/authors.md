@@ -10,16 +10,16 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/shikokuchuo/secretbase/blob/main/inst/CITATION)
+[`DESCRIPTION`](https://github.com/shikokuchuo/secretbase/blob/main/DESCRIPTION)
 
 Gao C (2025). *secretbase: Cryptographic Hash, Extendable-Output and
 Base64 Functions*. R package version 1.0.5.9000,
-<https://doi.org/10.5281/zenodo.10553139>.
+<https://shikokuchuo.net/secretbase/>.
 
     @Manual{,
       title = {secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions},
       author = {Charlie Gao},
       year = {2025},
       note = {R package version 1.0.5.9000},
-      url = {https://doi.org/10.5281/zenodo.10553139},
+      url = {https://shikokuchuo.net/secretbase/},
     }
