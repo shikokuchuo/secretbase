@@ -317,14 +317,14 @@ static nano_buf sb_any_buf(const SEXP x) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
-    if (XLENGTH(x) == 1 && !ANY_ATTRIB(x)) {
+    if (XLENGTH(x) == 1 && NO_ATTRIB(x)) {
       const char *s = CHAR(*STRING_PTR_RO(x));
       NANO_INIT(&buf, (unsigned char *) s, strlen(s));
       break;
     }
   if (0) {
   case RAWSXP:
-    if (!ANY_ATTRIB(x)) {
+    if (NO_ATTRIB(x)) {
       NANO_INIT(&buf, (unsigned char *) DATAPTR_RO(x), XLENGTH(x));
       break;
     }
