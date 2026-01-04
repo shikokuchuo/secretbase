@@ -206,14 +206,14 @@ static void hash_object(CSipHash *ctx, const SEXP x) {
   
   switch (TYPEOF(x)) {
   case STRSXP:
-    if (XLENGTH(x) == 1 && !ANY_ATTRIB(x)) {
+    if (XLENGTH(x) == 1 && NO_ATTRIB(x)) {
       const char *s = CHAR(*STRING_PTR_RO(x));
       c_siphash_append(ctx, (uint8_t *) s, strlen(s));
       return;
     }
     break;
   case RAWSXP:
-    if (!ANY_ATTRIB(x)) {
+    if (NO_ATTRIB(x)) {
       c_siphash_append(ctx, (uint8_t *) DATAPTR_RO(x), (size_t) XLENGTH(x));
       return;
     }

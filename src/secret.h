@@ -74,8 +74,8 @@ typedef struct nano_buf_s {
 #define SB_INIT_BUFSIZE 4096
 #define SB_SERIAL_THR 134217728
 
-#ifndef ANY_ATTRIB
-#define ANY_ATTRIB(x) (ATTRIB(x) != R_NilValue)
+#ifndef NO_ATTRIB
+#define NO_ATTRIB(x) (ATTRIB(x) == R_NilValue)
 #endif
 #define SB_DATAPTR(x) (void *) DATAPTR_RO(x)
 #define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
