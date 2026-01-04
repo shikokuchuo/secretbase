@@ -1,6 +1,6 @@
 Type: Package
 Package: secretbase
-Title: Cryptographic Hash, Extendable-Output and Base64 Functions
+Title: Cryptographic Hash, Extendable-Output and Data Encoding Functions
 Version: 1.0.5.9000
 Authors@R: c(
     person("Charlie", "Gao", , "charlie.gao@posit.co", role = c("aut", "cre"),
@@ -9,13 +9,12 @@ Authors@R: c(
            comment = c(ROR = "03wc8by49")),
     person("Hibiki AI Limited", role = "cph")
   )
-Description: Fast and memory-efficient streaming hash functions and base64
-    encoding / decoding. Hashes strings and raw vectors directly. Stream
-    hashes files which can be larger than memory, as well as in-memory
+Description: Fast and memory-efficient streaming hash functions and
+    binary-to-text encoding / decoding. Hashes strings and raw vectors directly.
+    Stream hashes files which can be larger than memory, as well as in-memory
     objects through R's serialization mechanism. Implementations include
     the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256
-    extendable-output function (XOF), and 'SipHash' pseudo-random
-    function.
+    extendable-output function (XOF), and 'SipHash' pseudo-random function.
 License: MIT + file LICENSE
 URL: https://shikokuchuo.net/secretbase/,
     https://github.com/shikokuchuo/secretbase/
