@@ -101,9 +101,15 @@ Rf_error("serialization exceeds max length of raw vector")
 
 void sb_clear_buffer(void *, const size_t);
 SEXP sb_hash_sexp(unsigned char *, const size_t, const int);
+nano_buf sb_any_buf(const SEXP);
+SEXP sb_raw_char(const unsigned char *, const size_t);
+SEXP sb_unserialize(unsigned char *, const size_t);
+void sb_sha256_raw(const void *, size_t, void *);
 
 SEXP secretbase_base64enc(SEXP, SEXP);
 SEXP secretbase_base64dec(SEXP, SEXP);
+SEXP secretbase_base58enc(SEXP, SEXP);
+SEXP secretbase_base58dec(SEXP, SEXP);
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_shake256(SEXP, SEXP, SEXP);

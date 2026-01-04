@@ -499,6 +499,18 @@ static SEXP secretbase_sha256_impl(const SEXP x, const SEXP key, const SEXP conv
   
 }
 
+// secretbase - shared helper functions ----------------------------------------
+
+void sb_sha256_raw(const void *data, size_t len, void *digest) {
+
+  mbedtls_sha256_context ctx;
+  mbedtls_sha256_init(&ctx);
+  mbedtls_sha256_starts(&ctx);
+  mbedtls_sha256_update(&ctx, data, len);
+  mbedtls_sha256_finish(&ctx, digest);
+
+}
+
 // secretbase - exported functions ---------------------------------------------
 
 SEXP secretbase_sha256(SEXP x, SEXP key, SEXP convert) {

@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Package Overview
 
-secretbase is an R package providing fast, memory-efficient streaming hash functions and base64 encoding/decoding. It implements:
+secretbase is an R package providing fast, memory-efficient streaming hash functions and encoding/decoding. It implements:
 - SHA-256, SHA-3, and Keccak cryptographic hash functions
 - SHAKE256 extendable-output function (XOF)
 - SipHash-1-3 pseudo-random function
 - Base64 encoding/decoding
+- Base58Check encoding/decoding (with double SHA-256 checksum)
 
 All hash functions support both direct hashing of strings/raw vectors and streaming hashing of files and R objects through serialization.
 
@@ -48,7 +49,7 @@ The package uses GitHub Actions workflows in `.github/workflows/`:
 
 **R Layer (R/*.R)**:
 - `R/secret.R` - Hash function interfaces (sha3, shake256, keccak, sha256, siphash13)
-- `R/base.R` - Base64 encoding/decoding interfaces (base64enc, base64dec)
+- `R/base.R` - Base64 and Base58Check encoding/decoding interfaces
 - All R functions are thin wrappers that call C code via `.Call()`
 
 **C Layer (src/*.c)**:
@@ -58,6 +59,7 @@ The package uses GitHub Actions workflows in `.github/workflows/`:
 - `src/secret2.c` - SHA-256 implementation (Mbed TLS based)
 - `src/secret3.c` - SipHash implementation (c-siphash based)
 - `src/base.c` - Base64 implementation (Mbed TLS based)
+- `src/base2.c` - Base58Check implementation (libbase58 based)
 
 ### Key Implementation Details
 
@@ -72,9 +74,9 @@ Files are read and hashed in 65536-byte chunks (SB_BUF_SIZE), allowing files lar
 
 **Output Formats**:
 The `convert` parameter controls output format:
-- `TRUE` - hex string representation
+- `TRUE` - hex/character string representation
 - `FALSE` - raw vector
-- `NA` - integer vector (useful for SHAKE256 generating RNG seeds)
+- `NA` - integer vector (for hashes) or unserialized object (for encoding functions)
 
 ### Context Structures
 - `mbedtls_sha3_context` - SHA-3/SHAKE256/Keccak state (25 × 64-bit words)
@@ -88,9 +90,10 @@ The package uses a custom minimal testing framework called "minitest" (defined a
 - `test_library()` - Load package
 - `test_type()` - Assert object type
 - `test_equal()` - Assert equality
+- `test_identical()` - Assert identical (stricter than equal)
 - `test_error()` - Assert error with optional message matching
 
-Tests validate against NIST known hashes and test all parameter combinations, error handling, serialization, and file operations.
+Tests validate against NIST known hashes and test all parameter combinations, error handling, serialization, and file operations. Base58Check tests use known Bitcoin test vectors.
 
 ## Code Style
 - R code uses roxygen2 for documentation (RoxygenNote: 7.3.3)

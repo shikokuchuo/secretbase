@@ -2,6 +2,7 @@
 test_library <- function(package) library(package = package, character.only = TRUE)
 test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
 test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
+test_identical <- function(a, b) invisible(identical(a, b) || {print(a); print(b); stop("the above expressions were not identical")})
 test_error <- function(x, containing = "") invisible(inherits(x <- tryCatch(x, error = identity), "error") && grepl(containing, x[["message"]], fixed = TRUE) || stop("Expected error message containing: ", containing, "\nActual error message: ", x[["message"]]))
 # ------------------------------------------------------------------------------
 
@@ -142,3 +143,22 @@ test_equal(base64dec(base64enc("secret base")), "secret base")
 test_equal(base64enc("s"), "cw==")
 test_equal(base64dec("c2VjcmV0"), "secret")
 test_equal(base64enc(""), base64dec(""))
+# Base58 tests:
+test_type("character", base58enc(sha256("", convert = FALSE)))
+test_type("raw", base58enc(data.frame(), convert = FALSE))
+test_type("character", base58dec(base58enc("secret base")))
+test_type("raw", base58dec(base58enc(as.raw(c(1L, 2L))), convert = FALSE))
+test_type("integer", base58dec(base58enc(c(1L, 2L)), convert = NA))
+test_equal(base58dec(base58enc("secret base")), "secret base")
+test_identical(base58dec(base58enc(sha256("test", convert = FALSE)), convert = FALSE), sha256("test", convert = FALSE))
+test_identical(base58dec(base58enc(as.raw(c(1, 2, 3))), convert = FALSE), as.raw(c(1, 2, 3)))
+test_error(base58enc("test", convert = 0), "'convert' must be a logical value")
+test_error(base58dec("invalid"), "input is not valid base58")
+test_error(base58dec("1111"), "base58 checksum validation failed")
+test_error(base58dec(404), "input is not valid base58")
+test_error(base58dec(base58enc("test"), convert = 1L), "'convert' must be a logical value")
+# Known Bitcoin test vectors from https://en.bitcoin.it/wiki/Base58Check_encoding
+btc_payload <- as.raw(c(0x01, 0x09, 0x66, 0x77, 0x60, 0x06, 0x95, 0x3D, 0x55, 0x67,
+                        0x43, 0x9E, 0x5E, 0x39, 0xF8, 0x6A, 0x0D, 0x27, 0x3B, 0xEE))
+test_equal(base58enc(btc_payload), "16UwLL9Risc3QfPqBUvKofHmBQ7wMtjvM")
+test_identical(base58dec("16UwLL9Risc3QfPqBUvKofHmBQ7wMtjvM", convert = FALSE), btc_payload)

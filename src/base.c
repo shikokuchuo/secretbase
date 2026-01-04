@@ -221,7 +221,7 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
 // secretbase - internals ------------------------------------------------------
 
-static SEXP sb_raw_char(const unsigned char *buf, const size_t sz) {
+SEXP sb_raw_char(const unsigned char *buf, const size_t sz) {
 
   int i;
   for (i = 0; i < sz; i++) if (!buf[i]) break;
@@ -288,7 +288,7 @@ static void sb_serialize(nano_buf *buf, const SEXP object) {
   
 }
 
-static SEXP sb_unserialize(unsigned char *buf, const size_t sz) {
+SEXP sb_unserialize(unsigned char *buf, const size_t sz) {
 
   nano_buf nbuf;
   struct R_inpstream_st input_stream;
@@ -311,7 +311,7 @@ static SEXP sb_unserialize(unsigned char *buf, const size_t sz) {
   
 }
 
-static nano_buf sb_any_buf(const SEXP x) {
+nano_buf sb_any_buf(const SEXP x) {
   
   nano_buf buf;
   
