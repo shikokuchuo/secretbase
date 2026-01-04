@@ -3,8 +3,10 @@ Package: secretbase
 Title: Cryptographic Hash, Extendable-Output and Base64 Functions
 Version: 1.0.5.9000
 Authors@R: c(
-    person("Charlie", "Gao", , "charlie.gao@shikokuchuo.net", role = c("aut", "cre"),
+    person("Charlie", "Gao", , "charlie.gao@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0750-061X")),
+    person("Posit Software, PBC", role = c("cph", "fnd"),
+           comment = c(ROR = "03wc8by49")),
     person("Hibiki AI Limited", role = "cph")
   )
 Description: Fast and memory-efficient streaming hash functions and base64
