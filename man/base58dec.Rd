@@ -2,13 +2,12 @@
 % Please edit documentation in R/base.R
 \name{base58dec}
 \alias{base58dec}
-\title{Base58Check Decode}
+\title{Base58 Decode}
 \usage{
 base58dec(x, convert = TRUE)
 }
 \arguments{
-\item{x}{a character string or raw vector containing Base58Check encoded
-data.}
+\item{x}{a character string or raw vector containing base58 encoded data.}
 
 \item{convert}{logical \code{TRUE} to convert back to a character string, \code{FALSE}
 to convert back to a raw vector or \code{NA} to decode and then unserialize back
@@ -19,11 +18,12 @@ A character string, raw vector, or other object depending on the
 value of \code{convert}.
 }
 \description{
-Decodes a character string or raw vector from Base58Check encoding.
+Decodes a character string or raw vector from base58 encoding with checksum.
 }
 \details{
-Expects Base58Check encoded input. The checksum is verified using double
-SHA-256 and an error is raised if validation fails.
+The 4-byte checksum suffix is verified using double SHA-256 and an error is
+raised if validation fails. Note: does not expect a version byte prefix
+(unlike Bitcoin Base58Check).
 
 The value of \code{convert} should be set to \code{TRUE}, \code{FALSE} or \code{NA} to be the
 reverse of the 3 encoding operations (for strings, raw vectors and arbitrary

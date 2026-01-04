@@ -154,11 +154,7 @@ test_identical(base58dec(base58enc(sha256("test", convert = FALSE)), convert = F
 test_identical(base58dec(base58enc(as.raw(c(1, 2, 3))), convert = FALSE), as.raw(c(1, 2, 3)))
 test_error(base58enc("test", convert = 0), "'convert' must be a logical value")
 test_error(base58dec("invalid"), "input is not valid base58")
+test_error(base58dec("111"), "base58 checksum validation failed")
 test_error(base58dec("1111"), "base58 checksum validation failed")
 test_error(base58dec(404), "input is not valid base58")
 test_error(base58dec(base58enc("test"), convert = 1L), "'convert' must be a logical value")
-# Known Bitcoin test vectors from https://en.bitcoin.it/wiki/Base58Check_encoding
-btc_payload <- as.raw(c(0x01, 0x09, 0x66, 0x77, 0x60, 0x06, 0x95, 0x3D, 0x55, 0x67,
-                        0x43, 0x9E, 0x5E, 0x39, 0xF8, 0x6A, 0x0D, 0x27, 0x3B, 0xEE))
-test_equal(base58enc(btc_payload), "16UwLL9Risc3QfPqBUvKofHmBQ7wMtjvM")
-test_identical(base58dec("16UwLL9Risc3QfPqBUvKofHmBQ7wMtjvM", convert = FALSE), btc_payload)

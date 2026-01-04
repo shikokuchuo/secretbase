@@ -62,13 +62,14 @@ base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 #'
 base64dec <- function(x, convert = TRUE) .Call(secretbase_base64dec, x, convert)
 
-#' Base58Check Encode
+#' Base58 Encode
 #'
-#' Encodes a character string, raw vector or other object to Base58Check
-#' encoding.
+#' Encodes a character string, raw vector or other object to base58 encoding
+#' with a 4-byte checksum suffix.
 #'
-#' Base58Check encoding adds a version byte prefix (set to 0) and a 4-byte
-#' checksum suffix (double SHA-256) to the data before base58 encoding.
+#' Adds a 4-byte checksum suffix (double SHA-256) to the data before base58
+#' encoding. Note: does not include a version byte prefix (unlike Bitcoin
+#' Base58Check).
 #'
 #' A character string or raw vector (with no attributes) is encoded as is,
 #' whilst all other objects are first serialized (using R serialisation version
@@ -95,19 +96,19 @@ base64dec <- function(x, convert = TRUE) .Call(secretbase_base64dec, x, convert)
 #'
 base58enc <- function(x, convert = TRUE) .Call(secretbase_base58enc, x, convert)
 
-#' Base58Check Decode
+#' Base58 Decode
 #'
-#' Decodes a character string or raw vector from Base58Check encoding.
+#' Decodes a character string or raw vector from base58 encoding with checksum.
 #'
-#' Expects Base58Check encoded input. The checksum is verified using double
-#' SHA-256 and an error is raised if validation fails.
+#' The 4-byte checksum suffix is verified using double SHA-256 and an error is
+#' raised if validation fails. Note: does not expect a version byte prefix
+#' (unlike Bitcoin Base58Check).
 #'
 #' The value of `convert` should be set to `TRUE`, `FALSE` or `NA` to be the
 #' reverse of the 3 encoding operations (for strings, raw vectors and arbitrary
 #' objects), in order to return the original object.
 #'
-#' @param x a character string or raw vector containing Base58Check encoded
-#'   data.
+#' @param x a character string or raw vector containing base58 encoded data.
 #' @param convert logical `TRUE` to convert back to a character string, `FALSE`
 #'   to convert back to a raw vector or `NA` to decode and then unserialize back
 #'   to the original object.

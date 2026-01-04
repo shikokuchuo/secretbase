@@ -176,21 +176,20 @@ static bool b58check(const void *bin, size_t binsz, const char *b58, size_t b58s
 
 }
 
-static bool b58check_enc(char *b58c, size_t *b58c_sz, uint8_t ver,
+static bool b58check_enc(char *b58c, size_t *b58c_sz,
                          const void *data, size_t datasz) {
 
   unsigned char hash1[SB_SHA256_SIZE], hash2[SB_SHA256_SIZE];
-  uint8_t *buf = R_Calloc(1 + datasz + 4, uint8_t);
+  uint8_t *buf = R_Calloc(datasz + 4, uint8_t);
 
-  buf[0] = ver;
-  memcpy(&buf[1], data, datasz);
+  memcpy(buf, data, datasz);
 
-  sb_sha256_raw(buf, 1 + datasz, hash1);
+  sb_sha256_raw(buf, datasz, hash1);
   sb_sha256_raw(hash1, SB_SHA256_SIZE, hash2);
 
-  memcpy(&buf[1 + datasz], hash2, 4);
+  memcpy(&buf[datasz], hash2, 4);
 
-  bool ret = b58enc(b58c, b58c_sz, buf, 1 + datasz + 4);
+  bool ret = b58enc(b58c, b58c_sz, buf, datasz + 4);
 
   R_Free(buf);
   return ret;
@@ -209,11 +208,11 @@ SEXP secretbase_base58enc(SEXP x, SEXP convert) {
 
   nano_buf hash = sb_any_buf(x);
 
-  // data + version byte + 4-byte checksum
-  olen = (1 + hash.cur + 4) * 138 / 100 + 2;
+  // data + 4-byte checksum
+  olen = (hash.cur + 4) * 138 / 100 + 2;
   unsigned char *buf = R_Calloc(olen, unsigned char);
 
-  if (!b58check_enc((char *) buf, &olen, 0, hash.buf, hash.cur)) {
+  if (!b58check_enc((char *) buf, &olen, hash.buf, hash.cur)) {
     NANO_FREE(hash);
     R_Free(buf);
     Rf_error("base58check encoding failed");
@@ -269,24 +268,18 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
     Rf_error("base58 checksum validation failed");
   }
 
-  // Data excludes version byte (1) and checksum (4)
-  if (olen < 5) {
-    R_Free(buf);
-    Rf_error("base58 data too short");
-  }
-
-  datalen = olen - 5;
+  datalen = olen - 4;
 
   switch (conv) {
   case 0:
     out = Rf_allocVector(RAWSXP, datalen);
-    memcpy(SB_DATAPTR(out), buf + 1, datalen);
+    memcpy(SB_DATAPTR(out), buf, datalen);
     break;
   case 1:
-    out = sb_raw_char(buf + 1, datalen);
+    out = sb_raw_char(buf, datalen);
     break;
   default:
-    out = sb_unserialize(buf + 1, datalen);
+    out = sb_unserialize(buf, datalen);
   }
 
   R_Free(buf);

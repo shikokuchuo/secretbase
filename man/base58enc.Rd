@@ -2,7 +2,7 @@
 % Please edit documentation in R/base.R
 \name{base58enc}
 \alias{base58enc}
-\title{Base58Check Encode}
+\title{Base58 Encode}
 \usage{
 base58enc(x, convert = TRUE)
 }
@@ -16,12 +16,13 @@ raw vector.}
 A character string or raw vector depending on the value of \code{convert}.
 }
 \description{
-Encodes a character string, raw vector or other object to Base58Check
-encoding.
+Encodes a character string, raw vector or other object to base58 encoding
+with a 4-byte checksum suffix.
 }
 \details{
-Base58Check encoding adds a version byte prefix (set to 0) and a 4-byte
-checksum suffix (double SHA-256) to the data before base58 encoding.
+Adds a 4-byte checksum suffix (double SHA-256) to the data before base58
+encoding. Note: does not include a version byte prefix (unlike Bitcoin
+Base58Check).
 
 A character string or raw vector (with no attributes) is encoded as is,
 whilst all other objects are first serialized (using R serialisation version

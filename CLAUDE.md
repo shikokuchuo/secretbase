@@ -9,7 +9,7 @@ secretbase is an R package providing fast, memory-efficient streaming hash funct
 - SHAKE256 extendable-output function (XOF)
 - SipHash-1-3 pseudo-random function
 - Base64 encoding/decoding
-- Base58Check encoding/decoding (with double SHA-256 checksum)
+- Base58 encoding/decoding with 4-byte double SHA-256 checksum (no version byte prefix)
 
 All hash functions support both direct hashing of strings/raw vectors and streaming hashing of files and R objects through serialization.
 
@@ -74,9 +74,9 @@ Files are read and hashed in 65536-byte chunks (SB_BUF_SIZE), allowing files lar
 
 **Output Formats**:
 The `convert` parameter controls output format:
-- `TRUE` - hex/character string representation
+- `TRUE` - character string (hex for hashes, base64/base58 for encoding)
 - `FALSE` - raw vector
-- `NA` - integer vector (for hashes) or unserialized object (for encoding functions)
+- `NA` - integer vector (for hashes with SHAKE256) or unserialized object (for base64/base58 decoding)
 
 ### Context Structures
 - `mbedtls_sha3_context` - SHA-3/SHAKE256/Keccak state (25 × 64-bit words)
