@@ -57,7 +57,7 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
   const unsigned char *b58u = (const unsigned char *) b58;
   unsigned char *binu = bin;
   size_t outisz = (binsz + sizeof(uint32_t) - 1) / sizeof(uint32_t);
-  uint32_t *outi = R_Calloc(outisz, uint32_t);
+  uint32_t outi[outisz];
   uint64_t t;
   uint32_t c;
   size_t i, j;
@@ -65,55 +65,62 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
   uint32_t zeromask = bytesleft ? (0xffffffff << (bytesleft * 8)) : 0;
   unsigned zerocount = 0;
 
-  if (!b58sz) b58sz = strlen(b58);
+  if (!b58sz)
+    b58sz = strlen(b58);
 
-  for (i = 0; i < outisz; ++i) outi[i] = 0;
+  for (i = 0; i < outisz; ++i) {
+    outi[i] = 0;
+  }
 
-  for (i = 0; i < b58sz && b58u[i] == '1'; ++i) ++zerocount;
+  for (i = 0; i < b58sz && b58u[i] == '1'; ++i)
+    ++zerocount;
 
   for ( ; i < b58sz; ++i) {
-    if (b58u[i] & 0x80) { R_Free(outi); return false; }
-    if (b58digits_map[b58u[i]] == -1) { R_Free(outi); return false; }
+    if (b58u[i] & 0x80)
+      return false;
+    if (b58digits_map[b58u[i]] == -1)
+      return false;
     c = (unsigned) b58digits_map[b58u[i]];
     for (j = outisz; j--; ) {
       t = ((uint64_t) outi[j]) * 58 + c;
-      c = (uint32_t) (t >> 32);
-      outi[j] = (uint32_t) (t & 0xffffffff);
+      c = t >> 32;
+      outi[j] = t & 0xffffffff;
     }
-    if (c) { R_Free(outi); return false; }
-    if (outi[0] & zeromask) { R_Free(outi); return false; }
+    if (c)
+      return false;
+    if (outi[0] & zeromask)
+      return false;
   }
 
   j = 0;
   if (bytesleft) {
     for (i = bytesleft; i > 0; --i) {
-      *(binu++) = (uint8_t) ((outi[0] >> (8 * (i - 1))) & 0xff);
+      *(binu++) = (outi[0] >> (8 * (i - 1))) & 0xff;
     }
     ++j;
   }
 
   for (; j < outisz; ++j) {
-    for (i = sizeof(uint32_t); i > 0; --i) {
-      *(binu++) = (uint8_t) ((outi[j] >> (8 * (i - 1))) & 0xff);
+    for (i = sizeof(*outi); i > 0; --i) {
+      *(binu++) = (outi[j] >> (8 * (i - 1))) & 0xff;
     }
   }
 
   binu = bin;
   for (i = 0; i < binsz; ++i) {
-    if (binu[i]) break;
+    if (binu[i])
+      break;
   }
 
   *binszp = binsz - i + zerocount;
 
-  if (i > zerocount) {
+  if (i > zerocount)
     memmove(binu + zerocount, binu + i, binsz - i);
-  } else if (i < zerocount) {
+  else if (i < zerocount)
     memmove(binu + zerocount, binu + i, binsz - i);
-  }
 
   memset(binu, 0, zerocount);
 
-  R_Free(outi);
   return true;
 
 }
@@ -125,10 +132,11 @@ static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz) {
   size_t i, j, high, zcount = 0;
   size_t size;
 
-  while (zcount < binsz && !bin[zcount]) ++zcount;
+  while (zcount < binsz && !bin[zcount])
+    ++zcount;
 
   size = (binsz - zcount) * 138 / 100 + 1;
-  uint8_t *buf = R_Calloc(size, uint8_t);
+  uint8_t buf[size];
   memset(buf, 0, size);
 
   for (i = zcount, high = size - 1; i < binsz; ++i, high = j) {
@@ -136,29 +144,28 @@ static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz) {
       carry += 256 * buf[j];
       buf[j] = carry % 58;
       carry /= 58;
-      if (!j) break;
+      if (!j)
+        break;
     }
   }
 
   for (j = 0; j < size && !buf[j]; ++j);
 
   if (*b58sz <= zcount + size - j) {
-    R_Free(buf);
     *b58sz = zcount + size - j + 1;
     return false;
   }
 
-  if (zcount) memset(b58, '1', zcount);
-  for (i = zcount; j < size; ++i, ++j) b58[i] = b58digits_ordered[buf[j]];
+  if (zcount)
+    memset(b58, '1', zcount);
+  for (i = zcount; j < size; ++i, ++j)
+    b58[i] = b58digits_ordered[buf[j]];
   b58[i] = '\0';
   *b58sz = i;
 
-  R_Free(buf);
   return true;
 
 }
-
-// secretbase - base58check functions ------------------------------------------
 
 static bool b58check(const void *bin, size_t binsz, const char *b58, size_t b58sz) {
 
@@ -180,7 +187,7 @@ static bool b58check_enc(char *b58c, size_t *b58c_sz,
                          const void *data, size_t datasz) {
 
   unsigned char hash1[SB_SHA256_SIZE], hash2[SB_SHA256_SIZE];
-  uint8_t *buf = R_Calloc(datasz + 4, uint8_t);
+  uint8_t buf[datasz + 4];
 
   memcpy(buf, data, datasz);
 
@@ -189,10 +196,7 @@ static bool b58check_enc(char *b58c, size_t *b58c_sz,
 
   memcpy(&buf[datasz], hash2, 4);
 
-  bool ret = b58enc(b58c, b58c_sz, buf, datasz + 4);
-
-  R_Free(buf);
-  return ret;
+  return b58enc(b58c, b58c_sz, buf, datasz + 4);
 
 }
 
@@ -208,7 +212,6 @@ SEXP secretbase_base58enc(SEXP x, SEXP convert) {
 
   nano_buf hash = sb_any_buf(x);
 
-  // data + 4-byte checksum
   olen = (hash.cur + 4) * 138 / 100 + 2;
   unsigned char *buf = R_Calloc(olen, unsigned char);
 
@@ -237,18 +240,17 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
 
   SB_ASSERT_LOGICAL(convert);
   const int conv = SB_LOGICAL(convert);
-  char *inbuf;
+  const char *inbuf;
   SEXP out;
   size_t inlen, olen, datalen;
 
   switch (TYPEOF(x)) {
-  case STRSXP: ;
-    const char *str = CHAR(*STRING_PTR_RO(x));
-    inbuf = (char *) str;
-    inlen = strlen(str);
+  case STRSXP:
+    inbuf = CHAR(*STRING_PTR_RO(x));
+    inlen = strlen(inbuf);
     break;
   case RAWSXP:
-    inbuf = (char *) RAW(x);
+    inbuf = (char *) DATAPTR_RO(x);
     inlen = XLENGTH(x);
     break;
   default:

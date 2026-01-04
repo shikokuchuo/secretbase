@@ -372,18 +372,19 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   SB_ASSERT_LOGICAL(convert);
   const int conv = SB_LOGICAL(convert);
   int xc;
-  unsigned char *inbuf;
+  const unsigned char *inbuf;
   SEXP out;
   size_t inlen, olen;
   
   switch (TYPEOF(x)) {
-  case STRSXP: ;
+  case STRSXP: {
     const char *str = CHAR(*STRING_PTR_RO(x));
     inbuf = (unsigned char *) str;
     inlen = strlen(str);
     break;
+  }
   case RAWSXP:
-    inbuf = RAW(x);
+    inbuf = (unsigned char *) DATAPTR_RO(x);
     inlen = XLENGTH(x);
     break;
   default:
