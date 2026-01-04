@@ -114,12 +114,10 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
 
   *binszp = binsz - i + zerocount;
 
-  if (i > zerocount)
+  if (i > zerocount && i < binsz)
     memmove(binu + zerocount, binu + i, binsz - i);
-  else if (i < zerocount)
-    memmove(binu + zerocount, binu + i, binsz - i);
-
-  memset(binu, 0, zerocount);
+  if (zerocount)
+    memset(binu, 0, zerocount);
 
   return true;
 
