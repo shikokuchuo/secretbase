@@ -1,5 +1,7 @@
 # secretbase (development version)
 
+* Adds base58 encoding and decoding (with a 4-byte checksum suffix and no version byte prefix).
+
 # secretbase 1.0.5
 
 * Package is re-licensed under the MIT licence.
