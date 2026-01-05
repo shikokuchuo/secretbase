@@ -221,12 +221,12 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
 
 // secretbase - internals ------------------------------------------------------
 
-SEXP sb_raw_char(const unsigned char *buf, const size_t sz) {
+SEXP sb_raw_char(unsigned char *buf, const size_t sz) {
 
   int i;
   for (i = 0; i < sz; i++) if (!buf[i]) break;
   if (sz - i > 1) {
-    R_Free(buf);
+    free(buf);
     Rf_error("data could not be converted to a character string");
   }
   
@@ -259,7 +259,12 @@ static inline void sb_write_bytes(R_outpstream_t stream, void *src, int len) {
     do {
       buf->len += buf->len > SB_SERIAL_THR ? SB_SERIAL_THR : buf->len;
     } while (buf->len < req);
-    buf->buf = R_Realloc(buf->buf, buf->len, unsigned char);
+    unsigned char *tmp = realloc(buf->buf, buf->len);
+    if (tmp == NULL) {
+      free(buf->buf);
+      Rf_error("memory allocation failed");
+    }
+    buf->buf = tmp;
   }
   
   memcpy(buf->buf + buf->cur, src, len);
@@ -349,19 +354,23 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   
   nano_buf hash = sb_any_buf(x);
   xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur);
-  unsigned char *buf = R_Calloc(olen, unsigned char);
+  unsigned char *buf = malloc(olen);
+  if (buf == NULL) {
+    NANO_FREE(hash);
+    Rf_error("memory allocation failed");
+  }
   xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur);
   NANO_FREE(hash);
   CHECK_ERROR(xc, buf);
-  
+
   if (conv) {
     out = sb_raw_char(buf, olen);
   } else {
     out = Rf_allocVector(RAWSXP, olen);
     memcpy(SB_DATAPTR(out), buf, olen);
   }
-  
-  R_Free(buf);
+
+  free(buf);
   
   return out;
   
@@ -394,10 +403,12 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   xc = mbedtls_base64_decode(NULL, 0, &olen, inbuf, inlen);
   if (xc == MBEDTLS_ERR_BASE64_INVALID_CHARACTER)
     Rf_error("input is not valid base64");
-  unsigned char *buf = R_Calloc(olen, unsigned char);
+  unsigned char *buf = malloc(olen);
+  if (buf == NULL)
+    Rf_error("memory allocation failed");
   xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen);
   CHECK_ERROR(xc, buf);
-  
+
   switch (conv) {
   case 0:
     out = Rf_allocVector(RAWSXP, olen);
@@ -409,8 +420,8 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   default:
     out = sb_unserialize(buf, olen);
   }
-  
-  R_Free(buf);
+
+  free(buf);
   
   return out;
   

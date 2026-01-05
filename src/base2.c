@@ -216,11 +216,15 @@ SEXP secretbase_base58enc(SEXP x, SEXP convert) {
   nano_buf hash = sb_any_buf(x);
 
   olen = (hash.cur + 4) * 138 / 100 + 2;
-  unsigned char *buf = R_Calloc(olen, unsigned char);
+  unsigned char *buf = malloc(olen);
+  if (buf == NULL) {
+    NANO_FREE(hash);
+    Rf_error("memory allocation failed");
+  }
 
   if (!b58check_enc((char *) buf, &olen, hash.buf, hash.cur)) {
     NANO_FREE(hash);
-    R_Free(buf);
+    free(buf);
     Rf_error("base58check encoding failed");
   }
 
@@ -233,7 +237,7 @@ SEXP secretbase_base58enc(SEXP x, SEXP convert) {
     memcpy(SB_DATAPTR(out), buf, olen);
   }
 
-  R_Free(buf);
+  free(buf);
 
   return out;
 
@@ -261,15 +265,17 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
   }
 
   olen = inlen * 3 / 4 + 4;
-  unsigned char *buf = R_Calloc(olen, unsigned char);
+  unsigned char *buf = malloc(olen);
+  if (buf == NULL)
+    Rf_error("memory allocation failed");
 
   if (!b58tobin(buf, &olen, inbuf, inlen)) {
-    R_Free(buf);
+    free(buf);
     Rf_error("input is not valid base58");
   }
 
   if (!b58check(buf, olen)) {
-    R_Free(buf);
+    free(buf);
     Rf_error("base58 checksum validation failed");
   }
 
@@ -287,7 +293,7 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
     out = sb_unserialize(buf, datalen);
   }
 
-  R_Free(buf);
+  free(buf);
 
   return out;
 
