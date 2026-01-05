@@ -152,58 +152,78 @@ test_type("integer", base58dec(base58enc(c(1L, 2L)), convert = NA))
 test_equal(base58dec(base58enc("secret base")), "secret base")
 test_identical(base58dec(base58enc(sha256("test", convert = FALSE)), convert = FALSE), sha256("test", convert = FALSE))
 test_identical(base58dec(base58enc(as.raw(c(1, 2, 3))), convert = FALSE), as.raw(c(1, 2, 3)))
+test_identical(base58dec(charToRaw(base58enc("test")), convert = FALSE), charToRaw("test"))
+test_identical(base58dec(base58enc(as.raw(c(0, 0, 1))), convert = FALSE), as.raw(c(0, 0, 1)))
+test_identical(base58dec(base58enc(raw(0)), convert = FALSE), raw(0))
 test_error(base58enc("test", convert = 0), "'convert' must be a logical value")
 test_error(base58dec("invalid"), "input is not valid base58")
 test_error(base58dec("111"), "base58 checksum validation failed")
 test_error(base58dec("1111"), "base58 checksum validation failed")
 test_error(base58dec(404), "input is not valid base58")
 test_error(base58dec(base58enc("test"), convert = 1L), "'convert' must be a logical value")
+test_error(base58dec("\x80"), "input is not valid base58")
 # CBOR encoding/decoding tests:
 test_type("raw", cborenc(NULL))
 test_identical(cbordec(cborenc(NULL)), NULL)
-# Scalars
-test_identical(cbordec(cborenc(TRUE)), TRUE)
-test_identical(cbordec(cborenc(FALSE)), FALSE)
-test_identical(cbordec(cborenc(42L)), 42L)
-test_identical(cbordec(cborenc(-1L)), -1L)
-test_identical(cbordec(cborenc(3.14)), 3.14)
-test_identical(cbordec(cborenc("hello")), "hello")
-# Raw vectors
+test_equal(cbordec(cborenc(TRUE)), TRUE)
+test_equal(cbordec(cborenc(FALSE)), FALSE)
+test_equal(cbordec(cborenc(42L)), 42L)
+test_equal(cbordec(cborenc(-1L)), -1L)
+test_equal(cbordec(cborenc(3.14)), 3.14)
+test_equal(cbordec(cborenc("hello")), "hello")
 test_identical(cbordec(cborenc(as.raw(1:10))), as.raw(1:10))
-# Vectors become arrays (lists)
 test_identical(cbordec(cborenc(1:3)), as.list(1:3))
 test_identical(cbordec(cborenc(c("a", "b"))), as.list(c("a", "b")))
-# Unnamed lists (arrays)
 test_identical(cbordec(cborenc(list(1L, "a", TRUE))), list(1L, "a", TRUE))
-# Named lists (maps)
 test_identical(cbordec(cborenc(list(a = 1L, b = "test"))), list(a = 1L, b = "test"))
-# Nested structures
 nested <- list(outer = list(inner = list(value = 42L)), data = as.raw(0:3))
 test_identical(cbordec(cborenc(nested)), nested)
-# Edge cases
 test_identical(cbordec(cborenc(raw(0))), raw(0))
-test_identical(cbordec(cborenc("")), "")
 test_identical(cbordec(cborenc(list())), list())
-# Large doubles (beyond 32-bit signed integer range)
-big <- 2147483648
-test_identical(cbordec(cborenc(big)), big)
-big <- -2147483649
-test_identical(cbordec(cborenc(big)), big)
-# NA handling
+test_equal(cbordec(cborenc("")), "")
+test_equal(cbordec(cborenc(2147483648)), 2147483648)
+test_equal(cbordec(cborenc(-2147483649)), -2147483649)
 test_identical(cbordec(cborenc(NA)), NA)
 test_identical(cbordec(cborenc(NA_integer_)), NA_integer_)
 test_identical(cbordec(cborenc(NA_real_)), NA_real_)
 test_identical(cbordec(cborenc(NA_character_)), NA)
-# Special float values (NaN, Inf)
-test_identical(is.nan(cbordec(cborenc(NaN))), TRUE)
-test_identical(cbordec(cborenc(Inf)), Inf)
-test_identical(cbordec(cborenc(-Inf)), -Inf)
-# Unicode strings (UTF-8 encoding)
-test_identical(cbordec(cborenc("caf\u00e9")), "caf\u00e9")
-test_identical(cbordec(cborenc("\U0001F600")), "\U0001F600")
-# Integer boundary cases
-test_identical(cbordec(cborenc(.Machine$integer.max)), .Machine$integer.max)
-test_identical(cbordec(cborenc(-.Machine$integer.max)), -.Machine$integer.max)
+test_equal(is.nan(cbordec(cborenc(NaN))), TRUE)
+test_equal(cbordec(cborenc(Inf)), Inf)
+test_equal(cbordec(cborenc(-Inf)), -Inf)
+test_equal(cbordec(cborenc("caf\u00e9")), "caf\u00e9")
+test_equal(cbordec(cborenc("\U0001F600")), "\U0001F600")
+test_equal(cbordec(cborenc(.Machine$integer.max)), .Machine$integer.max)
+test_equal(cbordec(cborenc(-.Machine$integer.max)), -.Machine$integer.max)
+large <- rep(as.raw(0:255), 20)  # 5120 bytes
+test_identical(cbordec(cborenc(large)), large)
+test_equal(cbordec(cborenc(255L)), 255L)
+test_equal(cbordec(cborenc(256L)), 256L)
+test_equal(cbordec(cborenc(65535L)), 65535L)
+test_equal(cbordec(cborenc(65536L)), 65536L)
+test_equal(cbordec(cborenc(-25L)), -25L)
+test_equal(cbordec(cborenc(-257L)), -257L)
+test_identical(cbordec(cborenc(c(1.5, 2.5))), list(1.5, 2.5))
+test_identical(cbordec(cborenc(c("a", NA, "b"))), list("a", NA, "b"))
+x <- 1L; attr(x, "foo") <- "bar"
+test_type("list", cbordec(cborenc(x)))
+test_equal(cbordec(as.raw(c(0xfa, 0x41, 0x20, 0x00, 0x00))), 10)
+test_equal(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00))), -2147483649)
+test_equal(suppressWarnings(cbordec(as.raw(c(0x01, 0xff)))), 1L)
+test_error(cborenc(function() {}), "unsupported type")
+test_error(cbordec(raw(0)), "unexpected end")
+test_error(cbordec("test"), "must be a raw vector")
+test_error(cbordec(as.raw(c(0x19, 0x01))), "unexpected end")  # truncated uint16
+test_error(cbordec(as.raw(c(0x1a, 0x01, 0x02))), "unexpected end")  # truncated uint32
+test_error(cbordec(as.raw(c(0x1b, 0x01))), "unexpected end")  # truncated uint64
+test_error(cbordec(as.raw(0x1c)), "invalid additional info")
+test_error(cbordec(as.raw(0xc0)), "unsupported major type")  # tagged item
+test_error(cbordec(as.raw(0xe0)), "unsupported simple value")
+test_error(cbordec(as.raw(c(0xa1, 0x01, 0x01))), "map key must be text")  # int key
+test_error(cbordec(as.raw(c(0x42, 0x01))), "byte string exceeds")  # truncated bytes
+test_error(cbordec(as.raw(c(0x62, 0x61))), "text string exceeds")  # truncated text
+test_error(cbordec(as.raw(c(0xfb, 0x01))), "float64 exceeds")  # truncated float64
+test_error(cbordec(as.raw(c(0xfa, 0x01))), "float32 exceeds")  # truncated float32
+test_error(cbordec(as.raw(c(0xa1, 0x62, 0x61))), "map key exceeds")  # truncated map key
 # RFC 8949 Appendix A test vectors
 test_identical(cborenc(0L), as.raw(0x00))
 test_identical(cborenc(23L), as.raw(0x17))
@@ -216,12 +236,4 @@ test_identical(cborenc(setNames(list(), character(0))), as.raw(0xa0))
 test_identical(cborenc(FALSE), as.raw(0xf4))
 test_identical(cborenc(TRUE), as.raw(0xf5))
 test_identical(cborenc(NULL), as.raw(0xf6))
-test_identical(cbordec(as.raw(0xf7)), NA)  # CBOR undefined -> NA
-# Buffer growth (exceeds initial 4096 byte buffer)
-large <- as.raw(0:255)
-large <- rep(large, 20)  # 5120 bytes
-test_identical(cbordec(cborenc(large)), large)
-# Error handling
-test_error(cborenc(function() {}), "unsupported type")
-test_error(cbordec(raw(0)), "unexpected end")
-test_error(cbordec("test"), "must be a raw vector")
+test_identical(cbordec(as.raw(0xf7)), NA)
