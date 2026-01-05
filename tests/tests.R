@@ -157,6 +157,7 @@ test_identical(base58dec(base58enc(as.raw(c(0, 0, 1))), convert = FALSE), as.raw
 test_identical(base58dec(base58enc(raw(0)), convert = FALSE), raw(0))
 test_error(base58enc("test", convert = 0), "'convert' must be a logical value")
 test_error(base58dec("invalid"), "input is not valid base58")
+test_error(base58dec(""), "base58 checksum validation failed")
 test_error(base58dec("111"), "base58 checksum validation failed")
 test_error(base58dec("1111"), "base58 checksum validation failed")
 test_error(base58dec(404), "input is not valid base58")
