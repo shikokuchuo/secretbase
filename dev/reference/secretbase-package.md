@@ -1,11 +1,11 @@
-# secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions
+# secretbase: Cryptographic Hash, Extendable-Output and Data Encoding Functions
 
-Fast and memory-efficient streaming hash functions and base64 encoding /
-decoding. Hashes strings and raw vectors directly. Stream hashes files
-which can be larger than memory, as well as in-memory objects through
-R's serialization mechanism. Implementations include the SHA-256, SHA-3
-and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output
-function (XOF), and 'SipHash' pseudo-random function.
+Fast and memory-efficient streaming hash functions and binary-to-text
+encoding / decoding. Hashes strings and raw vectors directly. Stream
+hashes files which can be larger than memory, as well as in-memory
+objects through R's serialization mechanism. Implementations include the
+SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256
+extendable-output function (XOF), and 'SipHash' pseudo-random function.
 
 ## See also
 
@@ -19,9 +19,12 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Charlie Gao <charlie.gao@shikokuchuo.net>
+**Maintainer**: Charlie Gao <charlie.gao@posit.co>
 ([ORCID](https://orcid.org/0000-0002-0750-061X))
 
 Other contributors:
+
+- Posit Software, PBC ([ROR](https://ror.org/03wc8by49)) \[copyright
+  holder, funder\]
 
 - Hibiki AI Limited \[copyright holder\]
