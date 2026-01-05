@@ -168,6 +168,7 @@ test_type("raw", cborenc(NULL))
 test_identical(cbordec(cborenc(NULL)), NULL)
 test_equal(cbordec(cborenc(TRUE)), TRUE)
 test_equal(cbordec(cborenc(FALSE)), FALSE)
+test_identical(cbordec(cborenc(c(TRUE, FALSE, NA))), list(TRUE, FALSE, NA))
 test_equal(cbordec(cborenc(42L)), 42L)
 test_equal(cbordec(cborenc(-1L)), -1L)
 test_equal(cbordec(cborenc(3.14)), 3.14)
@@ -209,6 +210,8 @@ x <- 1L; attr(x, "foo") <- "bar"
 test_type("list", cbordec(cborenc(x)))
 test_equal(cbordec(as.raw(c(0xfa, 0x41, 0x20, 0x00, 0x00))), 10)
 test_equal(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00))), -2147483649)
+test_equal(cbordec(as.raw(c(0x1b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00))), 4294967296)  # 64-bit uint (2^32)
+test_type("double", cbordec(as.raw(c(0x1a, 0x80, 0x00, 0x00, 0x00))))  # uint > INT_MAX returns double
 test_equal(suppressWarnings(cbordec(as.raw(c(0x01, 0xff)))), 1L)
 test_error(cborenc(function() {}), "unsupported type")
 test_error(cbordec(raw(0)), "unexpected end")
@@ -225,6 +228,7 @@ test_error(cbordec(as.raw(c(0x62, 0x61))), "text string exceeds")  # truncated t
 test_error(cbordec(as.raw(c(0xfb, 0x01))), "float64 exceeds")  # truncated float64
 test_error(cbordec(as.raw(c(0xfa, 0x01))), "float32 exceeds")  # truncated float32
 test_error(cbordec(as.raw(c(0xa1, 0x62, 0x61))), "map key exceeds")  # truncated map key
+test_error(cbordec(as.raw(c(rep(0x81, 513), 0x00))), "nesting depth exceeded")  # >512 nested arrays
 # RFC 8949 Appendix A test vectors
 test_identical(cborenc(0L), as.raw(0x00))
 test_identical(cborenc(23L), as.raw(0x17))
