@@ -9,4 +9,6 @@
 ^codecov\.yml$
 ^compile_commands\.json$
 ^\.cache$
+^\.claude$
 ^\CLAUDE.md$
+^[\.]?air\.toml$

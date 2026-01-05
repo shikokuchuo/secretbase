@@ -4,9 +4,9 @@
 \name{secretbase-package}
 \alias{secretbase}
 \alias{secretbase-package}
-\title{secretbase: Cryptographic Hash, Extendable-Output and Base64 Functions}
+\title{secretbase: Cryptographic Hash, Extendable-Output and Data Encoding Functions}
 \description{
-Fast and memory-efficient streaming hash functions and base64 encoding / decoding. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R's serialization mechanism. Implementations include the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
+Fast and memory-efficient streaming hash functions and binary-to-text encoding / decoding. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R's serialization mechanism. Implementations include the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), and 'SipHash' pseudo-random function.
 }
 \seealso{
 Useful links:
@@ -18,10 +18,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Charlie Gao \email{charlie.gao@shikokuchuo.net} (\href{https://orcid.org/0000-0002-0750-061X}{ORCID})
+\strong{Maintainer}: Charlie Gao \email{charlie.gao@posit.co} (\href{https://orcid.org/0000-0002-0750-061X}{ORCID})
 
 Other contributors:
 \itemize{
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
   \item Hibiki AI Limited [copyright holder]
 }
 

@@ -20,8 +20,8 @@ coverage](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https:/
     \  /  base /
      \/_______/
 
-Fast and memory-efficient streaming hash functions and base64 encoding /
-decoding.
+Fast and memory-efficient streaming hash functions and binary-to-text
+encoding / decoding.
 
 Hashes strings and raw vectors directly. Stream hashes files which can
 be larger than memory, as well as in-memory objects through R’s

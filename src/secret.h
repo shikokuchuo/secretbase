@@ -4,6 +4,7 @@
 #define SECRETBASE_H
 
 #include <stdint.h>
+#include <stdlib.h>
 #ifndef R_NO_REMAP
 #define R_NO_REMAP
 #endif
@@ -84,26 +85,33 @@ Rf_error("'convert' must be a logical value")
 #define SB_ASSERT_STR(x) if (TYPEOF(x) != STRSXP)              \
 Rf_error("'file' must be a character string")
 #define NANO_ALLOC(x, sz)                                      \
-(x)->buf = R_Calloc(sz, unsigned char);                        \
+(x)->buf = malloc(sz);                                         \
+if ((x)->buf == NULL) Rf_error("memory allocation failed");    \
 (x)->len = sz;                                                 \
 (x)->cur = 0
 #define NANO_INIT(x, ptr, sz)                                  \
 (x)->buf = ptr;                                                \
 (x)->len = 0;                                                  \
 (x)->cur = sz
-#define NANO_FREE(x) if (x.len) R_Free(x.buf)
-#define CHECK_ERROR(x, y) if (x) { R_Free(y);                  \
+#define NANO_FREE(x) if (x.len) free(x.buf)
+#define CHECK_ERROR(x, y) if (x) { free(y);                    \
 Rf_error("write buffer insufficient"); }
-#define ERROR_OUT(x) if (x->len) R_Free(x->buf);               \
+#define ERROR_OUT(x) if (x->len) free(x->buf);                 \
 Rf_error("serialization exceeds max length of raw vector")
 #define ERROR_FOPEN(x) Rf_error("file not found or no read permission at '%s'", x)
 #define ERROR_FREAD(x) Rf_error("file read error at '%s'", x)
 
 void sb_clear_buffer(void *, const size_t);
 SEXP sb_hash_sexp(unsigned char *, const size_t, const int);
+nano_buf sb_any_buf(const SEXP);
+SEXP sb_raw_char(unsigned char *, const size_t);
+SEXP sb_unserialize(unsigned char *, const size_t);
+void sb_sha256_raw(const void *, size_t, void *);
 
 SEXP secretbase_base64enc(SEXP, SEXP);
 SEXP secretbase_base64dec(SEXP, SEXP);
+SEXP secretbase_base58enc(SEXP, SEXP);
+SEXP secretbase_base58dec(SEXP, SEXP);
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_shake256(SEXP, SEXP, SEXP);
