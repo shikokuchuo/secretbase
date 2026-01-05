@@ -51,6 +51,19 @@ static const int8_t b58digits_map[] = {
 static const char b58digits_ordered[] =
   "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
+static inline size_t b58enc_byte(uint8_t *buf, size_t size, size_t high, int byte) {
+  int carry = byte;
+  size_t j;
+  for (j = size - 1; (j > high) || carry; --j) {
+    carry += 256 * buf[j];
+    buf[j] = carry % 58;
+    carry /= 58;
+    if (!j)
+      break;
+  }
+  return j;
+}
+
 static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
 
   size_t binsz = *binszp;
@@ -123,29 +136,26 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
 
 }
 
-static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz) {
+static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t datasz,
+                   const unsigned char *checksum) {
 
   const uint8_t *bin = data;
-  int carry;
+  const size_t binsz = datasz + 4;
   size_t i, j, high, zcount = 0;
   size_t size;
 
-  while (zcount < binsz && !bin[zcount])
+  while (zcount < datasz && !bin[zcount])
     ++zcount;
 
   size = (binsz - zcount) * 138 / 100 + 1;
   uint8_t buf[size];
   memset(buf, 0, size);
 
-  for (i = zcount, high = size - 1; i < binsz; ++i, high = j) {
-    for (carry = bin[i], j = size - 1; (j > high) || carry; --j) {
-      carry += 256 * buf[j];
-      buf[j] = carry % 58;
-      carry /= 58;
-      if (!j)
-        break;
-    }
-  }
+  for (i = zcount, high = size - 1; i < datasz; ++i)
+    high = b58enc_byte(buf, size, high, bin[i]);
+
+  for (i = 0; i < 4; ++i)
+    high = b58enc_byte(buf, size, high, checksum[i]);
 
   for (j = 0; j < size && !buf[j]; ++j);
 
@@ -185,16 +195,11 @@ static bool b58check_enc(char *b58c, size_t *b58c_sz,
                          const void *data, size_t datasz) {
 
   unsigned char hash1[SB_SHA256_SIZE], hash2[SB_SHA256_SIZE];
-  uint8_t buf[datasz + 4];
 
-  memcpy(buf, data, datasz);
-
-  sb_sha256_raw(buf, datasz, hash1);
+  sb_sha256_raw(data, datasz, hash1);
   sb_sha256_raw(hash1, SB_SHA256_SIZE, hash2);
 
-  memcpy(&buf[datasz], hash2, 4);
-
-  return b58enc(b58c, b58c_sz, buf, datasz + 4);
+  return b58enc(b58c, b58c_sz, data, datasz, hash2);
 
 }
 
