@@ -15,7 +15,8 @@ become CBOR arrays).}
 A raw vector containing the CBOR-encoded data.
 }
 \description{
-Encode an R object to CBOR (RFC 8949) format.
+Encode an R object to CBOR (Concise Binary Object Representation, RFC 8949)
+format.
 }
 \details{
 This implementation supports a minimal CBOR subset:

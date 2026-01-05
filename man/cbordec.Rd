@@ -13,7 +13,8 @@ cbordec(x)
 The decoded R object.
 }
 \description{
-Decode CBOR (RFC 8949) data to an R object.
+Decode CBOR (Concise Binary Object Representation, RFC 8949) data to an R
+object.
 }
 \details{
 CBOR types map to R types as follows:
@@ -25,7 +26,7 @@ CBOR types map to R types as follows:
 \item Maps: named lists (keys must be text strings)
 \item false/true: logical
 \item null: NULL
-\item Float64: double
+\item Float32/Float64: double
 }
 }
 \examples{

@@ -1,7 +1,9 @@
-// secretbase - CBOR implementation --------------------------------------------
+// secretbase ------------------------------------------------------------------
 
 #include "secret.h"
 #include <string.h>
+
+// secretbase - CBOR implementation --------------------------------------------
 
 /*
  *  CBOR (RFC 8949) encoder/decoder for R
@@ -15,7 +17,7 @@
  *  - Major type 3: text strings (UTF-8)
  *  - Major type 4: arrays (lists)
  *  - Major type 5: maps (named lists)
- *  - Major type 7: simple values (false, true, null, undefined) and float64
+ *  - Major type 7: simple values (false, true, null, undefined), float32, float64
  */
 
 // CBOR major type constants
@@ -43,12 +45,14 @@
 // Maximum nesting depth for decoder (stack overflow protection)
 #define CBOR_MAX_DEPTH 512
 
-// -----------------------------------------------------------------------------
-// Byte-order helpers from Mbed TLS
-//
-// Copyright The Mbed TLS Contributors
-// SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
-// -----------------------------------------------------------------------------
+// secretbase - byte order helpers  --------------------------------------------
+
+/*
+ *  Byte-order helpers from Mbed TLS
+ *
+ *  Copyright The Mbed TLS Contributors
+ *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+ */
 
 #if defined(__GNUC__) && defined(__GNUC_PREREQ)
 #if __GNUC_PREREQ(4, 8)
@@ -120,7 +124,6 @@ static inline uint64_t cbor_bswap64(uint64_t x) {
 #define CBOR_BSWAP64 cbor_bswap64
 #endif
 
-// Unaligned access helpers
 #if defined(__GNUC__)
 __attribute__((always_inline))
 #endif
@@ -169,7 +172,6 @@ static inline void cbor_put_unaligned_uint64(void *p, uint64_t x) {
   memcpy(p, &x, sizeof(x));
 }
 
-// Big-endian GET/PUT macros
 #define CBOR_GET_UINT16_BE(data, offset) \
   ((MBEDTLS_IS_BIG_ENDIAN) \
    ? cbor_get_unaligned_uint16((data) + (offset)) \
@@ -209,11 +211,8 @@ static inline void cbor_put_unaligned_uint64(void *p, uint64_t x) {
       cbor_put_unaligned_uint64((data) + (offset), CBOR_BSWAP64((uint64_t) (n))); \
   }
 
-// -----------------------------------------------------------------------------
-// Buffer helpers
-// -----------------------------------------------------------------------------
+// secretbase - internals ------------------------------------------------------
 
-// Ensure capacity in buffer, growing if needed
 static inline void cbor_buf_ensure(nano_buf *buf, size_t additional) {
   size_t req = buf->cur + additional;
   if (req > buf->len) {
@@ -230,24 +229,17 @@ static inline void cbor_buf_ensure(nano_buf *buf, size_t additional) {
   }
 }
 
-// Write single byte
 static inline void cbor_write_byte(nano_buf *buf, unsigned char b) {
   cbor_buf_ensure(buf, 1);
   buf->buf[buf->cur++] = b;
 }
 
-// Write multiple bytes
 static inline void cbor_write_bytes(nano_buf *buf, const unsigned char *data, size_t len) {
   cbor_buf_ensure(buf, len);
   memcpy(buf->buf + buf->cur, data, len);
   buf->cur += len;
 }
 
-// -----------------------------------------------------------------------------
-// CBOR Encoder
-// -----------------------------------------------------------------------------
-
-// Encode type header with length/value
 static void cbor_encode_uint(nano_buf *buf, unsigned char major, uint64_t val) {
   if (val < 24) {
     cbor_write_byte(buf, major | (unsigned char) val);
@@ -273,22 +265,17 @@ static void cbor_encode_uint(nano_buf *buf, unsigned char major, uint64_t val) {
   }
 }
 
-// Encode signed integer
 static void cbor_encode_int(nano_buf *buf, int64_t val) {
   if (val >= 0) {
     cbor_encode_uint(buf, CBOR_UINT, (uint64_t) val);
   } else {
-    // CBOR encodes -1 as 0, -2 as 1, etc.
     cbor_encode_uint(buf, CBOR_NEGINT, (uint64_t) (-1 - val));
   }
 }
 
-// Encode float64
 static void cbor_encode_double(nano_buf *buf, double val) {
   cbor_write_byte(buf, CBOR_FLOAT64);
   cbor_buf_ensure(buf, 8);
-
-  // Use union for type punning (standard-compliant)
   union {
     double d;
     uint64_t u;
@@ -299,22 +286,18 @@ static void cbor_encode_double(nano_buf *buf, double val) {
   buf->cur += 8;
 }
 
-// Encode byte string (raw vector)
 static void cbor_encode_bytes(nano_buf *buf, const unsigned char *data, size_t len) {
   cbor_encode_uint(buf, CBOR_BYTES, len);
   cbor_write_bytes(buf, data, len);
 }
 
-// Encode text string
 static void cbor_encode_text(nano_buf *buf, const char *str, size_t len) {
   cbor_encode_uint(buf, CBOR_TEXT, len);
   cbor_write_bytes(buf, (const unsigned char *) str, len);
 }
 
-// Forward declaration
 static void cbor_encode_sexp(nano_buf *buf, SEXP x);
 
-// Encode R logical vector
 static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   R_xlen_t n = XLENGTH(x);
   const int *p = LOGICAL_RO(x);
@@ -331,7 +314,6 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   }
 }
 
-// Encode R integer vector
 static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   R_xlen_t n = XLENGTH(x);
   const int *p = INTEGER_RO(x);
@@ -346,7 +328,6 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   }
 }
 
-// Encode R double vector
 static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   R_xlen_t n = XLENGTH(x);
   const double *p = REAL_RO(x);
@@ -361,7 +342,6 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   }
 }
 
-// Encode R character vector
 static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
   R_xlen_t n = XLENGTH(x);
   const SEXP *p = STRING_PTR_RO(x);
@@ -386,28 +366,23 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
   }
 }
 
-// Encode R raw vector
 static void cbor_encode_raw(nano_buf *buf, SEXP x) {
   R_xlen_t n = XLENGTH(x);
   cbor_encode_bytes(buf, (const unsigned char *) DATAPTR_RO(x), n);
 }
 
-// Encode R list
 static void cbor_encode_list(nano_buf *buf, SEXP x) {
   R_xlen_t n = XLENGTH(x);
   SEXP names = Rf_getAttrib(x, R_NamesSymbol);
 
   if (names == R_NilValue) {
-    // Unnamed list: encode as array
     cbor_encode_uint(buf, CBOR_ARRAY, n);
     for (R_xlen_t i = 0; i < n; i++) {
       cbor_encode_sexp(buf, VECTOR_ELT(x, i));
     }
   } else {
-    // Named list: encode as map
     cbor_encode_uint(buf, CBOR_MAP, n);
     for (R_xlen_t i = 0; i < n; i++) {
-      // CBOR text strings must be UTF-8 (RFC 8949 section 3.4)
       const char *key = Rf_translateCharUTF8(STRING_ELT(names, i));
       cbor_encode_text(buf, key, strlen(key));
       cbor_encode_sexp(buf, VECTOR_ELT(x, i));
@@ -415,7 +390,6 @@ static void cbor_encode_list(nano_buf *buf, SEXP x) {
   }
 }
 
-// Main dispatch function
 static void cbor_encode_sexp(nano_buf *buf, SEXP x) {
   switch (TYPEOF(x)) {
   case NILSXP:
@@ -440,30 +414,23 @@ static void cbor_encode_sexp(nano_buf *buf, SEXP x) {
     cbor_encode_list(buf, x);
     break;
   default:
-    NANO_FREE(*buf);
+    if (buf->len) free(buf->buf);
     Rf_error("unsupported type for CBOR encoding: %s", Rf_type2char(TYPEOF(x)));
   }
 }
 
-// -----------------------------------------------------------------------------
-// CBOR Decoder
-// -----------------------------------------------------------------------------
-
-// Decoder state
 typedef struct {
   const unsigned char *data;
   size_t len;
   size_t pos;
 } cbor_decoder;
 
-// Read single byte
 static inline unsigned char cbor_read_byte(cbor_decoder *dec) {
   if (dec->pos >= dec->len)
     Rf_error("CBOR decode error: unexpected end of input");
   return dec->data[dec->pos++];
 }
 
-// Read uint from additional info
 static uint64_t cbor_read_uint(cbor_decoder *dec, unsigned char info) {
   if (info < 24) {
     return info;
@@ -491,9 +458,6 @@ static uint64_t cbor_read_uint(cbor_decoder *dec, unsigned char info) {
   Rf_error("CBOR decode error: invalid additional info %d", info);
 }
 
-// Forward declaration
-static SEXP cbor_decode_item(cbor_decoder *dec, int depth);
-
 static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   if (depth > CBOR_MAX_DEPTH)
     Rf_error("CBOR decode error: nesting depth exceeded");
@@ -504,7 +468,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
 
   switch (major) {
   case CBOR_UINT: {
-    // Unsigned integer
     uint64_t val = cbor_read_uint(dec, info);
     if (val <= INT_MAX) {
       return Rf_ScalarInteger((int) val);
@@ -514,9 +477,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_NEGINT: {
-    // Negative integer: -1 - val
     uint64_t val = cbor_read_uint(dec, info);
-    // INT_MIN = -2147483648, so max val for int is 2147483647 (encodes -2147483648)
     if (val <= 2147483647ULL) {
       return Rf_ScalarInteger((int) (-1 - (int64_t) val));
     } else {
@@ -525,7 +486,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_BYTES: {
-    // Byte string -> raw vector
     uint64_t len = cbor_read_uint(dec, info);
     if (dec->pos + len > dec->len)
       Rf_error("CBOR decode error: byte string exceeds input");
@@ -536,7 +496,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_TEXT: {
-    // Text string -> character
     uint64_t len = cbor_read_uint(dec, info);
     if (dec->pos + len > dec->len)
       Rf_error("CBOR decode error: text string exceeds input");
@@ -546,7 +505,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_ARRAY: {
-    // Array -> list
     uint64_t n = cbor_read_uint(dec, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
     for (uint64_t i = 0; i < n; i++) {
@@ -557,13 +515,11 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_MAP: {
-    // Map -> named list
     uint64_t n = cbor_read_uint(dec, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
     SEXP names = PROTECT(Rf_allocVector(STRSXP, n));
 
     for (uint64_t i = 0; i < n; i++) {
-      // Key must be text string
       unsigned char kb = cbor_read_byte(dec);
       if ((kb & 0xE0) != CBOR_TEXT)
         Rf_error("CBOR decode error: map key must be text string");
@@ -572,8 +528,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
         Rf_error("CBOR decode error: map key exceeds input");
       SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) klen, CE_UTF8));
       dec->pos += klen;
-
-      // Value
       SET_VECTOR_ELT(out, i, cbor_decode_item(dec, depth + 1));
     }
 
@@ -583,7 +537,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_SIMPLE: {
-    // Simple values and floats
     if (byte == CBOR_FALSE) {
       return Rf_ScalarLogical(FALSE);
     } else if (byte == CBOR_TRUE) {
@@ -592,6 +545,16 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       return R_NilValue;
     } else if (byte == CBOR_UNDEF) {
       return Rf_ScalarLogical(NA_LOGICAL);
+    } else if (byte == 0xFA) {
+      if (dec->pos + 4 > dec->len)
+        Rf_error("CBOR decode error: float32 exceeds input");
+      union {
+        uint32_t u;
+        float f;
+      } conv;
+      conv.u = CBOR_GET_UINT32_BE(dec->data, dec->pos);
+      dec->pos += 4;
+      return Rf_ScalarReal((double) conv.f);
     } else if (byte == CBOR_FLOAT64) {
       if (dec->pos + 8 > dec->len)
         Rf_error("CBOR decode error: float64 exceeds input");
@@ -611,9 +574,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 }
 
-// -----------------------------------------------------------------------------
-// Exported functions
-// -----------------------------------------------------------------------------
+// secretbase - exported functions ---------------------------------------------
 
 SEXP secretbase_cborenc(SEXP x) {
   nano_buf buf;

@@ -189,11 +189,11 @@ big <- 2147483648
 test_identical(cbordec(cborenc(big)), big)
 big <- -2147483649
 test_identical(cbordec(cborenc(big)), big)
-# NA handling (becomes null)
-test_identical(cbordec(cborenc(NA)), NULL)
-test_identical(cbordec(cborenc(NA_integer_)), NULL)
-test_identical(cbordec(cborenc(NA_real_)), NULL)
-test_identical(cbordec(cborenc(NA_character_)), NULL)
+# NA handling
+test_identical(cbordec(cborenc(NA)), NA)
+test_identical(cbordec(cborenc(NA_integer_)), NA_integer_)
+test_identical(cbordec(cborenc(NA_real_)), NA_real_)
+test_identical(cbordec(cborenc(NA_character_)), NA)
 # Special float values (NaN, Inf)
 test_identical(is.nan(cbordec(cborenc(NaN))), TRUE)
 test_identical(cbordec(cborenc(Inf)), Inf)

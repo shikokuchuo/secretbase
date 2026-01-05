@@ -188,7 +188,7 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 #'   \item Maps: named lists (keys must be text strings)
 #'   \item false/true: logical
 #'   \item null: NULL
-#'   \item Float64: double
+#'   \item Float32/Float64: double
 #' }
 #'
 #' @seealso [cborenc()]
