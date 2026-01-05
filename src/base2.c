@@ -165,7 +165,7 @@ static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz) {
 
 }
 
-static bool b58check(const void *bin, size_t binsz, const char *b58, size_t b58sz) {
+static bool b58check(const void *bin, size_t binsz) {
 
   unsigned char hash1[SB_SHA256_SIZE], hash2[SB_SHA256_SIZE];
   const uint8_t *binc = bin;
@@ -263,7 +263,7 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
     Rf_error("input is not valid base58");
   }
 
-  if (!b58check(buf, olen, inbuf, inlen)) {
+  if (!b58check(buf, olen)) {
     R_Free(buf);
     Rf_error("base58 checksum validation failed");
   }

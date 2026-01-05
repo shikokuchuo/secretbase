@@ -20,8 +20,8 @@ All hash functions support both direct hashing of strings/raw vectors and stream
 # Run tests (uses minitest framework in tests/tests.R)
 Rscript tests/tests.R
 
-# Build and check package
-R CMD build .
+# Build and check package (run from parent directory)
+R CMD build secretbase
 R CMD check secretbase_*.tar.gz
 
 # Install from source
