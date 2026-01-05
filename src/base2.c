@@ -215,7 +215,7 @@ SEXP secretbase_base58enc(SEXP x, SEXP convert) {
 
   nano_buf hash = sb_any_buf(x);
 
-  olen = hash.cur * 2 + 10;
+  olen = (hash.cur + 4) * 138 / 100 + 2;
   unsigned char *buf = R_Calloc(olen, unsigned char);
 
   if (!b58check_enc((char *) buf, &olen, hash.buf, hash.cur)) {
@@ -260,7 +260,7 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
     Rf_error("input is not valid base58");
   }
 
-  olen = inlen + 1;
+  olen = inlen * 3 / 4 + 4;
   unsigned char *buf = R_Calloc(olen, unsigned char);
 
   if (!b58tobin(buf, &olen, inbuf, inlen)) {
