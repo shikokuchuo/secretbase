@@ -320,14 +320,12 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   const int *p = LOGICAL_RO(x);
 
   if (n == 1 && NO_ATTRIB(x)) {
-    // Scalar: encode as simple value
-    cbor_write_byte(buf, p[0] == NA_LOGICAL ? CBOR_NULL :
+    cbor_write_byte(buf, p[0] == NA_LOGICAL ? CBOR_UNDEF :
                          p[0] ? CBOR_TRUE : CBOR_FALSE);
   } else {
-    // Vector: encode as array
     cbor_encode_uint(buf, CBOR_ARRAY, n);
     for (R_xlen_t i = 0; i < n; i++) {
-      cbor_write_byte(buf, p[i] == NA_LOGICAL ? CBOR_NULL :
+      cbor_write_byte(buf, p[i] == NA_LOGICAL ? CBOR_UNDEF :
                            p[i] ? CBOR_TRUE : CBOR_FALSE);
     }
   }
@@ -339,21 +337,11 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   const int *p = INTEGER_RO(x);
 
   if (n == 1 && NO_ATTRIB(x)) {
-    // Scalar
-    if (p[0] == NA_INTEGER) {
-      cbor_write_byte(buf, CBOR_NULL);
-    } else {
-      cbor_encode_int(buf, p[0]);
-    }
+    cbor_encode_int(buf, p[0]);
   } else {
-    // Vector: encode as array
     cbor_encode_uint(buf, CBOR_ARRAY, n);
     for (R_xlen_t i = 0; i < n; i++) {
-      if (p[i] == NA_INTEGER) {
-        cbor_write_byte(buf, CBOR_NULL);
-      } else {
-        cbor_encode_int(buf, p[i]);
-      }
+      cbor_encode_int(buf, p[i]);
     }
   }
 }
@@ -364,21 +352,11 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   const double *p = REAL_RO(x);
 
   if (n == 1 && NO_ATTRIB(x)) {
-    // Scalar: NA encodes as null, NaN/Inf encode as float64
-    if (R_IsNA(p[0])) {
-      cbor_write_byte(buf, CBOR_NULL);
-    } else {
-      cbor_encode_double(buf, p[0]);
-    }
+    cbor_encode_double(buf, p[0]);
   } else {
-    // Vector: encode as array
     cbor_encode_uint(buf, CBOR_ARRAY, n);
     for (R_xlen_t i = 0; i < n; i++) {
-      if (R_IsNA(p[i])) {
-        cbor_write_byte(buf, CBOR_NULL);
-      } else {
-        cbor_encode_double(buf, p[i]);
-      }
+      cbor_encode_double(buf, p[i]);
     }
   }
 }
@@ -389,20 +367,17 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
   const SEXP *p = STRING_PTR_RO(x);
 
   if (n == 1 && NO_ATTRIB(x)) {
-    // Scalar
     if (p[0] == NA_STRING) {
-      cbor_write_byte(buf, CBOR_NULL);
+      cbor_write_byte(buf, CBOR_UNDEF);
     } else {
-      // CBOR text strings must be UTF-8 (RFC 8949 section 3.4)
       const char *s = Rf_translateCharUTF8(p[0]);
       cbor_encode_text(buf, s, strlen(s));
     }
   } else {
-    // Vector: encode as array
     cbor_encode_uint(buf, CBOR_ARRAY, n);
     for (R_xlen_t i = 0; i < n; i++) {
       if (p[i] == NA_STRING) {
-        cbor_write_byte(buf, CBOR_NULL);
+        cbor_write_byte(buf, CBOR_UNDEF);
       } else {
         const char *s = Rf_translateCharUTF8(p[i]);
         cbor_encode_text(buf, s, strlen(s));
@@ -465,6 +440,7 @@ static void cbor_encode_sexp(nano_buf *buf, SEXP x) {
     cbor_encode_list(buf, x);
     break;
   default:
+    NANO_FREE(*buf);
     Rf_error("unsupported type for CBOR encoding: %s", Rf_type2char(TYPEOF(x)));
   }
 }

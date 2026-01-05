@@ -133,7 +133,8 @@ base58dec <- function(x, convert = TRUE) .Call(secretbase_base58dec, x, convert)
 
 #' CBOR Encode
 #'
-#' Encode an R object to CBOR (RFC 8949) format.
+#' Encode an R object to CBOR (Concise Binary Object Representation, RFC 8949)
+#' format.
 #'
 #' @param x R object to encode. Supported types: NULL, logical, integer, double,
 #'   character, raw vectors, and lists (named lists become CBOR maps, unnamed
@@ -171,7 +172,8 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 
 #' CBOR Decode
 #'
-#' Decode CBOR (RFC 8949) data to an R object.
+#' Decode CBOR (Concise Binary Object Representation, RFC 8949) data to an R
+#' object.
 #'
 #' @param x A raw vector containing CBOR-encoded data.
 #'
