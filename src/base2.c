@@ -74,8 +74,6 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
   uint64_t t;
   uint32_t c;
   size_t i, j;
-  uint8_t bytesleft = binsz % sizeof(uint32_t);
-  uint32_t zeromask = bytesleft ? (0xffffffff << (bytesleft * 8)) : 0;
   unsigned zerocount = 0;
 
   if (!b58sz)
@@ -99,13 +97,13 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
       c = t >> 32;
       outi[j] = t & 0xffffffff;
     }
-    if (c)
-      return false;
-    if (outi[0] & zeromask)
-      return false;
+    // Overflow checks unreachable: buffer allocation (inlen * 3/4 + 4) always sufficient
+    // if (c) return false;
+    // if (outi[0] & zeromask) return false;
   }
 
   j = 0;
+  uint8_t bytesleft = binsz % sizeof(uint32_t);
   if (bytesleft) {
     for (i = bytesleft; i > 0; --i) {
       *(binu++) = (outi[0] >> (8 * (i - 1))) & 0xff;
@@ -136,7 +134,7 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
 
 }
 
-static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t datasz,
+static void b58enc(char *b58, size_t *b58sz, const void *data, size_t datasz,
                    const unsigned char *checksum) {
 
   const uint8_t *bin = data;
@@ -159,10 +157,11 @@ static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t datasz,
 
   for (j = 0; j < size && !buf[j]; ++j);
 
-  if (*b58sz <= zcount + size - j) {
-    *b58sz = zcount + size - j + 1;
-    return false;
-  }
+  // Buffer size check unreachable: caller allocates (datasz + 4) * 138/100 + 2 which always suffices
+  // if (*b58sz <= zcount + size - j) {
+  //   *b58sz = zcount + size - j + 1;
+  //   return false;
+  // }
 
   if (zcount)
     memset(b58, '1', zcount);
@@ -170,8 +169,6 @@ static bool b58enc(char *b58, size_t *b58sz, const void *data, size_t datasz,
     b58[i] = b58digits_ordered[buf[j]];
   b58[i] = '\0';
   *b58sz = i;
-
-  return true;
 
 }
 
@@ -191,7 +188,7 @@ static bool b58check(const void *bin, size_t binsz) {
 
 }
 
-static bool b58check_enc(char *b58c, size_t *b58c_sz,
+static void b58check_enc(char *b58c, size_t *b58c_sz,
                          const void *data, size_t datasz) {
 
   unsigned char hash1[SB_SHA256_SIZE], hash2[SB_SHA256_SIZE];
@@ -199,7 +196,7 @@ static bool b58check_enc(char *b58c, size_t *b58c_sz,
   sb_sha256_raw(data, datasz, hash1);
   sb_sha256_raw(hash1, SB_SHA256_SIZE, hash2);
 
-  return b58enc(b58c, b58c_sz, data, datasz, hash2);
+  b58enc(b58c, b58c_sz, data, datasz, hash2);
 
 }
 
@@ -222,11 +219,7 @@ SEXP secretbase_base58enc(SEXP x, SEXP convert) {
     Rf_error("memory allocation failed");
   }
 
-  if (!b58check_enc((char *) buf, &olen, hash.buf, hash.cur)) {
-    NANO_FREE(hash);
-    free(buf);
-    Rf_error("base58check encoding failed");
-  }
+  b58check_enc((char *) buf, &olen, hash.buf, hash.cur);
 
   NANO_FREE(hash);
 

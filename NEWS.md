@@ -1,5 +1,6 @@
 # secretbase (development version)
 
+* Adds CBOR encoding and decoding (supporting a minimal subset of types).
 * Adds base58 encoding and decoding (with a 4-byte checksum suffix and no version byte prefix).
 
 # secretbase 1.0.5

@@ -2,7 +2,12 @@
 
 #include "secret.h"
 
+SEXP secretbase_cborenc(SEXP);
+SEXP secretbase_cbordec(SEXP);
+
 static const R_CallMethodDef callMethods[] = {
+  {"secretbase_cborenc", (DL_FUNC) &secretbase_cborenc, 1},
+  {"secretbase_cbordec", (DL_FUNC) &secretbase_cbordec, 1},
   {"secretbase_base64enc", (DL_FUNC) &secretbase_base64enc, 2},
   {"secretbase_base64dec", (DL_FUNC) &secretbase_base64dec, 2},
   {"secretbase_base58enc", (DL_FUNC) &secretbase_base58enc, 2},

@@ -130,3 +130,74 @@ base58enc <- function(x, convert = TRUE) .Call(secretbase_base58enc, x, convert)
 #' @export
 #'
 base58dec <- function(x, convert = TRUE) .Call(secretbase_base58dec, x, convert)
+
+#' CBOR Encode
+#'
+#' Encode an R object to CBOR (Concise Binary Object Representation, RFC 8949)
+#' format.
+#'
+#' @param x R object to encode. Supported types: NULL, logical, integer, double,
+#'   character, raw vectors, and lists (named lists become CBOR maps, unnamed
+#'   become CBOR arrays).
+#'
+#' @return A raw vector containing the CBOR-encoded data.
+#'
+#' @details This implementation supports a minimal CBOR subset:
+#' \itemize{
+#'   \item Unsigned and negative integers
+#'   \item Byte strings (raw vectors)
+#'   \item Text strings (UTF-8)
+#'   \item Arrays (unnamed lists/vectors)
+#'   \item Maps (named lists)
+#'   \item Simple values: false, true, null
+#'   \item Float64
+#' }
+#'
+#' Scalars (length-1 vectors without attributes) encode as their CBOR scalar
+#' equivalents. Vectors with length > 1 or attributes encode as CBOR arrays.
+#' NA values encode as CBOR null.
+#'
+#' @seealso [cbordec()]
+#'
+#' @examples
+#' # Encode a named list (becomes CBOR map)
+#' cborenc(list(a = 1L, b = "hello"))
+#'
+#' # Round-trip
+#' cbordec(cborenc(list(x = TRUE, y = as.raw(1:3))))
+#'
+#' @export
+#'
+cborenc <- function(x) .Call(secretbase_cborenc, x)
+
+#' CBOR Decode
+#'
+#' Decode CBOR (Concise Binary Object Representation, RFC 8949) data to an R
+#' object.
+#'
+#' @param x A raw vector containing CBOR-encoded data.
+#'
+#' @return The decoded R object.
+#'
+#' @details CBOR types map to R types as follows:
+#' \itemize{
+#'   \item Integers: integer (if within range) or double
+#'   \item Byte strings: raw vectors
+#'   \item Text strings: character
+#'   \item Arrays: lists
+#'   \item Maps: named lists (keys must be text strings)
+#'   \item false/true: logical
+#'   \item null: NULL
+#'   \item Float32/Float64: double
+#' }
+#'
+#' @seealso [cborenc()]
+#'
+#' @examples
+#' # Round-trip encoding
+#' original <- list(a = 1L, b = "test", c = TRUE)
+#' cbordec(cborenc(original))
+#'
+#' @export
+#'
+cbordec <- function(x) .Call(secretbase_cbordec, x)
