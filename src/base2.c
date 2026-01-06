@@ -64,7 +64,7 @@ static inline size_t b58enc_byte(uint8_t *buf, size_t size, size_t high, int byt
   return j;
 }
 
-static void b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
+static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
 
   size_t binsz = *binszp;
   const unsigned char *b58u = (const unsigned char *) b58;
@@ -88,9 +88,9 @@ static void b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
 
   for ( ; i < b58sz; ++i) {
     if (b58u[i] & 0x80)
-      Rf_error("input is not valid base58");
+      return false;
     if (b58digits_map[b58u[i]] == -1)
-      Rf_error("input is not valid base58");
+      return false;
     c = (unsigned) b58digits_map[b58u[i]];
     for (j = outisz; j--; ) {
       t = ((uint64_t) outi[j]) * 58 + c;
@@ -129,6 +129,8 @@ static void b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
     memmove(binu + zerocount, binu + i, binsz - i);
   if (zerocount)
     memset(binu, 0, zerocount);
+
+  return true;
 
 }
 
@@ -260,7 +262,10 @@ SEXP secretbase_base58dec(SEXP x, SEXP convert) {
   if (buf == NULL)
     Rf_error("memory allocation failed");
 
-  b58tobin(buf, &olen, inbuf, inlen);
+  if (!b58tobin(buf, &olen, inbuf, inlen)) {
+    free(buf);
+    Rf_error("input is not valid base58");
+  }
 
   if (!b58check(buf, olen)) {
     free(buf);
