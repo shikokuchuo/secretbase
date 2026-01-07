@@ -1,4 +1,4 @@
-# secretbase (development version)
+# secretbase 1.1.0
 
 * Adds `cborenc()` and `cbordec()` for CBOR (RFC 8949) encoding/decoding, supporting integers, floats, strings, raw vectors, lists and simple values.
 * Adds `base58enc()` and `base58dec()` for base58 encoding/decoding with a 4-byte double SHA-256 checksum.
