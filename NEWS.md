@@ -1,7 +1,7 @@
 # secretbase (development version)
 
-* Adds CBOR encoding and decoding (supporting a minimal subset of types).
-* Adds base58 encoding and decoding (with a 4-byte checksum suffix and no version byte prefix).
+* Adds `cborenc()` and `cbordec()` for CBOR (RFC 8949) encoding/decoding, supporting integers, floats, strings, raw vectors, lists and simple values.
+* Adds `base58enc()` and `base58dec()` for base58 encoding/decoding with a 4-byte double SHA-256 checksum.
 
 # secretbase 1.0.5
 

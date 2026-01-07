@@ -208,11 +208,11 @@ test_identical(cbordec(cborenc(c(1.5, NA, 2.5))), list(1.5, NA, 2.5))
 test_identical(cbordec(cborenc(c("a", NA, "b"))), list("a", NA, "b"))
 x <- 1L; attr(x, "foo") <- "bar"
 test_type("list", cbordec(cborenc(x)))
-test_equal(cbordec(as.raw(c(0xfa, 0x41, 0x20, 0x00, 0x00))), 10)
-test_equal(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00))), -2147483649)
-test_equal(cbordec(as.raw(c(0x1b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00))), 4294967296)  # 64-bit uint (2^32)
+test_identical(cbordec(as.raw(c(0xfa, 0x41, 0x20, 0x00, 0x00))), 10)
+test_identical(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00))), -2147483649)
+test_identical(cbordec(as.raw(c(0x1b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00))), 4294967296)  # 64-bit uint (2^32)
 test_type("double", cbordec(as.raw(c(0x1a, 0x80, 0x00, 0x00, 0x00))))  # uint > INT_MAX returns double
-test_equal(suppressWarnings(cbordec(as.raw(c(0x01, 0xff)))), 1L)
+test_identical(suppressWarnings(cbordec(as.raw(c(0x01, 0xff)))), 1L)
 test_error(cborenc(function() {}), "unsupported type")
 test_error(cbordec(raw(0)), "unexpected end")
 test_error(cbordec("test"), "must be a raw vector")
@@ -227,6 +227,7 @@ test_error(cbordec(as.raw(c(0x42, 0x01))), "byte string exceeds")  # truncated b
 test_error(cbordec(as.raw(c(0x62, 0x61))), "text string exceeds")  # truncated text
 test_error(cbordec(as.raw(c(0xfb, 0x01))), "float64 exceeds")  # truncated float64
 test_error(cbordec(as.raw(c(0xfa, 0x01))), "float32 exceeds")  # truncated float32
+test_error(cbordec(as.raw(c(0xf9, 0x01))), "float16 exceeds")  # truncated float16
 test_error(cbordec(as.raw(c(0xa1, 0x62, 0x61))), "map key exceeds")  # truncated map key
 test_error(cbordec(as.raw(c(rep(0x81, 513), 0x00))), "nesting depth exceeded")  # >512 nested arrays
 # RFC 8949 Appendix A test vectors
@@ -272,4 +273,14 @@ test_identical(cbordec(as.raw(c(0xfa, 0xff, 0x80, 0x00, 0x00))), -Inf)
 test_identical(cbordec(as.raw(c(0xfb, 0xff, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))), -Inf)
 test_true(is.nan(cbordec(as.raw(c(0xfa, 0x7f, 0xc0, 0x00, 0x00)))))
 test_true(is.nan(cbordec(as.raw(c(0xfb, 0x7f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)))))
+test_identical(cbordec(as.raw(c(0xf9, 0x00, 0x00))), 0)
+test_identical(cbordec(as.raw(c(0xf9, 0x80, 0x00))), 0)
+test_identical(cbordec(as.raw(c(0xf9, 0x3c, 0x00))), 1)
+test_identical(cbordec(as.raw(c(0xf9, 0x3e, 0x00))), 1.5)
+test_identical(cbordec(as.raw(c(0xf9, 0x7b, 0xff))), 65504)
+test_identical(cbordec(as.raw(c(0xf9, 0x04, 0x00))), 0.00006103515625)
+test_identical(cbordec(as.raw(c(0xf9, 0xc4, 0x00))), -4)
+test_identical(cbordec(as.raw(c(0xf9, 0x7c, 0x00))), Inf)
+test_identical(cbordec(as.raw(c(0xf9, 0xfc, 0x00))), -Inf)
+test_true(is.nan(cbordec(as.raw(c(0xf9, 0x7e, 0x00)))))
 test_identical(cbordec(as.raw(c(0x82, 0x61, 0x61, 0xa1, 0x61, 0x62, 0x61, 0x63))), list("a", list(b = "c")))

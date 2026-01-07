@@ -20,13 +20,14 @@ object.
 CBOR types map to R types as follows:
 \itemize{
 \item Integers: integer (if within range) or double
+\item Float16/Float32/Float64: double
 \item Byte strings: raw vectors
 \item Text strings: character
-\item Arrays: lists
-\item Maps: named lists (keys must be text strings)
 \item false/true: logical
 \item null: NULL
-\item Float32/Float64: double
+\item undefined: NA
+\item Arrays: lists
+\item Maps: named lists (keys must be text strings)
 }
 }
 \examples{
