@@ -563,16 +563,6 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       return R_NilValue;
     } else if (byte == CBOR_UNDEF) {
       return Rf_ScalarLogical(NA_LOGICAL);
-    } else if (byte == 0xFA) {
-      if (dec->pos + 4 > dec->len)
-        Rf_error("CBOR decode error: float32 exceeds input");
-      union {
-        uint32_t u;
-        float f;
-      } conv;
-      conv.u = CBOR_GET_UINT32_BE(dec->data, dec->pos);
-      dec->pos += 4;
-      return Rf_ScalarReal((double) conv.f);
     } else if (byte == CBOR_FLOAT64) {
       if (dec->pos + 8 > dec->len)
         Rf_error("CBOR decode error: float64 exceeds input");
@@ -583,6 +573,34 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       conv.u = CBOR_GET_UINT64_BE(dec->data, dec->pos);
       dec->pos += 8;
       return Rf_ScalarReal(conv.d);
+    } else if (byte == 0xFA) {
+      if (dec->pos + 4 > dec->len)
+        Rf_error("CBOR decode error: float32 exceeds input");
+      union {
+        uint32_t u;
+        float f;
+      } conv;
+      conv.u = CBOR_GET_UINT32_BE(dec->data, dec->pos);
+      dec->pos += 4;
+      return Rf_ScalarReal((double) conv.f);
+    } else if (byte == 0xF9) {
+      // float16 (IEEE 754 half-precision)
+      if (dec->pos + 2 > dec->len)
+        Rf_error("CBOR decode error: float16 exceeds input");
+      uint16_t half = CBOR_GET_UINT16_BE(dec->data, dec->pos);
+      dec->pos += 2;
+      int exp = (half >> 10) & 0x1F;
+      int mant = half & 0x3FF;
+      double val;
+      if (exp == 0) {
+        val = ldexp(mant, -24);
+      } else if (exp == 31) {
+        val = mant == 0 ? R_PosInf : R_NaN;
+      } else {
+        val = ldexp(mant + 1024, exp - 25);
+      }
+      if (half & 0x8000) val = -val;
+      return Rf_ScalarReal(val);
     }
     Rf_error("CBOR decode error: unsupported simple value 0x%02x", byte);
   }

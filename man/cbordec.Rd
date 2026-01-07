@@ -26,7 +26,7 @@ CBOR types map to R types as follows:
 \item Maps: named lists (keys must be text strings)
 \item false/true: logical
 \item null: NULL
-\item Float32/Float64: double
+\item Float16/Float32/Float64: double
 }
 }
 \examples{
