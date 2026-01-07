@@ -1,7 +1,6 @@
 // secretbase ------------------------------------------------------------------
 
 #include "secret.h"
-#include <string.h>
 
 // secretbase - CBOR implementation --------------------------------------------
 
@@ -45,172 +44,6 @@
 // Maximum nesting depth for decoder (stack overflow protection)
 #define CBOR_MAX_DEPTH 512
 
-// secretbase - byte order helpers  --------------------------------------------
-
-/*
- *  Byte-order helpers from Mbed TLS
- *
- *  Copyright The Mbed TLS Contributors
- *  SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
- */
-
-#if defined(__GNUC__) && defined(__GNUC_PREREQ)
-#if __GNUC_PREREQ(4, 8)
-#define CBOR_BSWAP16 __builtin_bswap16
-#endif
-#if __GNUC_PREREQ(4, 3)
-#define CBOR_BSWAP32 __builtin_bswap32
-#define CBOR_BSWAP64 __builtin_bswap64
-#endif
-#endif
-
-#if defined(__clang__) && defined(__has_builtin)
-#if __has_builtin(__builtin_bswap16) && !defined(CBOR_BSWAP16)
-#define CBOR_BSWAP16 __builtin_bswap16
-#endif
-#if __has_builtin(__builtin_bswap32) && !defined(CBOR_BSWAP32)
-#define CBOR_BSWAP32 __builtin_bswap32
-#endif
-#if __has_builtin(__builtin_bswap64) && !defined(CBOR_BSWAP64)
-#define CBOR_BSWAP64 __builtin_bswap64
-#endif
-#endif
-
-#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 410000) && !defined(CBOR_BSWAP32)
-#if defined(__ARM_ACLE)
-#include <arm_acle.h>
-#endif
-#define CBOR_BSWAP32 __rev
-#endif
-
-#if defined(__IAR_SYSTEMS_ICC__)
-#if defined(__ARM_ACLE)
-#include <arm_acle.h>
-#define CBOR_BSWAP16(x) ((uint16_t) __rev16((uint32_t) (x)))
-#define CBOR_BSWAP32 __rev
-#define CBOR_BSWAP64 __revll
-#endif
-#endif
-
-#if !defined(CBOR_BSWAP16)
-static inline uint16_t cbor_bswap16(uint16_t x) {
-  return (x & 0x00ff) << 8 |
-         (x & 0xff00) >> 8;
-}
-#define CBOR_BSWAP16 cbor_bswap16
-#endif
-
-#if !defined(CBOR_BSWAP32)
-static inline uint32_t cbor_bswap32(uint32_t x) {
-  return (x & 0x000000ff) << 24 |
-         (x & 0x0000ff00) <<  8 |
-         (x & 0x00ff0000) >>  8 |
-         (x & 0xff000000) >> 24;
-}
-#define CBOR_BSWAP32 cbor_bswap32
-#endif
-
-#if !defined(CBOR_BSWAP64)
-static inline uint64_t cbor_bswap64(uint64_t x) {
-  return (x & 0x00000000000000ffULL) << 56 |
-         (x & 0x000000000000ff00ULL) << 40 |
-         (x & 0x0000000000ff0000ULL) << 24 |
-         (x & 0x00000000ff000000ULL) <<  8 |
-         (x & 0x000000ff00000000ULL) >>  8 |
-         (x & 0x0000ff0000000000ULL) >> 24 |
-         (x & 0x00ff000000000000ULL) >> 40 |
-         (x & 0xff00000000000000ULL) >> 56;
-}
-#define CBOR_BSWAP64 cbor_bswap64
-#endif
-
-#if defined(__GNUC__)
-__attribute__((always_inline))
-#endif
-static inline uint16_t cbor_get_unaligned_uint16(const void *p) {
-  uint16_t r;
-  memcpy(&r, p, sizeof(r));
-  return r;
-}
-
-#if defined(__GNUC__)
-__attribute__((always_inline))
-#endif
-static inline void cbor_put_unaligned_uint16(void *p, uint16_t x) {
-  memcpy(p, &x, sizeof(x));
-}
-
-#if defined(__GNUC__)
-__attribute__((always_inline))
-#endif
-static inline uint32_t cbor_get_unaligned_uint32(const void *p) {
-  uint32_t r;
-  memcpy(&r, p, sizeof(r));
-  return r;
-}
-
-#if defined(__GNUC__)
-__attribute__((always_inline))
-#endif
-static inline void cbor_put_unaligned_uint32(void *p, uint32_t x) {
-  memcpy(p, &x, sizeof(x));
-}
-
-#if defined(__GNUC__)
-__attribute__((always_inline))
-#endif
-static inline uint64_t cbor_get_unaligned_uint64(const void *p) {
-  uint64_t r;
-  memcpy(&r, p, sizeof(r));
-  return r;
-}
-
-#if defined(__GNUC__)
-__attribute__((always_inline))
-#endif
-static inline void cbor_put_unaligned_uint64(void *p, uint64_t x) {
-  memcpy(p, &x, sizeof(x));
-}
-
-#define CBOR_GET_UINT16_BE(data, offset) \
-  ((MBEDTLS_IS_BIG_ENDIAN) \
-   ? cbor_get_unaligned_uint16((data) + (offset)) \
-   : CBOR_BSWAP16(cbor_get_unaligned_uint16((data) + (offset))))
-
-#define CBOR_PUT_UINT16_BE(n, data, offset) \
-  { \
-    if (MBEDTLS_IS_BIG_ENDIAN) \
-      cbor_put_unaligned_uint16((data) + (offset), (uint16_t) (n)); \
-    else \
-      cbor_put_unaligned_uint16((data) + (offset), CBOR_BSWAP16((uint16_t) (n))); \
-  }
-
-#define CBOR_GET_UINT32_BE(data, offset) \
-  ((MBEDTLS_IS_BIG_ENDIAN) \
-   ? cbor_get_unaligned_uint32((data) + (offset)) \
-   : CBOR_BSWAP32(cbor_get_unaligned_uint32((data) + (offset))))
-
-#define CBOR_PUT_UINT32_BE(n, data, offset) \
-  { \
-    if (MBEDTLS_IS_BIG_ENDIAN) \
-      cbor_put_unaligned_uint32((data) + (offset), (uint32_t) (n)); \
-    else \
-      cbor_put_unaligned_uint32((data) + (offset), CBOR_BSWAP32((uint32_t) (n))); \
-  }
-
-#define CBOR_GET_UINT64_BE(data, offset) \
-  ((MBEDTLS_IS_BIG_ENDIAN) \
-   ? cbor_get_unaligned_uint64((data) + (offset)) \
-   : CBOR_BSWAP64(cbor_get_unaligned_uint64((data) + (offset))))
-
-#define CBOR_PUT_UINT64_BE(n, data, offset) \
-  { \
-    if (MBEDTLS_IS_BIG_ENDIAN) \
-      cbor_put_unaligned_uint64((data) + (offset), (uint64_t) (n)); \
-    else \
-      cbor_put_unaligned_uint64((data) + (offset), CBOR_BSWAP64((uint64_t) (n))); \
-  }
-
 // secretbase - internals ------------------------------------------------------
 
 static inline void cbor_buf_ensure(nano_buf *buf, size_t additional) {
@@ -240,17 +73,17 @@ static void cbor_encode_uint(nano_buf *buf, unsigned char major, uint64_t val) {
   } else if (val <= 0xFFFF) {
     cbor_buf_ensure(buf, 3);
     buf->buf[buf->cur++] = major | CBOR_UINT16;
-    CBOR_PUT_UINT16_BE((uint16_t) val, buf->buf, buf->cur);
+    MBEDTLS_PUT_UINT16_BE((uint16_t) val, buf->buf, buf->cur);
     buf->cur += 2;
   } else if (val <= 0xFFFFFFFF) {
     cbor_buf_ensure(buf, 5);
     buf->buf[buf->cur++] = major | CBOR_UINT32;
-    CBOR_PUT_UINT32_BE((uint32_t) val, buf->buf, buf->cur);
+    MBEDTLS_PUT_UINT32_BE((uint32_t) val, buf->buf, buf->cur);
     buf->cur += 4;
   } else {
     cbor_buf_ensure(buf, 9);
     buf->buf[buf->cur++] = major | CBOR_UINT64;
-    CBOR_PUT_UINT64_BE(val, buf->buf, buf->cur);
+    MBEDTLS_PUT_UINT64_BE(val, buf->buf, buf->cur);
     buf->cur += 8;
   }
 }
@@ -271,7 +104,7 @@ static void cbor_encode_double(nano_buf *buf, double val) {
     uint64_t u;
   } conv;
   conv.d = val;
-  CBOR_PUT_UINT64_BE(conv.u, buf->buf, buf->cur);
+  MBEDTLS_PUT_UINT64_BE(conv.u, buf->buf, buf->cur);
   buf->cur += 8;
 }
 
@@ -457,19 +290,19 @@ static uint64_t cbor_read_uint(cbor_decoder *dec, unsigned char info) {
   } else if (info == CBOR_UINT16) {
     if (dec->pos + 2 > dec->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint16_t val = CBOR_GET_UINT16_BE(dec->data, dec->pos);
+    uint16_t val = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
     dec->pos += 2;
     return val;
   } else if (info == CBOR_UINT32) {
     if (dec->pos + 4 > dec->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint32_t val = CBOR_GET_UINT32_BE(dec->data, dec->pos);
+    uint32_t val = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
     dec->pos += 4;
     return val;
   } else if (info == CBOR_UINT64) {
     if (dec->pos + 8 > dec->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint64_t val = CBOR_GET_UINT64_BE(dec->data, dec->pos);
+    uint64_t val = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
     dec->pos += 8;
     return val;
   }
@@ -570,7 +403,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
         uint64_t u;
         double d;
       } conv;
-      conv.u = CBOR_GET_UINT64_BE(dec->data, dec->pos);
+      conv.u = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
       dec->pos += 8;
       return Rf_ScalarReal(conv.d);
     } else if (byte == 0xFA) {
@@ -580,14 +413,14 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
         uint32_t u;
         float f;
       } conv;
-      conv.u = CBOR_GET_UINT32_BE(dec->data, dec->pos);
+      conv.u = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
       dec->pos += 4;
       return Rf_ScalarReal((double) conv.f);
     } else if (byte == 0xF9) {
       // float16 (IEEE 754 half-precision)
       if (dec->pos + 2 > dec->len)
         Rf_error("CBOR decode error: float16 exceeds input");
-      uint16_t half = CBOR_GET_UINT16_BE(dec->data, dec->pos);
+      uint16_t half = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
       dec->pos += 2;
       int exp = (half >> 10) & 0x1F;
       int mant = half & 0x3FF;
