@@ -145,17 +145,17 @@ base58dec <- function(x, convert = TRUE) .Call(secretbase_base58dec, x, convert)
 #' @details This implementation supports a minimal CBOR subset:
 #' \itemize{
 #'   \item Unsigned and negative integers
+#'   \item Float64
 #'   \item Byte strings (raw vectors)
 #'   \item Text strings (UTF-8)
+#'   \item Simple values: false, true, null, undefined
 #'   \item Arrays (unnamed lists/vectors)
 #'   \item Maps (named lists)
-#'   \item Simple values: false, true, null
-#'   \item Float64
 #' }
 #'
 #' Scalars (length-1 vectors without attributes) encode as their CBOR scalar
 #' equivalents. Vectors with length > 1 or attributes encode as CBOR arrays.
-#' NA values encode as CBOR null.
+#' NA values encode as CBOR undefined (which decodes back to NA).
 #'
 #' @seealso [cbordec()]
 #'
@@ -182,13 +182,14 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 #' @details CBOR types map to R types as follows:
 #' \itemize{
 #'   \item Integers: integer (if within range) or double
+#'   \item Float16/Float32/Float64: double
 #'   \item Byte strings: raw vectors
 #'   \item Text strings: character
-#'   \item Arrays: lists
-#'   \item Maps: named lists (keys must be text strings)
 #'   \item false/true: logical
 #'   \item null: NULL
-#'   \item Float16/Float32/Float64: double
+#'   \item undefined: NA
+#'   \item Arrays: lists
+#'   \item Maps: named lists (keys must be text strings)
 #' }
 #'
 #' @seealso [cborenc()]
