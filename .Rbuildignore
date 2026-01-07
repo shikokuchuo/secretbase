@@ -6,6 +6,7 @@
 ^docs$
 ^pkgdown$
 ^revdep$
+^cran-comments\.md$
 ^\.github$
 ^codecov\.yml$
 ^compile_commands\.json$
