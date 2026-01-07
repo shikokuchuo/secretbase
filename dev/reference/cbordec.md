@@ -25,19 +25,21 @@ CBOR types map to R types as follows:
 
 - Integers: integer (if within range) or double
 
+- Float16/Float32/Float64: double
+
 - Byte strings: raw vectors
 
 - Text strings: character
-
-- Arrays: lists
-
-- Maps: named lists (keys must be text strings)
 
 - false/true: logical
 
 - null: NULL
 
-- Float32/Float64: double
+- undefined: NA
+
+- Arrays: lists
+
+- Maps: named lists (keys must be text strings)
 
 ## See also
 

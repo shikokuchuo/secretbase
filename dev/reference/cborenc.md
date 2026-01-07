@@ -27,21 +27,22 @@ This implementation supports a minimal CBOR subset:
 
 - Unsigned and negative integers
 
+- Float64
+
 - Byte strings (raw vectors)
 
 - Text strings (UTF-8)
+
+- Simple values: false, true, null, undefined
 
 - Arrays (unnamed lists/vectors)
 
 - Maps (named lists)
 
-- Simple values: false, true, null
-
-- Float64
-
 Scalars (length-1 vectors without attributes) encode as their CBOR
 scalar equivalents. Vectors with length \> 1 or attributes encode as
-CBOR arrays. NA values encode as CBOR null.
+CBOR arrays. NA values encode as CBOR undefined (which decodes back to
+NA).
 
 ## See also
 

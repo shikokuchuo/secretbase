@@ -2,10 +2,17 @@
 
 ## secretbase (development version)
 
-- Adds CBOR encoding and decoding (supporting a minimal subset of
-  types).
-- Adds base58 encoding and decoding (with a 4-byte checksum suffix and
-  no version byte prefix).
+- Adds
+  [`cborenc()`](https://shikokuchuo.net/secretbase/dev/reference/cborenc.md)
+  and
+  [`cbordec()`](https://shikokuchuo.net/secretbase/dev/reference/cbordec.md)
+  for CBOR (RFC 8949) encoding/decoding, supporting integers, floats,
+  strings, raw vectors, lists and simple values.
+- Adds
+  [`base58enc()`](https://shikokuchuo.net/secretbase/dev/reference/base58enc.md)
+  and
+  [`base58dec()`](https://shikokuchuo.net/secretbase/dev/reference/base58dec.md)
+  for base58 encoding/decoding with a 4-byte double SHA-256 checksum.
 
 ## secretbase 1.0.5
 

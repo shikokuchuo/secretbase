@@ -69,15 +69,15 @@ become CBOR arrays).</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This implementation supports a minimal CBOR subset:</p><ul><li><p>Unsigned and negative integers</p></li>
+<li><p>Float64</p></li>
 <li><p>Byte strings (raw vectors)</p></li>
 <li><p>Text strings (UTF-8)</p></li>
+<li><p>Simple values: false, true, null, undefined</p></li>
 <li><p>Arrays (unnamed lists/vectors)</p></li>
 <li><p>Maps (named lists)</p></li>
-<li><p>Simple values: false, true, null</p></li>
-<li><p>Float64</p></li>
 </ul><p>Scalars (length-1 vectors without attributes) encode as their CBOR scalar
 equivalents. Vectors with length &gt; 1 or attributes encode as CBOR arrays.
-NA values encode as CBOR null.</p>
+NA values encode as CBOR undefined (which decodes back to NA).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

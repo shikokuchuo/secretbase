@@ -67,13 +67,14 @@ object.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>CBOR types map to R types as follows:</p><ul><li><p>Integers: integer (if within range) or double</p></li>
+<li><p>Float16/Float32/Float64: double</p></li>
 <li><p>Byte strings: raw vectors</p></li>
 <li><p>Text strings: character</p></li>
-<li><p>Arrays: lists</p></li>
-<li><p>Maps: named lists (keys must be text strings)</p></li>
 <li><p>false/true: logical</p></li>
 <li><p>null: NULL</p></li>
-<li><p>Float32/Float64: double</p></li>
+<li><p>undefined: NA</p></li>
+<li><p>Arrays: lists</p></li>
+<li><p>Maps: named lists (keys must be text strings)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
