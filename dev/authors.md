@@ -16,13 +16,13 @@ Source:
 [`DESCRIPTION`](https://github.com/shikokuchuo/secretbase/blob/main/DESCRIPTION)
 
 Gao C (2026). *secretbase: Cryptographic Hash, Extendable-Output and
-Binary Encoding Functions*. R package version 1.0.5.9000,
+Binary Encoding Functions*. R package version 1.1.0.9000,
 <https://shikokuchuo.net/secretbase/>.
 
     @Manual{,
       title = {secretbase: Cryptographic Hash, Extendable-Output and Binary Encoding Functions},
       author = {Charlie Gao},
       year = {2026},
-      note = {R package version 1.0.5.9000},
+      note = {R package version 1.1.0.9000},
       url = {https://shikokuchuo.net/secretbase/},
     }

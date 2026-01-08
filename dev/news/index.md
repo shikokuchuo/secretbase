@@ -2,6 +2,8 @@
 
 ## secretbase (development version)
 
+## secretbase 1.1.0
+
 - Adds
   [`cborenc()`](https://shikokuchuo.net/secretbase/dev/reference/cborenc.md)
   and
