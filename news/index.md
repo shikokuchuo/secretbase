@@ -2,6 +2,8 @@
 
 ## secretbase 1.1.0
 
+CRAN release: 2026-01-08
+
 - Adds
   [`cborenc()`](https://shikokuchuo.net/secretbase/reference/cborenc.md)
   and
