@@ -342,7 +342,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
 
   case CBOR_BYTES: {
     uint64_t len = cbor_read_uint(dec, info);
-    if (dec->pos + len > dec->len)
+    if (len > dec->len - dec->pos)
       Rf_error("CBOR decode error: byte string exceeds input");
     SEXP out = Rf_allocVector(RAWSXP, len);
     memcpy(RAW(out), dec->data + dec->pos, len);
@@ -352,7 +352,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
 
   case CBOR_TEXT: {
     uint64_t len = cbor_read_uint(dec, info);
-    if (dec->pos + len > dec->len)
+    if (len > dec->len - dec->pos)
       Rf_error("CBOR decode error: text string exceeds input");
     SEXP out = Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) len, CE_UTF8);
     dec->pos += len;
@@ -379,7 +379,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       if ((kb & 0xE0) != CBOR_TEXT)
         Rf_error("CBOR decode error: map key must be text string");
       uint64_t klen = cbor_read_uint(dec, kb & 0x1F);
-      if (dec->pos + klen > dec->len)
+      if (klen > dec->len - dec->pos)
         Rf_error("CBOR decode error: map key exceeds input");
       SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) klen, CE_UTF8));
       dec->pos += klen;
