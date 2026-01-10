@@ -390,16 +390,17 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
     return out;
   }
 
-  case CBOR_SIMPLE: {
-    if (byte == CBOR_FALSE) {
+  case CBOR_SIMPLE:
+    switch (byte) {
+    case CBOR_FALSE:
       return Rf_ScalarLogical(FALSE);
-    } else if (byte == CBOR_TRUE) {
+    case CBOR_TRUE:
       return Rf_ScalarLogical(TRUE);
-    } else if (byte == CBOR_NULL) {
+    case CBOR_NULL:
       return R_NilValue;
-    } else if (byte == CBOR_UNDEF) {
+    case CBOR_UNDEF:
       return Rf_ScalarLogical(NA_LOGICAL);
-    } else if (byte == CBOR_FLOAT64) {
+    case CBOR_FLOAT64: {
       if (dec->pos + 8 > dec->len)
         Rf_error("CBOR decode error: float64 exceeds input");
       union {
@@ -409,7 +410,8 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       conv.u = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
       dec->pos += 8;
       return Rf_ScalarReal(conv.d);
-    } else if (byte == CBOR_FLOAT32) {
+    }
+    case CBOR_FLOAT32: {
       if (dec->pos + 4 > dec->len)
         Rf_error("CBOR decode error: float32 exceeds input");
       union {
@@ -419,7 +421,8 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       conv.u = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
       dec->pos += 4;
       return Rf_ScalarReal((double) conv.f);
-    } else if (byte == CBOR_FLOAT16) {
+    }
+    case CBOR_FLOAT16: {
       if (dec->pos + 2 > dec->len)
         Rf_error("CBOR decode error: float16 exceeds input");
       uint16_t half = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
@@ -437,8 +440,9 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       if (half & 0x8000) val = -val;
       return Rf_ScalarReal(val);
     }
-    Rf_error("CBOR decode error: unsupported simple value 0x%02x", byte);
-  }
+    default:
+      Rf_error("CBOR decode error: unsupported simple value 0x%02x", byte);
+    }
 
   default:
     Rf_error("CBOR decode error: unsupported major type %d", major >> 5);
