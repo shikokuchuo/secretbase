@@ -271,58 +271,52 @@ static void cbor_encode_sexp(nano_buf *buf, SEXP x) {
   }
 }
 
-typedef struct {
-  const unsigned char *data;
-  size_t len;
-  size_t pos;
-} cbor_decoder;
-
-static inline unsigned char cbor_read_byte(cbor_decoder *dec) {
-  if (dec->pos >= dec->len)
+static inline unsigned char cbor_read_byte(nano_buf *buf) {
+  if (buf->cur >= buf->len)
     Rf_error("CBOR decode error: unexpected end of input");
-  return dec->data[dec->pos++];
+  return buf->buf[buf->cur++];
 }
 
-static uint64_t cbor_read_uint(cbor_decoder *dec, unsigned char info) {
+static uint64_t cbor_read_uint(nano_buf *buf, unsigned char info) {
   if (info < 24)
     return info;
   switch (info) {
   case CBOR_UINT8:
-    return cbor_read_byte(dec);
+    return cbor_read_byte(buf);
   case CBOR_UINT16:
-    if (dec->pos + 2 > dec->len)
+    if (buf->cur + 2 > buf->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint16_t val16 = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
-    dec->pos += 2;
+    uint16_t val16 = MBEDTLS_GET_UINT16_BE(buf->buf, buf->cur);
+    buf->cur += 2;
     return val16;
   case CBOR_UINT32:
-    if (dec->pos + 4 > dec->len)
+    if (buf->cur + 4 > buf->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint32_t val32 = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
-    dec->pos += 4;
+    uint32_t val32 = MBEDTLS_GET_UINT32_BE(buf->buf, buf->cur);
+    buf->cur += 4;
     return val32;
   case CBOR_UINT64:
-    if (dec->pos + 8 > dec->len)
+    if (buf->cur + 8 > buf->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint64_t val64 = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
-    dec->pos += 8;
+    uint64_t val64 = MBEDTLS_GET_UINT64_BE(buf->buf, buf->cur);
+    buf->cur += 8;
     return val64;
   default:
     Rf_error("CBOR decode error: invalid additional info %d", info);
   }
 }
 
-static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
+static SEXP cbor_decode_item(nano_buf *buf, int depth) {
   if (depth > CBOR_MAX_DEPTH)
     Rf_error("CBOR decode error: nesting depth exceeded");
 
-  unsigned char byte = cbor_read_byte(dec);
+  unsigned char byte = cbor_read_byte(buf);
   unsigned char major = byte & 0xE0;
   unsigned char info = byte & 0x1F;
 
   switch (major) {
   case CBOR_UINT: {
-    uint64_t val = cbor_read_uint(dec, info);
+    uint64_t val = cbor_read_uint(buf, info);
     if (val <= INT_MAX) {
       return Rf_ScalarInteger((int) val);
     } else {
@@ -331,7 +325,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_NEGINT: {
-    uint64_t val = cbor_read_uint(dec, info);
+    uint64_t val = cbor_read_uint(buf, info);
     if (val <= INT_MAX) {
       return Rf_ScalarInteger((int) (-1 - (int64_t) val));
     } else {
@@ -340,49 +334,49 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_BYTES: {
-    uint64_t len = cbor_read_uint(dec, info);
-    if (len > dec->len - dec->pos)
+    uint64_t len = cbor_read_uint(buf, info);
+    if (len > buf->len - buf->cur)
       Rf_error("CBOR decode error: byte string exceeds input");
     SEXP out = Rf_allocVector(RAWSXP, len);
-    memcpy(RAW(out), dec->data + dec->pos, len);
-    dec->pos += len;
+    memcpy(RAW(out), buf->buf + buf->cur, len);
+    buf->cur += len;
     return out;
   }
 
   case CBOR_TEXT: {
-    uint64_t len = cbor_read_uint(dec, info);
-    if (len > dec->len - dec->pos)
+    uint64_t len = cbor_read_uint(buf, info);
+    if (len > buf->len - buf->cur)
       Rf_error("CBOR decode error: text string exceeds input");
-    SEXP out = Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) len, CE_UTF8);
-    dec->pos += len;
+    SEXP out = Rf_mkCharLenCE((const char *) (buf->buf + buf->cur), (int) len, CE_UTF8);
+    buf->cur += len;
     return Rf_ScalarString(out);
   }
 
   case CBOR_ARRAY: {
-    uint64_t n = cbor_read_uint(dec, info);
+    uint64_t n = cbor_read_uint(buf, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
     for (uint64_t i = 0; i < n; i++) {
-      SET_VECTOR_ELT(out, i, cbor_decode_item(dec, depth + 1));
+      SET_VECTOR_ELT(out, i, cbor_decode_item(buf, depth + 1));
     }
     UNPROTECT(1);
     return out;
   }
 
   case CBOR_MAP: {
-    uint64_t n = cbor_read_uint(dec, info);
+    uint64_t n = cbor_read_uint(buf, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
     SEXP names = PROTECT(Rf_allocVector(STRSXP, n));
 
     for (uint64_t i = 0; i < n; i++) {
-      unsigned char kb = cbor_read_byte(dec);
+      unsigned char kb = cbor_read_byte(buf);
       if ((kb & 0xE0) != CBOR_TEXT)
         Rf_error("CBOR decode error: map key must be text string");
-      uint64_t klen = cbor_read_uint(dec, kb & 0x1F);
-      if (klen > dec->len - dec->pos)
+      uint64_t klen = cbor_read_uint(buf, kb & 0x1F);
+      if (klen > buf->len - buf->cur)
         Rf_error("CBOR decode error: map key exceeds input");
-      SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) klen, CE_UTF8));
-      dec->pos += klen;
-      SET_VECTOR_ELT(out, i, cbor_decode_item(dec, depth + 1));
+      SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (buf->buf + buf->cur), (int) klen, CE_UTF8));
+      buf->cur += klen;
+      SET_VECTOR_ELT(out, i, cbor_decode_item(buf, depth + 1));
     }
 
     Rf_setAttrib(out, R_NamesSymbol, names);
@@ -401,32 +395,32 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
     case CBOR_UNDEF:
       return Rf_ScalarLogical(NA_LOGICAL);
     case CBOR_FLOAT64: {
-      if (dec->pos + 8 > dec->len)
+      if (buf->cur + 8 > buf->len)
         Rf_error("CBOR decode error: float64 exceeds input");
       union {
         uint64_t u;
         double d;
       } conv;
-      conv.u = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
-      dec->pos += 8;
+      conv.u = MBEDTLS_GET_UINT64_BE(buf->buf, buf->cur);
+      buf->cur += 8;
       return Rf_ScalarReal(conv.d);
     }
     case CBOR_FLOAT32: {
-      if (dec->pos + 4 > dec->len)
+      if (buf->cur + 4 > buf->len)
         Rf_error("CBOR decode error: float32 exceeds input");
       union {
         uint32_t u;
         float f;
       } conv;
-      conv.u = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
-      dec->pos += 4;
+      conv.u = MBEDTLS_GET_UINT32_BE(buf->buf, buf->cur);
+      buf->cur += 4;
       return Rf_ScalarReal((double) conv.f);
     }
     case CBOR_FLOAT16: {
-      if (dec->pos + 2 > dec->len)
+      if (buf->cur + 2 > buf->len)
         Rf_error("CBOR decode error: float16 exceeds input");
-      uint16_t half = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
-      dec->pos += 2;
+      uint16_t half = MBEDTLS_GET_UINT16_BE(buf->buf, buf->cur);
+      buf->cur += 2;
       int exp = (half >> 10) & 0x1F;
       int mant = half & 0x3FF;
       double val;
@@ -459,8 +453,8 @@ SEXP secretbase_cborenc(SEXP x) {
 
   SEXP out = Rf_allocVector(RAWSXP, buf.cur);
   memcpy(RAW(out), buf.buf, buf.cur);
-
   NANO_FREE(buf);
+  
   return out;
 }
 
@@ -468,16 +462,12 @@ SEXP secretbase_cbordec(SEXP x) {
   if (TYPEOF(x) != RAWSXP)
     Rf_error("'x' must be a raw vector");
 
-  cbor_decoder dec;
-  dec.data = (const unsigned char *) DATAPTR_RO(x);
-  dec.len = XLENGTH(x);
-  dec.pos = 0;
+  nano_buf buf = {.buf = (unsigned char *) DATAPTR_RO(x), .len = XLENGTH(x), .cur = 0};
+  SEXP out = cbor_decode_item(&buf, 0);
 
-  SEXP out = cbor_decode_item(&dec, 0);
-
-  if (dec.pos != dec.len) {
+  if (buf.cur != buf.len) {
     PROTECT(out);
-    Rf_warning("CBOR decode: %zu trailing bytes ignored", dec.len - dec.pos);
+    Rf_warning("CBOR decode: %zu trailing bytes ignored", buf.len - buf.cur);
     UNPROTECT(1);
   }
 
