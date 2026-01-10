@@ -333,7 +333,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
 
   case CBOR_NEGINT: {
     uint64_t val = cbor_read_uint(dec, info);
-    if (val <= 2147483647ULL) {
+    if (val <= INT_MAX) {
       return Rf_ScalarInteger((int) (-1 - (int64_t) val));
     } else {
       return Rf_ScalarReal(-1.0 - (double) val);
