@@ -33,6 +33,8 @@
 #define CBOR_TRUE     0xF5
 #define CBOR_NULL     0xF6
 #define CBOR_UNDEF    0xF7
+#define CBOR_FLOAT16  0xF9
+#define CBOR_FLOAT32  0xFA
 #define CBOR_FLOAT64  0xFB
 
 // Additional info thresholds
@@ -217,8 +219,7 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
 }
 
 static void cbor_encode_raw(nano_buf *buf, SEXP x) {
-  R_xlen_t xlen = XLENGTH(x);
-  cbor_encode_bytes(buf, (const unsigned char *) DATAPTR_RO(x), xlen);
+  cbor_encode_bytes(buf, (const unsigned char *) DATAPTR_RO(x), XLENGTH(x));
 }
 
 static void cbor_encode_list(nano_buf *buf, SEXP x) {
@@ -407,7 +408,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       conv.u = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
       dec->pos += 8;
       return Rf_ScalarReal(conv.d);
-    } else if (byte == 0xFA) {
+    } else if (byte == CBOR_FLOAT32) {
       if (dec->pos + 4 > dec->len)
         Rf_error("CBOR decode error: float32 exceeds input");
       union {
@@ -417,8 +418,7 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       conv.u = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
       dec->pos += 4;
       return Rf_ScalarReal((double) conv.f);
-    } else if (byte == 0xF9) {
-      // float16 (IEEE 754 half-precision)
+    } else if (byte == CBOR_FLOAT16) {
       if (dec->pos + 2 > dec->len)
         Rf_error("CBOR decode error: float16 exceeds input");
       uint16_t half = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
