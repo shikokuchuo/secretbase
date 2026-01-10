@@ -33,7 +33,6 @@
  */
 
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -179,9 +178,7 @@ static bool b58check(const void *bin, size_t binsz) {
   sb_sha256_raw(bin, binsz - 4, hash1);
   sb_sha256_raw(hash1, SB_SHA256_SIZE, hash2);
 
-  if (memcmp(&binc[binsz - 4], hash2, 4)) return false;
-
-  return true;
+  return !memcmp(&binc[binsz - 4], hash2, 4);
 
 }
 
