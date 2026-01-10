@@ -99,6 +99,7 @@ static void cbor_encode_int(nano_buf *buf, int64_t val) {
 }
 
 static void cbor_encode_double(nano_buf *buf, double val) {
+  cbor_buf_ensure(buf, 9);
   buf->buf[buf->cur++] = CBOR_FLOAT64;
   union {
     double d;
@@ -172,17 +173,17 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   const double *p = REAL_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
-    cbor_buf_ensure(buf, 9);
     if (ISNA(p[0])) {
+      cbor_buf_ensure(buf, 1);
       buf->buf[buf->cur++] = CBOR_UNDEF;
     } else {
       cbor_encode_double(buf, p[0]);
     }
   } else {
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
-    cbor_buf_ensure(buf, xlen * 9);
     for (R_xlen_t i = 0; i < xlen; i++) {
       if (ISNA(p[i])) {
+        cbor_buf_ensure(buf, 1);
         buf->buf[buf->cur++] = CBOR_UNDEF;
       } else {
         cbor_encode_double(buf, p[i]);
