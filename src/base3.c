@@ -224,19 +224,20 @@ static void cbor_encode_raw(nano_buf *buf, SEXP x) {
 static void cbor_encode_list(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   SEXP names = Rf_getAttrib(x, R_NamesSymbol);
-
   if (names == R_NilValue) {
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
     for (R_xlen_t i = 0; i < xlen; i++) {
       cbor_encode_sexp(buf, VECTOR_ELT(x, i));
     }
   } else {
+    PROTECT(names);
     cbor_encode_uint(buf, CBOR_MAP, xlen);
     for (R_xlen_t i = 0; i < xlen; i++) {
       const char *key = Rf_translateCharUTF8(STRING_ELT(names, i));
       cbor_encode_text(buf, key, strlen(key));
       cbor_encode_sexp(buf, VECTOR_ELT(x, i));
     }
+    UNPROTECT(1);
   }
 }
 
@@ -469,8 +470,11 @@ SEXP secretbase_cbordec(SEXP x) {
 
   SEXP out = cbor_decode_item(&dec, 0);
 
-  if (dec.pos != dec.len)
+  if (dec.pos != dec.len) {
+    PROTECT(out);
     Rf_warning("CBOR decode: %zu trailing bytes ignored", dec.len - dec.pos);
+    UNPROTECT(1);
+  }
 
   return out;
 }
