@@ -285,30 +285,32 @@ static inline unsigned char cbor_read_byte(cbor_decoder *dec) {
 }
 
 static uint64_t cbor_read_uint(cbor_decoder *dec, unsigned char info) {
-  if (info < 24) {
+  if (info < 24)
     return info;
-  } else if (info == CBOR_UINT8) {
+  switch (info) {
+  case CBOR_UINT8:
     return cbor_read_byte(dec);
-  } else if (info == CBOR_UINT16) {
+  case CBOR_UINT16:
     if (dec->pos + 2 > dec->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint16_t val = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
+    uint16_t val16 = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
     dec->pos += 2;
-    return val;
-  } else if (info == CBOR_UINT32) {
+    return val16;
+  case CBOR_UINT32:
     if (dec->pos + 4 > dec->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint32_t val = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
+    uint32_t val32 = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
     dec->pos += 4;
-    return val;
-  } else if (info == CBOR_UINT64) {
+    return val32;
+  case CBOR_UINT64:
     if (dec->pos + 8 > dec->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint64_t val = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
+    uint64_t val64 = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
     dec->pos += 8;
-    return val;
+    return val64;
+  default:
+    Rf_error("CBOR decode error: invalid additional info %d", info);
   }
-  Rf_error("CBOR decode error: invalid additional info %d", info);
 }
 
 static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
