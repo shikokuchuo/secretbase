@@ -76,9 +76,6 @@ static bool b58tobin(void *bin, size_t *binszp, const char *b58, size_t b58sz) {
   size_t i, j;
   unsigned zerocount = 0;
 
-  if (!b58sz)
-    b58sz = strlen(b58);
-
   for (i = 0; i < outisz; ++i) {
     outi[i] = 0;
   }
