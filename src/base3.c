@@ -33,6 +33,8 @@
 #define CBOR_TRUE     0xF5
 #define CBOR_NULL     0xF6
 #define CBOR_UNDEF    0xF7
+#define CBOR_FLOAT16  0xF9
+#define CBOR_FLOAT32  0xFA
 #define CBOR_FLOAT64  0xFB
 
 // Additional info thresholds
@@ -47,9 +49,9 @@
 // secretbase - internals ------------------------------------------------------
 
 static inline void cbor_buf_ensure(nano_buf *buf, size_t additional) {
+  if (additional > R_XLEN_T_MAX - buf->cur) { ERROR_OUT(buf); }
   size_t req = buf->cur + additional;
   if (req > buf->len) {
-    if (req > R_XLEN_T_MAX) { ERROR_OUT(buf); }
     do {
       buf->len += buf->len > SB_SERIAL_THR ? SB_SERIAL_THR : buf->len;
     } while (buf->len < req);
@@ -88,7 +90,7 @@ static void cbor_encode_uint(nano_buf *buf, unsigned char major, uint64_t val) {
   }
 }
 
-static void cbor_encode_int(nano_buf *buf, int64_t val) {
+static inline void cbor_encode_int(nano_buf *buf, int64_t val) {
   if (val >= 0) {
     cbor_encode_uint(buf, CBOR_UINT, (uint64_t) val);
   } else {
@@ -96,7 +98,7 @@ static void cbor_encode_int(nano_buf *buf, int64_t val) {
   }
 }
 
-static void cbor_encode_double(nano_buf *buf, double val) {
+static inline void cbor_encode_double(nano_buf *buf, double val) {
   cbor_buf_ensure(buf, 9);
   buf->buf[buf->cur++] = CBOR_FLOAT64;
   union {
@@ -108,25 +110,30 @@ static void cbor_encode_double(nano_buf *buf, double val) {
   buf->cur += 8;
 }
 
-static void cbor_encode_bytes(nano_buf *buf, const unsigned char *data, size_t len) {
+static inline void cbor_encode_bytes(nano_buf *buf, const unsigned char *data, size_t len) {
   cbor_encode_uint(buf, CBOR_BYTES, len);
   cbor_buf_ensure(buf, len);
   memcpy(buf->buf + buf->cur, data, len);
   buf->cur += len;
 }
 
-static void cbor_encode_text(nano_buf *buf, const char *str, size_t len) {
+static inline void cbor_encode_text(nano_buf *buf, const char *str, size_t len) {
   cbor_encode_uint(buf, CBOR_TEXT, len);
   cbor_buf_ensure(buf, len);
   memcpy(buf->buf + buf->cur, str, len);
   buf->cur += len;
 }
 
+static inline void cbor_encode_undef(nano_buf *buf) {
+  cbor_buf_ensure(buf, 1);
+  buf->buf[buf->cur++] = CBOR_UNDEF;
+}
+
 static void cbor_encode_sexp(nano_buf *buf, SEXP x);
 
 static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
-  const int *p = LOGICAL_RO(x);
+  const int *p = (const int *) DATAPTR_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     cbor_buf_ensure(buf, 1);
@@ -144,12 +151,11 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
 
 static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
-  const int *p = INTEGER_RO(x);
+  const int *p = (const int *) DATAPTR_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     if (p[0] == NA_INTEGER) {
-      cbor_buf_ensure(buf, 1);
-      buf->buf[buf->cur++] = CBOR_UNDEF;
+      cbor_encode_undef(buf);
     } else {
       cbor_encode_int(buf, p[0]);
     }
@@ -157,8 +163,7 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
     for (R_xlen_t i = 0; i < xlen; i++) {
       if (p[i] == NA_INTEGER) {
-        cbor_buf_ensure(buf, 1);
-        buf->buf[buf->cur++] = CBOR_UNDEF;
+        cbor_encode_undef(buf);
       } else {
         cbor_encode_int(buf, p[i]);
       }
@@ -168,12 +173,11 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
 
 static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
-  const double *p = REAL_RO(x);
+  const double *p = (const double *) DATAPTR_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     if (ISNA(p[0])) {
-      cbor_buf_ensure(buf, 1);
-      buf->buf[buf->cur++] = CBOR_UNDEF;
+      cbor_encode_undef(buf);
     } else {
       cbor_encode_double(buf, p[0]);
     }
@@ -181,8 +185,7 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
     for (R_xlen_t i = 0; i < xlen; i++) {
       if (ISNA(p[i])) {
-        cbor_buf_ensure(buf, 1);
-        buf->buf[buf->cur++] = CBOR_UNDEF;
+        cbor_encode_undef(buf);
       } else {
         cbor_encode_double(buf, p[i]);
       }
@@ -196,8 +199,7 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     if (p[0] == NA_STRING) {
-      cbor_buf_ensure(buf, 1);
-      buf->buf[buf->cur++] = CBOR_UNDEF;
+      cbor_encode_undef(buf);
     } else {
       const char *s = Rf_translateCharUTF8(p[0]);
       cbor_encode_text(buf, s, strlen(s));
@@ -206,8 +208,7 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
     for (R_xlen_t i = 0; i < xlen; i++) {
       if (p[i] == NA_STRING) {
-        cbor_buf_ensure(buf, 1);
-        buf->buf[buf->cur++] = CBOR_UNDEF;
+        cbor_encode_undef(buf);
       } else {
         const char *s = Rf_translateCharUTF8(p[i]);
         cbor_encode_text(buf, s, strlen(s));
@@ -216,9 +217,8 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
   }
 }
 
-static void cbor_encode_raw(nano_buf *buf, SEXP x) {
-  R_xlen_t xlen = XLENGTH(x);
-  cbor_encode_bytes(buf, (const unsigned char *) DATAPTR_RO(x), xlen);
+static inline void cbor_encode_raw(nano_buf *buf, SEXP x) {
+  cbor_encode_bytes(buf, (const unsigned char *) DATAPTR_RO(x), XLENGTH(x));
 }
 
 static void cbor_encode_list(nano_buf *buf, SEXP x) {
@@ -271,56 +271,52 @@ static void cbor_encode_sexp(nano_buf *buf, SEXP x) {
   }
 }
 
-typedef struct {
-  const unsigned char *data;
-  size_t len;
-  size_t pos;
-} cbor_decoder;
-
-static inline unsigned char cbor_read_byte(cbor_decoder *dec) {
-  if (dec->pos >= dec->len)
+static inline unsigned char cbor_read_byte(nano_buf *buf) {
+  if (buf->cur >= buf->len)
     Rf_error("CBOR decode error: unexpected end of input");
-  return dec->data[dec->pos++];
+  return buf->buf[buf->cur++];
 }
 
-static uint64_t cbor_read_uint(cbor_decoder *dec, unsigned char info) {
-  if (info < 24) {
+static uint64_t cbor_read_uint(nano_buf *buf, unsigned char info) {
+  if (info < 24)
     return info;
-  } else if (info == CBOR_UINT8) {
-    return cbor_read_byte(dec);
-  } else if (info == CBOR_UINT16) {
-    if (dec->pos + 2 > dec->len)
+  switch (info) {
+  case CBOR_UINT8:
+    return cbor_read_byte(buf);
+  case CBOR_UINT16:
+    if (buf->cur + 2 > buf->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint16_t val = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
-    dec->pos += 2;
-    return val;
-  } else if (info == CBOR_UINT32) {
-    if (dec->pos + 4 > dec->len)
+    uint16_t val16 = MBEDTLS_GET_UINT16_BE(buf->buf, buf->cur);
+    buf->cur += 2;
+    return val16;
+  case CBOR_UINT32:
+    if (buf->cur + 4 > buf->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint32_t val = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
-    dec->pos += 4;
-    return val;
-  } else if (info == CBOR_UINT64) {
-    if (dec->pos + 8 > dec->len)
+    uint32_t val32 = MBEDTLS_GET_UINT32_BE(buf->buf, buf->cur);
+    buf->cur += 4;
+    return val32;
+  case CBOR_UINT64:
+    if (buf->cur + 8 > buf->len)
       Rf_error("CBOR decode error: unexpected end of input");
-    uint64_t val = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
-    dec->pos += 8;
-    return val;
+    uint64_t val64 = MBEDTLS_GET_UINT64_BE(buf->buf, buf->cur);
+    buf->cur += 8;
+    return val64;
+  default:
+    Rf_error("CBOR decode error: invalid additional info %d", info);
   }
-  Rf_error("CBOR decode error: invalid additional info %d", info);
 }
 
-static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
+static SEXP cbor_decode_item(nano_buf *buf, int depth) {
   if (depth > CBOR_MAX_DEPTH)
     Rf_error("CBOR decode error: nesting depth exceeded");
 
-  unsigned char byte = cbor_read_byte(dec);
+  unsigned char byte = cbor_read_byte(buf);
   unsigned char major = byte & 0xE0;
   unsigned char info = byte & 0x1F;
 
   switch (major) {
   case CBOR_UINT: {
-    uint64_t val = cbor_read_uint(dec, info);
+    uint64_t val = cbor_read_uint(buf, info);
     if (val <= INT_MAX) {
       return Rf_ScalarInteger((int) val);
     } else {
@@ -329,8 +325,8 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_NEGINT: {
-    uint64_t val = cbor_read_uint(dec, info);
-    if (val <= 2147483647ULL) {
+    uint64_t val = cbor_read_uint(buf, info);
+    if (val <= INT_MAX) {
       return Rf_ScalarInteger((int) (-1 - (int64_t) val));
     } else {
       return Rf_ScalarReal(-1.0 - (double) val);
@@ -338,91 +334,93 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
   }
 
   case CBOR_BYTES: {
-    uint64_t len = cbor_read_uint(dec, info);
-    if (dec->pos + len > dec->len)
+    uint64_t len = cbor_read_uint(buf, info);
+    if (len > buf->len - buf->cur)
       Rf_error("CBOR decode error: byte string exceeds input");
     SEXP out = Rf_allocVector(RAWSXP, len);
-    memcpy(RAW(out), dec->data + dec->pos, len);
-    dec->pos += len;
+    memcpy(RAW(out), buf->buf + buf->cur, len);
+    buf->cur += len;
     return out;
   }
 
   case CBOR_TEXT: {
-    uint64_t len = cbor_read_uint(dec, info);
-    if (dec->pos + len > dec->len)
+    uint64_t len = cbor_read_uint(buf, info);
+    if (len > buf->len - buf->cur)
       Rf_error("CBOR decode error: text string exceeds input");
-    SEXP out = Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) len, CE_UTF8);
-    dec->pos += len;
+    SEXP out = Rf_mkCharLenCE((const char *) (buf->buf + buf->cur), (int) len, CE_UTF8);
+    buf->cur += len;
     return Rf_ScalarString(out);
   }
 
   case CBOR_ARRAY: {
-    uint64_t n = cbor_read_uint(dec, info);
+    uint64_t n = cbor_read_uint(buf, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
     for (uint64_t i = 0; i < n; i++) {
-      SET_VECTOR_ELT(out, i, cbor_decode_item(dec, depth + 1));
+      SET_VECTOR_ELT(out, i, cbor_decode_item(buf, depth + 1));
     }
     UNPROTECT(1);
     return out;
   }
 
   case CBOR_MAP: {
-    uint64_t n = cbor_read_uint(dec, info);
+    uint64_t n = cbor_read_uint(buf, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
-    SEXP names = PROTECT(Rf_allocVector(STRSXP, n));
+    SEXP names = Rf_allocVector(STRSXP, n);
+    Rf_namesgets(out, names);
 
     for (uint64_t i = 0; i < n; i++) {
-      unsigned char kb = cbor_read_byte(dec);
+      unsigned char kb = cbor_read_byte(buf);
       if ((kb & 0xE0) != CBOR_TEXT)
         Rf_error("CBOR decode error: map key must be text string");
-      uint64_t klen = cbor_read_uint(dec, kb & 0x1F);
-      if (dec->pos + klen > dec->len)
+      uint64_t klen = cbor_read_uint(buf, kb & 0x1F);
+      if (klen > buf->len - buf->cur)
         Rf_error("CBOR decode error: map key exceeds input");
-      SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (dec->data + dec->pos), (int) klen, CE_UTF8));
-      dec->pos += klen;
-      SET_VECTOR_ELT(out, i, cbor_decode_item(dec, depth + 1));
+      SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (buf->buf + buf->cur), (int) klen, CE_UTF8));
+      buf->cur += klen;
+      SET_VECTOR_ELT(out, i, cbor_decode_item(buf, depth + 1));
     }
 
-    Rf_setAttrib(out, R_NamesSymbol, names);
-    UNPROTECT(2);
+    UNPROTECT(1);
     return out;
   }
 
-  case CBOR_SIMPLE: {
-    if (byte == CBOR_FALSE) {
+  case CBOR_SIMPLE:
+    switch (byte) {
+    case CBOR_FALSE:
       return Rf_ScalarLogical(FALSE);
-    } else if (byte == CBOR_TRUE) {
+    case CBOR_TRUE:
       return Rf_ScalarLogical(TRUE);
-    } else if (byte == CBOR_NULL) {
+    case CBOR_NULL:
       return R_NilValue;
-    } else if (byte == CBOR_UNDEF) {
+    case CBOR_UNDEF:
       return Rf_ScalarLogical(NA_LOGICAL);
-    } else if (byte == CBOR_FLOAT64) {
-      if (dec->pos + 8 > dec->len)
+    case CBOR_FLOAT64: {
+      if (buf->cur + 8 > buf->len)
         Rf_error("CBOR decode error: float64 exceeds input");
       union {
         uint64_t u;
         double d;
       } conv;
-      conv.u = MBEDTLS_GET_UINT64_BE(dec->data, dec->pos);
-      dec->pos += 8;
+      conv.u = MBEDTLS_GET_UINT64_BE(buf->buf, buf->cur);
+      buf->cur += 8;
       return Rf_ScalarReal(conv.d);
-    } else if (byte == 0xFA) {
-      if (dec->pos + 4 > dec->len)
+    }
+    case CBOR_FLOAT32: {
+      if (buf->cur + 4 > buf->len)
         Rf_error("CBOR decode error: float32 exceeds input");
       union {
         uint32_t u;
         float f;
       } conv;
-      conv.u = MBEDTLS_GET_UINT32_BE(dec->data, dec->pos);
-      dec->pos += 4;
+      conv.u = MBEDTLS_GET_UINT32_BE(buf->buf, buf->cur);
+      buf->cur += 4;
       return Rf_ScalarReal((double) conv.f);
-    } else if (byte == 0xF9) {
-      // float16 (IEEE 754 half-precision)
-      if (dec->pos + 2 > dec->len)
+    }
+    case CBOR_FLOAT16: {
+      if (buf->cur + 2 > buf->len)
         Rf_error("CBOR decode error: float16 exceeds input");
-      uint16_t half = MBEDTLS_GET_UINT16_BE(dec->data, dec->pos);
-      dec->pos += 2;
+      uint16_t half = MBEDTLS_GET_UINT16_BE(buf->buf, buf->cur);
+      buf->cur += 2;
       int exp = (half >> 10) & 0x1F;
       int mant = half & 0x3FF;
       double val;
@@ -436,8 +434,9 @@ static SEXP cbor_decode_item(cbor_decoder *dec, int depth) {
       if (half & 0x8000) val = -val;
       return Rf_ScalarReal(val);
     }
-    Rf_error("CBOR decode error: unsupported simple value 0x%02x", byte);
-  }
+    default:
+      Rf_error("CBOR decode error: unsupported simple value 0x%02x", byte);
+    }
 
   default:
     Rf_error("CBOR decode error: unsupported major type %d", major >> 5);
@@ -453,9 +452,9 @@ SEXP secretbase_cborenc(SEXP x) {
   cbor_encode_sexp(&buf, x);
 
   SEXP out = Rf_allocVector(RAWSXP, buf.cur);
-  memcpy(RAW(out), buf.buf, buf.cur);
-
+  memcpy(SB_DATAPTR(out), buf.buf, buf.cur);
   NANO_FREE(buf);
+  
   return out;
 }
 
@@ -463,18 +462,6 @@ SEXP secretbase_cbordec(SEXP x) {
   if (TYPEOF(x) != RAWSXP)
     Rf_error("'x' must be a raw vector");
 
-  cbor_decoder dec;
-  dec.data = (const unsigned char *) DATAPTR_RO(x);
-  dec.len = XLENGTH(x);
-  dec.pos = 0;
-
-  SEXP out = cbor_decode_item(&dec, 0);
-
-  if (dec.pos != dec.len) {
-    PROTECT(out);
-    Rf_warning("CBOR decode: %zu trailing bytes ignored", dec.len - dec.pos);
-    UNPROTECT(1);
-  }
-
-  return out;
+  nano_buf buf = {.buf = (unsigned char *) DATAPTR_RO(x), .len = XLENGTH(x), .cur = 0};
+  return cbor_decode_item(&buf, 0);
 }
