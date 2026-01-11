@@ -463,13 +463,5 @@ SEXP secretbase_cbordec(SEXP x) {
     Rf_error("'x' must be a raw vector");
 
   nano_buf buf = {.buf = (unsigned char *) DATAPTR_RO(x), .len = XLENGTH(x), .cur = 0};
-  SEXP out = cbor_decode_item(&buf, 0);
-
-  if (buf.cur != buf.len) {
-    PROTECT(out);
-    Rf_warning("CBOR decode: %zu trailing bytes ignored", buf.len - buf.cur);
-    UNPROTECT(1);
-  }
-
-  return out;
+  return cbor_decode_item(&buf, 0);
 }
