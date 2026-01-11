@@ -133,7 +133,7 @@ static void cbor_encode_sexp(nano_buf *buf, SEXP x);
 
 static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
-  const int *p = LOGICAL_RO(x);
+  const int *p = (const int *) DATAPTR_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     cbor_buf_ensure(buf, 1);
@@ -151,7 +151,7 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
 
 static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
-  const int *p = INTEGER_RO(x);
+  const int *p = (const int *) DATAPTR_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     if (p[0] == NA_INTEGER) {
@@ -173,7 +173,7 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
 
 static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
-  const double *p = REAL_RO(x);
+  const double *p = (const double *) DATAPTR_RO(x);
 
   if (xlen == 1 && NO_ATTRIB(x)) {
     if (ISNA(p[0])) {
@@ -452,7 +452,7 @@ SEXP secretbase_cborenc(SEXP x) {
   cbor_encode_sexp(&buf, x);
 
   SEXP out = Rf_allocVector(RAWSXP, buf.cur);
-  memcpy(RAW(out), buf.buf, buf.cur);
+  memcpy(SB_DATAPTR(out), buf.buf, buf.cur);
   NANO_FREE(buf);
   
   return out;
