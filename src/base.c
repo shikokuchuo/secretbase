@@ -250,12 +250,12 @@ static inline void sb_read_bytes(R_inpstream_t stream, void *dst, int len) {
 }
 
 static inline void sb_write_bytes(R_outpstream_t stream, void *src, int len) {
-  
+
   nano_buf *buf = (nano_buf *) stream->data;
-  
+
+  if ((size_t) len > R_XLEN_T_MAX - buf->cur) { ERROR_OUT(buf); }
   size_t req = buf->cur + (size_t) len;
   if (req > buf->len) {
-    if (req > R_XLEN_T_MAX) { ERROR_OUT(buf); }
     do {
       buf->len += buf->len > SB_SERIAL_THR ? SB_SERIAL_THR : buf->len;
     } while (buf->len < req);

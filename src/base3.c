@@ -49,9 +49,9 @@
 // secretbase - internals ------------------------------------------------------
 
 static inline void cbor_buf_ensure(nano_buf *buf, size_t additional) {
+  if (additional > R_XLEN_T_MAX - buf->cur) { ERROR_OUT(buf); }
   size_t req = buf->cur + additional;
   if (req > buf->len) {
-    if (req > R_XLEN_T_MAX) { ERROR_OUT(buf); }
     do {
       buf->len += buf->len > SB_SERIAL_THR ? SB_SERIAL_THR : buf->len;
     } while (buf->len < req);
