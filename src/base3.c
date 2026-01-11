@@ -379,7 +379,7 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
       SET_VECTOR_ELT(out, i, cbor_decode_item(buf, depth + 1));
     }
 
-    Rf_setAttrib(out, R_NamesSymbol, names);
+    Rf_namesgets(out, names);
     UNPROTECT(2);
     return out;
   }
