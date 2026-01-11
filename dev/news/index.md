@@ -2,6 +2,8 @@
 
 ## secretbase (development version)
 
+- Optimizes CBOR implementation.
+
 ## secretbase 1.1.0
 
 CRAN release: 2026-01-08
