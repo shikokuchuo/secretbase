@@ -365,7 +365,8 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
   case CBOR_MAP: {
     uint64_t n = cbor_read_uint(buf, info);
     SEXP out = PROTECT(Rf_allocVector(VECSXP, n));
-    SEXP names = PROTECT(Rf_allocVector(STRSXP, n));
+    SEXP names = Rf_allocVector(STRSXP, n);
+    Rf_namesgets(out, names);
 
     for (uint64_t i = 0; i < n; i++) {
       unsigned char kb = cbor_read_byte(buf);
@@ -379,8 +380,7 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
       SET_VECTOR_ELT(out, i, cbor_decode_item(buf, depth + 1));
     }
 
-    Rf_namesgets(out, names);
-    UNPROTECT(2);
+    UNPROTECT(1);
     return out;
   }
 
