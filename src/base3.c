@@ -43,6 +43,10 @@
 #define CBOR_UINT32   26
 #define CBOR_UINT64   27
 
+// Byte extraction macros
+#define CBOR_MAJOR(b)  ((b) & 0xE0)
+#define CBOR_INFO(b)   ((b) & 0x1F)
+
 // Maximum nesting depth for decoder (stack overflow protection)
 #define CBOR_MAX_DEPTH 512
 
@@ -311,8 +315,8 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
     Rf_error("CBOR decode error: nesting depth exceeded");
 
   unsigned char byte = cbor_read_byte(buf);
-  unsigned char major = byte & 0xE0;
-  unsigned char info = byte & 0x1F;
+  unsigned char major = CBOR_MAJOR(byte);
+  unsigned char info = CBOR_INFO(byte);
 
   switch (major) {
   case CBOR_UINT: {
@@ -370,9 +374,9 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
 
     for (uint64_t i = 0; i < n; i++) {
       unsigned char kb = cbor_read_byte(buf);
-      if ((kb & 0xE0) != CBOR_TEXT)
+      if (CBOR_MAJOR(kb) != CBOR_TEXT)
         Rf_error("CBOR decode error: map key must be text string");
-      uint64_t klen = cbor_read_uint(buf, kb & 0x1F);
+      uint64_t klen = cbor_read_uint(buf, CBOR_INFO(kb));
       if (klen > buf->len - buf->cur)
         Rf_error("CBOR decode error: map key exceeds input");
       SET_STRING_ELT(names, i, Rf_mkCharLenCE((const char *) (buf->buf + buf->cur), (int) klen, CE_UTF8));
