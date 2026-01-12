@@ -135,7 +135,7 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const int *p = (const int *) DATAPTR_RO(x);
 
-  if (xlen == 1 && NO_ATTRIB(x)) {
+  if (xlen == 1) {
     cbor_buf_ensure(buf, 1);
     buf->buf[buf->cur++] = p[0] == NA_LOGICAL ? CBOR_UNDEF :
                            p[0] ? CBOR_TRUE : CBOR_FALSE;
@@ -153,7 +153,7 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const int *p = (const int *) DATAPTR_RO(x);
 
-  if (xlen == 1 && NO_ATTRIB(x)) {
+  if (xlen == 1) {
     if (p[0] == NA_INTEGER) {
       cbor_encode_undef(buf);
     } else {
@@ -175,7 +175,7 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const double *p = (const double *) DATAPTR_RO(x);
 
-  if (xlen == 1 && NO_ATTRIB(x)) {
+  if (xlen == 1) {
     if (ISNA(p[0])) {
       cbor_encode_undef(buf);
     } else {
@@ -197,7 +197,7 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const SEXP *p = STRING_PTR_RO(x);
 
-  if (xlen == 1 && NO_ATTRIB(x)) {
+  if (xlen == 1) {
     if (p[0] == NA_STRING) {
       cbor_encode_undef(buf);
     } else {
