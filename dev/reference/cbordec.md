@@ -41,6 +41,11 @@ CBOR types map to R types as follows:
 
 - Maps: named lists (keys must be text strings)
 
+Note: CBOR arrays always decode to lists, so R atomic vectors encoded
+via
+[`cborenc()`](https://shikokuchuo.net/secretbase/dev/reference/cborenc.md)
+will decode to lists rather than vectors.
+
 ## See also
 
 [`cborenc()`](https://shikokuchuo.net/secretbase/dev/reference/cborenc.md)
