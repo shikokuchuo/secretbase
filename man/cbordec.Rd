@@ -29,6 +29,9 @@ CBOR types map to R types as follows:
 \item Arrays: lists
 \item Maps: named lists (keys must be text strings)
 }
+
+Note: CBOR arrays always decode to lists, so R atomic vectors encoded via
+\code{\link[=cborenc]{cborenc()}} will decode to lists rather than vectors.
 }
 \examples{
 # Round-trip encoding

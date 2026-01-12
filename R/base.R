@@ -153,9 +153,12 @@ base58dec <- function(x, convert = TRUE) .Call(secretbase_base58dec, x, convert)
 #'   \item Maps (named lists)
 #' }
 #'
-#' Scalars (length-1 vectors without attributes) encode as their CBOR scalar
-#' equivalents. Vectors with length > 1 or attributes encode as CBOR arrays.
-#' NA values encode as CBOR undefined (which decodes back to NA).
+#' Scalars (length-1 vectors) encode as CBOR primitives; longer vectors encode
+#' as CBOR arrays. NA values encode as CBOR undefined. Names on atomic vectors
+#' are ignored.
+#'
+#' Note: atomic vectors do not round-trip perfectly as CBOR arrays decode to
+#' lists. Named lists round-trip correctly as CBOR maps.
 #'
 #' @seealso [cbordec()]
 #'
@@ -191,6 +194,9 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 #'   \item Arrays: lists
 #'   \item Maps: named lists (keys must be text strings)
 #' }
+#'
+#' Note: CBOR arrays always decode to lists, so R atomic vectors encoded via
+#' [cborenc()] will decode to lists rather than vectors.
 #'
 #' @seealso [cborenc()]
 #'
