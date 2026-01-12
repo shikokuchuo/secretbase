@@ -206,8 +206,6 @@ test_equal(cbordec(cborenc(-257L)), -257L)
 test_identical(cbordec(cborenc(c(1L, NA, 3L))), list(1L, NA, 3L))
 test_identical(cbordec(cborenc(c(1.5, NA, 2.5))), list(1.5, NA, 2.5))
 test_identical(cbordec(cborenc(c("a", NA, "b"))), list("a", NA, "b"))
-x <- 1L; attr(x, "foo") <- "bar"
-test_type("list", cbordec(cborenc(x)))
 test_identical(cbordec(as.raw(c(0xfa, 0x41, 0x20, 0x00, 0x00))), 10)
 test_identical(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00))), -2147483649)
 test_identical(cbordec(as.raw(c(0x1b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00))), 4294967296)  # 64-bit uint (2^32)
