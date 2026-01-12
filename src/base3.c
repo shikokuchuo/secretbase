@@ -139,17 +139,13 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const int *p = (const int *) DATAPTR_RO(x);
 
-  if (xlen == 1) {
-    cbor_buf_ensure(buf, 1);
-    buf->buf[buf->cur++] = p[0] == NA_LOGICAL ? CBOR_UNDEF :
-                           p[0] ? CBOR_TRUE : CBOR_FALSE;
-  } else {
+  if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
-    cbor_buf_ensure(buf, xlen);
-    for (R_xlen_t i = 0; i < xlen; i++) {
-      buf->buf[buf->cur++] = p[i] == NA_LOGICAL ? CBOR_UNDEF :
-                             p[i] ? CBOR_TRUE : CBOR_FALSE;
-    }
+
+  for (R_xlen_t i = 0; i < xlen; i++) {
+    cbor_buf_ensure(buf, 1);
+    buf->buf[buf->cur++] = p[i] == NA_LOGICAL ? CBOR_UNDEF :
+                           p[i] ? CBOR_TRUE : CBOR_FALSE;
   }
 }
 
@@ -157,20 +153,14 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const int *p = (const int *) DATAPTR_RO(x);
 
-  if (xlen == 1) {
-    if (p[0] == NA_INTEGER) {
+  if (xlen != 1)
+    cbor_encode_uint(buf, CBOR_ARRAY, xlen);
+
+  for (R_xlen_t i = 0; i < xlen; i++) {
+    if (p[i] == NA_INTEGER) {
       cbor_encode_undef(buf);
     } else {
-      cbor_encode_int(buf, p[0]);
-    }
-  } else {
-    cbor_encode_uint(buf, CBOR_ARRAY, xlen);
-    for (R_xlen_t i = 0; i < xlen; i++) {
-      if (p[i] == NA_INTEGER) {
-        cbor_encode_undef(buf);
-      } else {
-        cbor_encode_int(buf, p[i]);
-      }
+      cbor_encode_int(buf, p[i]);
     }
   }
 }
@@ -179,20 +169,14 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const double *p = (const double *) DATAPTR_RO(x);
 
-  if (xlen == 1) {
-    if (ISNA(p[0])) {
+  if (xlen != 1)
+    cbor_encode_uint(buf, CBOR_ARRAY, xlen);
+
+  for (R_xlen_t i = 0; i < xlen; i++) {
+    if (ISNA(p[i])) {
       cbor_encode_undef(buf);
     } else {
-      cbor_encode_double(buf, p[0]);
-    }
-  } else {
-    cbor_encode_uint(buf, CBOR_ARRAY, xlen);
-    for (R_xlen_t i = 0; i < xlen; i++) {
-      if (ISNA(p[i])) {
-        cbor_encode_undef(buf);
-      } else {
-        cbor_encode_double(buf, p[i]);
-      }
+      cbor_encode_double(buf, p[i]);
     }
   }
 }
@@ -201,22 +185,15 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
   R_xlen_t xlen = XLENGTH(x);
   const SEXP *p = STRING_PTR_RO(x);
 
-  if (xlen == 1) {
-    if (p[0] == NA_STRING) {
+  if (xlen != 1)
+    cbor_encode_uint(buf, CBOR_ARRAY, xlen);
+
+  for (R_xlen_t i = 0; i < xlen; i++) {
+    if (p[i] == NA_STRING) {
       cbor_encode_undef(buf);
     } else {
-      const char *s = Rf_translateCharUTF8(p[0]);
+      const char *s = Rf_translateCharUTF8(p[i]);
       cbor_encode_text(buf, s, strlen(s));
-    }
-  } else {
-    cbor_encode_uint(buf, CBOR_ARRAY, xlen);
-    for (R_xlen_t i = 0; i < xlen; i++) {
-      if (p[i] == NA_STRING) {
-        cbor_encode_undef(buf);
-      } else {
-        const char *s = Rf_translateCharUTF8(p[i]);
-        cbor_encode_text(buf, s, strlen(s));
-      }
     }
   }
 }
