@@ -13,7 +13,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/shikokuchuo/secretbase/blob/v1.1.1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/shikokuchuo/secretbase/blob/main/DESCRIPTION)
 
 Gao C (2026). *secretbase: Cryptographic Hash, Extendable-Output and
 Binary Encoding Functions*. R package version 1.1.1,
