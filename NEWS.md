@@ -1,6 +1,6 @@
 # secretbase (development version)
 
-* CBOR optimizations: scalar values with attributes now encode as scalars rather than arrays.
+* CBOR: performance optimizations; scalar values with attributes now encode as scalars rather than arrays.
 
 # secretbase 1.1.0
 
