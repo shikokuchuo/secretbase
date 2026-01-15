@@ -103,7 +103,6 @@ static inline void cbor_encode_int(nano_buf *buf, int64_t val) {
 }
 
 static inline void cbor_encode_double(nano_buf *buf, double val) {
-  cbor_buf_ensure(buf, 9);
   buf->buf[buf->cur++] = CBOR_FLOAT64;
   union {
     double d;
@@ -129,7 +128,6 @@ static inline void cbor_encode_text(nano_buf *buf, const char *str, size_t len) 
 }
 
 static inline void cbor_encode_undef(nano_buf *buf) {
-  cbor_buf_ensure(buf, 1);
   buf->buf[buf->cur++] = CBOR_UNDEF;
 }
 
@@ -142,8 +140,8 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
 
+  cbor_buf_ensure(buf, xlen);
   for (R_xlen_t i = 0; i < xlen; i++) {
-    cbor_buf_ensure(buf, 1);
     buf->buf[buf->cur++] = p[i] == NA_LOGICAL ? CBOR_UNDEF :
                            p[i] ? CBOR_TRUE : CBOR_FALSE;
   }
@@ -156,6 +154,7 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
 
+  cbor_buf_ensure(buf, (size_t) xlen * 5);
   for (R_xlen_t i = 0; i < xlen; i++) {
     if (p[i] == NA_INTEGER) {
       cbor_encode_undef(buf);
@@ -172,6 +171,7 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
 
+  cbor_buf_ensure(buf, (size_t) xlen * 9);
   for (R_xlen_t i = 0; i < xlen; i++) {
     if (ISNA(p[i])) {
       cbor_encode_undef(buf);
@@ -190,6 +190,7 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
 
   for (R_xlen_t i = 0; i < xlen; i++) {
     if (p[i] == NA_STRING) {
+      cbor_buf_ensure(buf, 1);
       cbor_encode_undef(buf);
     } else {
       const char *s = Rf_translateCharUTF8(p[i]);
