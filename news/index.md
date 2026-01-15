@@ -1,5 +1,12 @@
 # Changelog
 
+## secretbase 1.1.1
+
+CRAN release: 2026-01-15
+
+- CBOR: performance optimizations; scalar values with attributes now
+  encode as scalars rather than arrays.
+
 ## secretbase 1.1.0
 
 CRAN release: 2026-01-08
