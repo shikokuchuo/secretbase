@@ -23,8 +23,8 @@ coverage](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https:/
 [![Ask
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/shikokuchuo/secretbase)
 
-Fast and memory-efficient streaming hash functions, binary encoding and
-serialization.
+Fast and memory-efficient streaming hash functions, binary/text encoding
+and serialization.
 
 Hashes strings and raw vectors directly. Stream hashes files which can
 be larger than memory, as well as in-memory objects through R’s
