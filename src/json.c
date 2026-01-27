@@ -1,5 +1,6 @@
 // secretbase ------------------------------------------------------------------
 
+#include "Rinternals.h"
 #include "secret.h"
 
 // minimal JSON parser ---------------------------------------------------------
@@ -9,6 +10,24 @@ static inline void json_skip_ws(const char **p) {
 }
 
 static SEXP json_parse_value(const char **p);
+
+static int json_count_elements(const char *scan) {
+  int depth = 1, count = 1;
+  while (*scan && depth > 0) {
+    if (*scan == '"') {
+      scan++;
+      while (*scan && !(*scan == '"' && scan[-1] != '\\')) scan++;
+    } else if (*scan == '[' || *scan == '{') {
+      depth++;
+    } else if (*scan == ']' || *scan == '}') {
+      depth--;
+    } else if (*scan == ',' && depth == 1) {
+      count++;
+    }
+    if (*scan) scan++;
+  }
+  return count;
+}
 
 static SEXP json_parse_string(const char **p) {
   (*p)++; // skip opening "
@@ -55,25 +74,7 @@ static SEXP json_parse_array(const char **p) {
   (*p)++; // skip [
   json_skip_ws(p);
 
-  if (**p == ']') { (*p)++; return Rf_allocVector(VECSXP, 0); }
-
-  // First pass: count elements
-  const char *scan = *p;
-  int depth = 1, count = 1;
-  while (*scan && depth > 0) {
-    if (*scan == '"') {
-      scan++;
-      while (*scan && !(*scan == '"' && scan[-1] != '\\')) scan++;
-    } else if (*scan == '[' || *scan == '{') {
-      depth++;
-    } else if (*scan == ']' || *scan == '}') {
-      depth--;
-    } else if (*scan == ',' && depth == 1) {
-      count++;
-    }
-    if (*scan) scan++;
-  }
-
+  int count = (**p == ']') ? 0 : json_count_elements(*p);
   SEXP out = PROTECT(Rf_allocVector(VECSXP, count));
   for (int i = 0; i < count; i++) {
     json_skip_ws(p);
@@ -91,27 +92,13 @@ static SEXP json_parse_object(const char **p) {
   (*p)++; // skip {
   json_skip_ws(p);
 
-  if (**p == '}') { (*p)++; return Rf_allocVector(VECSXP, 0); }
-
-  // First pass: count pairs
-  const char *scan = *p;
-  int depth = 1, count = 1;
-  while (*scan && depth > 0) {
-    if (*scan == '"') {
-      scan++;
-      while (*scan && !(*scan == '"' && scan[-1] != '\\')) scan++;
-    } else if (*scan == '[' || *scan == '{') {
-      depth++;
-    } else if (*scan == ']' || *scan == '}') {
-      depth--;
-    } else if (*scan == ',' && depth == 1) {
-      count++;
-    }
-    if (*scan) scan++;
+  int count = (**p == '}') ? 0 : json_count_elements(*p);
+  SEXP out, names;
+  PROTECT(out = Rf_allocVector(VECSXP, count));
+  if (count) {
+    names = Rf_allocVector(STRSXP, count);
+    Rf_namesgets(out, names);
   }
-
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, count));
-  SEXP names = PROTECT(Rf_allocVector(STRSXP, count));
 
   for (int i = 0; i < count; i++) {
     json_skip_ws(p);
@@ -127,8 +114,7 @@ static SEXP json_parse_object(const char **p) {
   }
   json_skip_ws(p);
   if (**p == '}') (*p)++;
-  Rf_setAttrib(out, R_NamesSymbol, names);
-  UNPROTECT(2);
+  UNPROTECT(1);
   return out;
 }
 
@@ -139,19 +125,13 @@ static SEXP json_parse_value(const char **p) {
     case '[': return json_parse_array(p);
     case '"': return json_parse_string(p);
     case 't':
-      if ((*p)[1] == 'r' && (*p)[2] == 'u' && (*p)[3] == 'e') {
-        *p += 4; return Rf_ScalarLogical(1);
-      }
+      if (strncmp(*p, "true", 4) == 0) { *p += 4; return Rf_ScalarLogical(1); }
       return R_NilValue;
     case 'f':
-      if ((*p)[1] == 'a' && (*p)[2] == 'l' && (*p)[3] == 's' && (*p)[4] == 'e') {
-        *p += 5; return Rf_ScalarLogical(0);
-      }
+      if (strncmp(*p, "false", 5) == 0) { *p += 5; return Rf_ScalarLogical(0); }
       return R_NilValue;
     case 'n':
-      if ((*p)[1] == 'u' && (*p)[2] == 'l' && (*p)[3] == 'l') {
-        *p += 4; return R_NilValue;
-      }
+      if (strncmp(*p, "null", 4) == 0) { *p += 4; return R_NilValue; }
       return R_NilValue;
     case '-': case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
@@ -161,7 +141,157 @@ static SEXP json_parse_value(const char **p) {
   }
 }
 
+// minimal JSON encoder --------------------------------------------------------
+
+static void json_encode_string(nano_buf *buf, const char *s) {
+  nano_buf_char(buf, '"');
+  while (*s) {
+    switch (*s) {
+      case '"':  nano_buf_str(buf, "\\\"", 2); break;
+      case '\\': nano_buf_str(buf, "\\\\", 2); break;
+      case '\n': nano_buf_str(buf, "\\n", 2); break;
+      case '\r': nano_buf_str(buf, "\\r", 2); break;
+      case '\t': nano_buf_str(buf, "\\t", 2); break;
+      default:   nano_buf_char(buf, *s);
+    }
+    s++;
+  }
+  nano_buf_char(buf, '"');
+}
+
+static void json_encode_value(nano_buf *buf, SEXP x);
+
+static void json_encode_object(nano_buf *buf, SEXP x) {
+  nano_buf_char(buf, '{');
+  R_xlen_t n = XLENGTH(x);
+  SEXP names;
+  PROTECT(names = Rf_getAttrib(x, R_NamesSymbol));
+  for (R_xlen_t i = 0; i < n; i++) {
+    if (i > 0) nano_buf_char(buf, ',');
+    json_encode_string(buf, CHAR(STRING_ELT(names, i)));
+    nano_buf_char(buf, ':');
+    json_encode_value(buf, VECTOR_ELT(x, i));
+  }
+  UNPROTECT(1);
+  nano_buf_char(buf, '}');
+}
+
+static void json_encode_array(nano_buf *buf, SEXP x) {
+  nano_buf_char(buf, '[');
+  R_xlen_t n = XLENGTH(x);
+  for (R_xlen_t i = 0; i < n; i++) {
+    if (i > 0) nano_buf_char(buf, ',');
+    json_encode_value(buf, VECTOR_ELT(x, i));
+  }
+  nano_buf_char(buf, ']');
+}
+
+#define JSON_ARRAY_OPEN(buf, n) if (n != 1) nano_buf_char(buf, '[')
+#define JSON_ARRAY_CLOSE(buf, n) if (n != 1) nano_buf_char(buf, ']')
+
+static void json_encode_value(nano_buf *buf, SEXP x) {
+  switch (TYPEOF(x)) {
+    case NILSXP:
+      nano_buf_str(buf, "null", 4);
+      break;
+    case LGLSXP: {
+      R_xlen_t n = XLENGTH(x);
+      const int *p = LOGICAL_RO(x);
+      JSON_ARRAY_OPEN(buf, n);
+      for (R_xlen_t i = 0; i < n; i++) {
+        if (i > 0) nano_buf_char(buf, ',');
+        if (p[i] == NA_LOGICAL)
+          nano_buf_str(buf, "null", 4);
+        else if (p[i])
+          nano_buf_str(buf, "true", 4);
+        else
+          nano_buf_str(buf, "false", 5);
+      }
+      JSON_ARRAY_CLOSE(buf, n);
+      break;
+    }
+    case INTSXP: {
+      R_xlen_t n = XLENGTH(x);
+      const int *p = INTEGER_RO(x);
+      JSON_ARRAY_OPEN(buf, n);
+      for (R_xlen_t i = 0; i < n; i++) {
+        if (i > 0) nano_buf_char(buf, ',');
+        if (p[i] == NA_INTEGER) {
+          nano_buf_str(buf, "null", 4);
+        } else {
+          char tmp[32];
+          int len = snprintf(tmp, sizeof(tmp), "%d", p[i]);
+          nano_buf_str(buf, tmp, len);
+        }
+      }
+      JSON_ARRAY_CLOSE(buf, n);
+      break;
+    }
+    case REALSXP: {
+      R_xlen_t n = XLENGTH(x);
+      const double *p = REAL_RO(x);
+      JSON_ARRAY_OPEN(buf, n);
+      for (R_xlen_t i = 0; i < n; i++) {
+        if (i > 0) nano_buf_char(buf, ',');
+        if (ISNA(p[i]) || ISNAN(p[i])) {
+          nano_buf_str(buf, "null", 4);
+        } else {
+          char tmp[32];
+          int len = snprintf(tmp, sizeof(tmp), "%.15g", p[i]);
+          nano_buf_str(buf, tmp, len);
+        }
+      }
+      JSON_ARRAY_CLOSE(buf, n);
+      break;
+    }
+    case STRSXP: {
+      R_xlen_t n = XLENGTH(x);
+      JSON_ARRAY_OPEN(buf, n);
+      for (R_xlen_t i = 0; i < n; i++) {
+        if (i > 0) nano_buf_char(buf, ',');
+        SEXP s = STRING_ELT(x, i);
+        if (s == NA_STRING)
+          nano_buf_str(buf, "null", 4);
+        else
+          json_encode_string(buf, CHAR(s));
+      }
+      JSON_ARRAY_CLOSE(buf, n);
+      break;
+    }
+    case VECSXP: {
+      SEXP names = Rf_getAttrib(x, R_NamesSymbol);
+      if (names == R_NilValue)
+        json_encode_array(buf, x);
+      else
+        json_encode_object(buf, x);
+      break;
+    }
+    default:
+      nano_buf_str(buf, "null", 4);
+  }
+}
+
 // secretbase - exported functions ---------------------------------------------
+
+SEXP secretbase_jsonenc(SEXP x) {
+
+  if (TYPEOF(x) != VECSXP ||
+      (XLENGTH(x) > 0 && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue))
+    Rf_error("'x' must be a named list");
+
+  nano_buf buf;
+  NANO_ALLOC(&buf, SB_INIT_BUFSIZE);
+  json_encode_object(&buf, x);
+
+  SEXP out;
+  PROTECT(out = Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(out, 0, Rf_mkCharLenCE((char *) buf.buf, buf.cur, CE_UTF8));
+  free(buf.buf);
+  UNPROTECT(1);
+
+  return out;
+
+}
 
 SEXP secretbase_jsondec(SEXP x) {
 
@@ -174,6 +304,7 @@ SEXP secretbase_jsondec(SEXP x) {
     return Rf_allocVector(VECSXP, 0);
   }
   json_skip_ws(&json);
+  
   if (*json != '{') return Rf_allocVector(VECSXP, 0);
   return json_parse_object(&json);
 
