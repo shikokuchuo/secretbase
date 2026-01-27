@@ -215,6 +215,9 @@ cbordec <- function(x) .Call(secretbase_cbordec, x)
 #' This is a minimal implementation designed for creating HTTP API request
 #' bodies. It requires a named list (JSON object) at the top level.
 #'
+#' Does not conform to JSON standards and is intended for APIs with fixed
+#' payloads where correctness can be easily verified, not for arbitrary use.
+#'
 #' Type mappings:
 #' \itemize{
 #'   \item Named list -> object `{}`
@@ -236,6 +239,8 @@ cbordec <- function(x) .Call(secretbase_cbordec, x)
 #'
 #' @return A character string containing the JSON representation.
 #'
+#' @seealso [jsondec()]
+#'
 #' @examples
 #' jsonenc(list(name = "John", age = 30L))
 #' jsonenc(list(valid = TRUE, count = NULL))
@@ -251,8 +256,10 @@ jsonenc <- function(x) .Call(secretbase_jsonenc, x)
 #' proper type handling.
 #'
 #' This is a minimal implementation designed for parsing HTTP API responses. It
-#' expects a JSON object at the top level, i.e. enclosed by curly braces
-#' `\{\}`.
+#' expects a JSON object at the top level, i.e. enclosed by curly braces `{}`.
+#'
+#' Does not conform to JSON standards and is intended for APIs with fixed
+#' payloads where correctness can be easily verified, not for arbitrary use.
 #'
 #' Limitations:
 #' \itemize{
@@ -267,6 +274,8 @@ jsonenc <- function(x) .Call(secretbase_jsonenc, x)
 #'
 #' @return A named list. Returns an empty list for non-object JSON or invalid
 #'   input.
+#'
+#' @seealso [jsonenc()]
 #'
 #' @examples
 #' jsondec('{"name": "John", "age": 30}')

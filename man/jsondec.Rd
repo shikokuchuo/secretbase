@@ -19,8 +19,10 @@ proper type handling.
 }
 \details{
 This is a minimal implementation designed for parsing HTTP API responses. It
-expects a JSON object at the top level, i.e. enclosed by curly braces
-\verb{\\\{\\\}}.
+expects a JSON object at the top level, i.e. enclosed by curly braces \code{{}}.
+
+Does not conform to JSON standards and is intended for APIs with fixed
+payloads where correctness can be easily verified, not for arbitrary use.
 
 Limitations:
 \itemize{
@@ -36,4 +38,7 @@ jsondec('{"name": "John", "age": 30}')
 jsondec('{"valid": true, "count": null}')
 jsondec('{"nested": {"a": 1, "b": [2, 3]}}')
 
+}
+\seealso{
+\code{\link[=jsonenc]{jsonenc()}}
 }

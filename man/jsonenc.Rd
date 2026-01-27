@@ -19,6 +19,9 @@ Minimal JSON encoder. Converts an R named list to a JSON string.
 This is a minimal implementation designed for creating HTTP API request
 bodies. It requires a named list (JSON object) at the top level.
 
+Does not conform to JSON standards and is intended for APIs with fixed
+payloads where correctness can be easily verified, not for arbitrary use.
+
 Type mappings:
 \itemize{
 \item Named list -> object \code{{}}
@@ -42,4 +45,7 @@ jsonenc(list(valid = TRUE, count = NULL))
 jsonenc(list(nested = list(a = 1, b = list(2, 3))))
 jsonenc(list(nums = 1:3, strs = c("a", "b")))
 
+}
+\seealso{
+\code{\link[=jsondec]{jsondec()}}
 }

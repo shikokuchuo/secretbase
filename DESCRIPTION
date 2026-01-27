@@ -15,7 +15,7 @@ Description: Fast and memory-efficient streaming hash functions, binary
     in-memory objects through R's serialization mechanism. Implements the
     SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256
     extendable-output function (XOF), 'SipHash' pseudo-random function,
-    base64 and base58 encoding, and 'CBOR' serialization.
+    base64 and base58 encoding, 'CBOR' and 'JSON' serialization.
 License: MIT + file LICENSE
 URL: https://shikokuchuo.net/secretbase/,
     https://github.com/shikokuchuo/secretbase/
