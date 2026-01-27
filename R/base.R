@@ -1,4 +1,4 @@
-# secretbase - Base64 Functions ------------------------------------------------
+# secretbase - Encoding and Decoding Functions ---------------------------------
 
 #' Base64 Encode
 #'
@@ -208,3 +208,34 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 #' @export
 #'
 cbordec <- function(x) .Call(secretbase_cbordec, x)
+
+#' JSON Decode
+#'
+#' Minimal JSON parser for HTTP response objects. Converts JSON to R list with
+#' proper type handling.
+#'
+#' This is a minimal implementation designed for parsing HTTP API responses. It
+#' expects a JSON object at the top level, i.e. enclosed by curly braces
+#' `\{\}`.
+#'
+#' Limitations:
+#' \itemize{
+#'   \item Top-level arrays are not supported and will return an empty list.
+#'   \item Only escape sequences `\\`, `\"`, `\n`, `\r`, `\t` are
+#'   recognised; all other escapes are passed through verbatim.
+#'   \item No validation of input; malformed JSON may produce unexpected
+#'   results.
+#' }
+#'
+#' @param x Character string or raw vector containing JSON data.
+#'
+#' @return A named list. Returns an empty list for non-object JSON or invalid
+#'   input.
+#'
+#' @examples
+#' jsondec('{"name": "John", "age": 30}')
+#' jsondec('{"valid": true, "count": null}')
+#' jsondec('{"nested": {"a": 1, "b": [2, 3]}}')
+#'
+#' @export
+jsondec <- function(x) .Call(secretbase_jsondec, x)
