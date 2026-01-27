@@ -196,7 +196,7 @@ static void json_encode_value(nano_buf *buf, SEXP x) {
       break;
     case LGLSXP: {
       R_xlen_t n = XLENGTH(x);
-      const int *p = LOGICAL_RO(x);
+      const int *p = (const int *) DATAPTR_RO(x);
       JSON_ARRAY_OPEN(buf, n);
       for (R_xlen_t i = 0; i < n; i++) {
         if (i > 0) nano_buf_char(buf, ',');
@@ -212,7 +212,7 @@ static void json_encode_value(nano_buf *buf, SEXP x) {
     }
     case INTSXP: {
       R_xlen_t n = XLENGTH(x);
-      const int *p = INTEGER_RO(x);
+      const int *p = (const int *) DATAPTR_RO(x);
       JSON_ARRAY_OPEN(buf, n);
       for (R_xlen_t i = 0; i < n; i++) {
         if (i > 0) nano_buf_char(buf, ',');
@@ -229,7 +229,7 @@ static void json_encode_value(nano_buf *buf, SEXP x) {
     }
     case REALSXP: {
       R_xlen_t n = XLENGTH(x);
-      const double *p = REAL_RO(x);
+      const double *p = (const double *) DATAPTR_RO(x);
       JSON_ARRAY_OPEN(buf, n);
       for (R_xlen_t i = 0; i < n; i++) {
         if (i > 0) nano_buf_char(buf, ',');
@@ -286,7 +286,7 @@ SEXP secretbase_jsonenc(SEXP x) {
   SEXP out;
   PROTECT(out = Rf_allocVector(STRSXP, 1));
   SET_STRING_ELT(out, 0, Rf_mkCharLenCE((char *) buf.buf, buf.cur, CE_UTF8));
-  free(buf.buf);
+  NANO_FREE(buf);
   UNPROTECT(1);
 
   return out;
@@ -297,7 +297,7 @@ SEXP secretbase_jsondec(SEXP x) {
 
   const char *json;
   if (TYPEOF(x) == RAWSXP) {
-    json = (const char *) RAW(x);
+    json = CHAR(Rf_mkCharLenCE((const char *) DATAPTR_RO(x), XLENGTH(x), CE_UTF8));
   } else if (TYPEOF(x) == STRSXP) {
     json = CHAR(STRING_ELT(x, 0));
   } else {

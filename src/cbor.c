@@ -304,7 +304,7 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
     if (len > buf->len - buf->cur)
       Rf_error("CBOR decode error: byte string exceeds input");
     SEXP out = Rf_allocVector(RAWSXP, len);
-    memcpy(RAW(out), buf->buf + buf->cur, len);
+    memcpy(SB_DATAPTR(out), buf->buf + buf->cur, len);
     buf->cur += len;
     return out;
   }
