@@ -50,6 +50,8 @@ static SEXP json_parse_string(const char **p) {
         case 'n': *d++ = '\n'; break;
         case 'r': *d++ = '\r'; break;
         case 't': *d++ = '\t'; break;
+        case 'b': *d++ = '\b'; break;
+        case 'f': *d++ = '\f'; break;
         default: *d++ = *s;
       }
       s++;
@@ -152,7 +154,16 @@ static void json_encode_string(nano_buf *buf, const char *s) {
       case '\n': nano_buf_str(buf, "\\n", 2); break;
       case '\r': nano_buf_str(buf, "\\r", 2); break;
       case '\t': nano_buf_str(buf, "\\t", 2); break;
-      default:   nano_buf_char(buf, *s);
+      case '\b': nano_buf_str(buf, "\\b", 2); break;
+      case '\f': nano_buf_str(buf, "\\f", 2); break;
+      default:
+        if ((unsigned char) *s < 0x20) {
+          char esc[7];
+          snprintf(esc, sizeof(esc), "\\u%04x", (unsigned char) *s);
+          nano_buf_str(buf, esc, 6);
+        } else {
+          nano_buf_char(buf, *s);
+        }
     }
     s++;
   }
