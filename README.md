@@ -23,8 +23,8 @@ coverage](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https:/
 [![Ask
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/shikokuchuo/secretbase)
 
-Fast and memory-efficient streaming hash functions, binary encoding and
-serialization.
+Fast and memory-efficient streaming hash functions, binary/text encoding
+and serialization.
 
 Hashes strings and raw vectors directly. Stream hashes files which can
 be larger than memory, as well as in-memory objects through R’s
@@ -32,7 +32,7 @@ serialization mechanism.
 
 Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions,
 SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random
-function, base64 and base58 encoding, and ‘CBOR’ serialization.
+function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
 
 | Function                       | Purpose                            |
 |--------------------------------|------------------------------------|
@@ -42,6 +42,7 @@ function, base64 and base58 encoding, and ‘CBOR’ serialization.
 | `base64enc()` `base64dec()`    | Base64 encoding                    |
 | `base58enc()` `base58dec()`    | Base58 encoding with checksum      |
 | `cborenc()` `cbordec()`        | CBOR serialization                 |
+| `jsonenc()` `jsondec()`        | JSON serialization                 |
 
 ### Installation
 
@@ -200,6 +201,24 @@ cbordec(cborenc(list(a = 1L, b = "hello", c = TRUE)))
 #> [1] "hello"
 #> 
 #> $c
+#> [1] TRUE
+```
+
+#### JSON
+
+Minimal JSON encoder/decoder for HTTP API request/response bodies:
+
+``` r
+jsonenc(list(name = "John", age = 30L, active = TRUE))
+#> [1] "{\"name\":\"John\",\"age\":30,\"active\":true}"
+jsondec('{"name": "John", "age": 30, "active": true}')
+#> $name
+#> [1] "John"
+#> 
+#> $age
+#> [1] 30
+#> 
+#> $active
 #> [1] TRUE
 ```
 

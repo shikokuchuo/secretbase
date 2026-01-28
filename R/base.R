@@ -1,4 +1,4 @@
-# secretbase - Base64 Functions ------------------------------------------------
+# secretbase - Encoding and Decoding Functions ---------------------------------
 
 #' Base64 Encode
 #'
@@ -206,5 +206,73 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 #' cbordec(cborenc(original))
 #'
 #' @export
-#'
 cbordec <- function(x) .Call(secretbase_cbordec, x)
+
+#' JSON Encode
+#'
+#' Minimal JSON encoder. Converts an R named list to a JSON string.
+#'
+#' This is a minimal implementation designed for creating HTTP API request
+#' bodies. It requires a named list (JSON object) at the top level.
+#'
+#' Does not conform to JSON standards and is intended for APIs with fixed
+#' payloads where correctness can be easily verified, not for arbitrary use.
+#'
+#' Type mappings:
+#' \itemize{
+#'   \item Named list -> object `{}`
+#'   \item Unnamed list -> array `[]`
+#'   \item Character -> string (with escaping)
+#'   \item Numeric/integer -> number
+#'   \item Logical -> `true`/`false`
+#'   \item `NULL`, `NA` -> `null`
+#'   \item Vectors (length > 1) -> array `[]`
+#' }
+#'
+#' @param x A named list to encode as JSON.
+#'
+#' @return A character string containing the JSON representation.
+#'
+#' @seealso [jsondec()]
+#'
+#' @examples
+#' jsonenc(list(name = "John", age = 30L))
+#' jsonenc(list(valid = TRUE, count = NULL))
+#' jsonenc(list(nested = list(a = 1, b = list(2, 3))))
+#' jsonenc(list(nums = 1:3, strs = c("a", "b")))
+#'
+#' @export
+jsonenc <- function(x) .Call(secretbase_jsonenc, x)
+
+#' JSON Decode
+#'
+#' Minimal JSON parser for HTTP response objects. Converts JSON to R list with
+#' proper type handling.
+#'
+#' This is a minimal implementation designed for parsing HTTP API responses. It
+#' expects a JSON object at the top level, i.e. enclosed by curly braces `{}`.
+#'
+#' Not fully RFC 8259 compliant. Intended for APIs with fixed payloads where
+#' correctness can be easily verified, not for parsing arbitrary JSON.
+#'
+#' Limitations:
+#' \itemize{
+#'   \item Top-level arrays are not supported and will return an empty list.
+#'   \item Duplicate object keys are accepted; the last value is kept.
+#'   \item Nesting depth is limited to 512 levels.
+#' }
+#'
+#' @param x Character string or raw vector containing JSON data.
+#'
+#' @return A named list. Returns an empty list for non-object JSON or invalid
+#'   input.
+#'
+#' @seealso [jsonenc()]
+#'
+#' @examples
+#' jsondec('{"name": "John", "age": 30}')
+#' jsondec('{"valid": true, "count": null}')
+#' jsondec('{"nested": {"a": 1, "b": [2, 3]}}')
+#'
+#' @export
+jsondec <- function(x) .Call(secretbase_jsondec, x)

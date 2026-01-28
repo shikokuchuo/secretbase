@@ -52,42 +52,26 @@
 
 // secretbase - internals ------------------------------------------------------
 
-static inline void cbor_buf_ensure(nano_buf *buf, size_t additional) {
-  if (additional > R_XLEN_T_MAX - buf->cur) { ERROR_OUT(buf); }
-  size_t req = buf->cur + additional;
-  if (req > buf->len) {
-    do {
-      buf->len += buf->len > SB_SERIAL_THR ? SB_SERIAL_THR : buf->len;
-    } while (buf->len < req);
-    unsigned char *tmp = realloc(buf->buf, buf->len);
-    if (tmp == NULL) {
-      free(buf->buf);
-      Rf_error("memory allocation failed");
-    }
-    buf->buf = tmp;
-  }
-}
-
 static void cbor_encode_uint(nano_buf *buf, unsigned char major, uint64_t val) {
   if (val < 24) {
-    cbor_buf_ensure(buf, 1);
+    nano_buf_ensure(buf, 1);
     buf->buf[buf->cur++] = major | (unsigned char) val;
   } else if (val <= 0xFF) {
-    cbor_buf_ensure(buf, 2);
+    nano_buf_ensure(buf, 2);
     buf->buf[buf->cur++] = major | CBOR_UINT8;
     buf->buf[buf->cur++] = (unsigned char) val;
   } else if (val <= 0xFFFF) {
-    cbor_buf_ensure(buf, 3);
+    nano_buf_ensure(buf, 3);
     buf->buf[buf->cur++] = major | CBOR_UINT16;
     MBEDTLS_PUT_UINT16_BE((uint16_t) val, buf->buf, buf->cur);
     buf->cur += 2;
   } else if (val <= 0xFFFFFFFF) {
-    cbor_buf_ensure(buf, 5);
+    nano_buf_ensure(buf, 5);
     buf->buf[buf->cur++] = major | CBOR_UINT32;
     MBEDTLS_PUT_UINT32_BE((uint32_t) val, buf->buf, buf->cur);
     buf->cur += 4;
   } else {
-    cbor_buf_ensure(buf, 9);
+    nano_buf_ensure(buf, 9);
     buf->buf[buf->cur++] = major | CBOR_UINT64;
     MBEDTLS_PUT_UINT64_BE(val, buf->buf, buf->cur);
     buf->cur += 8;
@@ -115,14 +99,14 @@ static inline void cbor_encode_double(nano_buf *buf, double val) {
 
 static inline void cbor_encode_bytes(nano_buf *buf, const unsigned char *data, size_t len) {
   cbor_encode_uint(buf, CBOR_BYTES, len);
-  cbor_buf_ensure(buf, len);
+  nano_buf_ensure(buf, len);
   memcpy(buf->buf + buf->cur, data, len);
   buf->cur += len;
 }
 
 static inline void cbor_encode_text(nano_buf *buf, const char *str, size_t len) {
   cbor_encode_uint(buf, CBOR_TEXT, len);
-  cbor_buf_ensure(buf, len);
+  nano_buf_ensure(buf, len);
   memcpy(buf->buf + buf->cur, str, len);
   buf->cur += len;
 }
@@ -140,7 +124,7 @@ static void cbor_encode_logical_vec(nano_buf *buf, SEXP x) {
   if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
 
-  cbor_buf_ensure(buf, xlen);
+  nano_buf_ensure(buf, xlen);
   for (R_xlen_t i = 0; i < xlen; i++) {
     buf->buf[buf->cur++] = p[i] == NA_LOGICAL ? CBOR_UNDEF :
                            p[i] ? CBOR_TRUE : CBOR_FALSE;
@@ -154,7 +138,7 @@ static void cbor_encode_integer_vec(nano_buf *buf, SEXP x) {
   if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
 
-  cbor_buf_ensure(buf, (size_t) xlen * 5);
+  nano_buf_ensure(buf, (size_t) xlen * 5);
   for (R_xlen_t i = 0; i < xlen; i++) {
     if (p[i] == NA_INTEGER) {
       cbor_encode_undef(buf);
@@ -171,7 +155,7 @@ static void cbor_encode_double_vec(nano_buf *buf, SEXP x) {
   if (xlen != 1)
     cbor_encode_uint(buf, CBOR_ARRAY, xlen);
 
-  cbor_buf_ensure(buf, (size_t) xlen * 9);
+  nano_buf_ensure(buf, (size_t) xlen * 9);
   for (R_xlen_t i = 0; i < xlen; i++) {
     if (ISNA(p[i])) {
       cbor_encode_undef(buf);
@@ -190,7 +174,7 @@ static void cbor_encode_character_vec(nano_buf *buf, SEXP x) {
 
   for (R_xlen_t i = 0; i < xlen; i++) {
     if (p[i] == NA_STRING) {
-      cbor_buf_ensure(buf, 1);
+      nano_buf_ensure(buf, 1);
       cbor_encode_undef(buf);
     } else {
       const char *s = Rf_translateCharUTF8(p[i]);
@@ -226,7 +210,7 @@ static void cbor_encode_list(nano_buf *buf, SEXP x) {
 static void cbor_encode_sexp(nano_buf *buf, SEXP x) {
   switch (TYPEOF(x)) {
   case NILSXP:
-    cbor_buf_ensure(buf, 1);
+    nano_buf_ensure(buf, 1);
     buf->buf[buf->cur++] = CBOR_NULL;
     break;
   case LGLSXP:
@@ -320,7 +304,7 @@ static SEXP cbor_decode_item(nano_buf *buf, int depth) {
     if (len > buf->len - buf->cur)
       Rf_error("CBOR decode error: byte string exceeds input");
     SEXP out = Rf_allocVector(RAWSXP, len);
-    memcpy(RAW(out), buf->buf + buf->cur, len);
+    memcpy(SB_DATAPTR(out), buf->buf + buf->cur, len);
     buf->cur += len;
     return out;
   }
