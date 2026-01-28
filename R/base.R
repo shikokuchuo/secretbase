@@ -229,12 +229,6 @@ cbordec <- function(x) .Call(secretbase_cbordec, x)
 #'   \item Vectors (length > 1) -> array `[]`
 #' }
 #'
-#' Limitations:
-#' \itemize{
-#'   \item Top-level must be a named list (object).
-#'   \item Only escape sequences `\\`, `\"`, `\n`, `\r`, `\t` are encoded.
-#' }
-#'
 #' @param x A named list to encode as JSON.
 #'
 #' @return A character string containing the JSON representation.
@@ -258,16 +252,14 @@ jsonenc <- function(x) .Call(secretbase_jsonenc, x)
 #' This is a minimal implementation designed for parsing HTTP API responses. It
 #' expects a JSON object at the top level, i.e. enclosed by curly braces `{}`.
 #'
-#' Does not conform to JSON standards and is intended for APIs with fixed
-#' payloads where correctness can be easily verified, not for arbitrary use.
+#' Not fully RFC 8259 compliant. Intended for APIs with fixed payloads where
+#' correctness can be easily verified, not for parsing arbitrary JSON.
 #'
 #' Limitations:
 #' \itemize{
 #'   \item Top-level arrays are not supported and will return an empty list.
-#'   \item Only escape sequences `\\`, `\"`, `\n`, `\r`, `\t` are
-#'   recognised; all other escapes are passed through verbatim.
-#'   \item No validation of input; malformed JSON may produce unexpected
-#'   results.
+#'   \item Duplicate object keys are accepted; the last value is kept.
+#'   \item Nesting depth is limited to 512 levels.
 #' }
 #'
 #' @param x Character string or raw vector containing JSON data.

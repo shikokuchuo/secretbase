@@ -32,12 +32,6 @@ Type mappings:
 \item \code{NULL}, \code{NA} -> \code{null}
 \item Vectors (length > 1) -> array \verb{[]}
 }
-
-Limitations:
-\itemize{
-\item Top-level must be a named list (object).
-\item Only escape sequences \verb{\\\\}, \verb{\\"}, \verb{\\n}, \verb{\\r}, \verb{\\t} are encoded.
-}
 }
 \examples{
 jsonenc(list(name = "John", age = 30L))

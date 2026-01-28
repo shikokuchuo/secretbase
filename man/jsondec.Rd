@@ -21,16 +21,14 @@ proper type handling.
 This is a minimal implementation designed for parsing HTTP API responses. It
 expects a JSON object at the top level, i.e. enclosed by curly braces \code{{}}.
 
-Does not conform to JSON standards and is intended for APIs with fixed
-payloads where correctness can be easily verified, not for arbitrary use.
+Not fully RFC 8259 compliant. Intended for APIs with fixed payloads where
+correctness can be easily verified, not for parsing arbitrary JSON.
 
 Limitations:
 \itemize{
 \item Top-level arrays are not supported and will return an empty list.
-\item Only escape sequences \verb{\\\\}, \verb{\\"}, \verb{\\n}, \verb{\\r}, \verb{\\t} are
-recognised; all other escapes are passed through verbatim.
-\item No validation of input; malformed JSON may produce unexpected
-results.
+\item Duplicate object keys are accepted; the last value is kept.
+\item Nesting depth is limited to 512 levels.
 }
 }
 \examples{

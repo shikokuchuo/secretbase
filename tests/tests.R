@@ -367,6 +367,18 @@ test_identical(jsondec('  {  "key"  :  "value"  }  ')[["key"]], "value")
 test_identical(jsondec('{\n"key"\t:\r"value"\n}')[["key"]], "value")
 test_identical(jsondec(jsonenc(list(a = 1, b = "test"))), list(a = 1, b = "test"))
 test_identical(jsondec(jsonenc(list(nested = list(x = TRUE))))[["nested"]][["x"]], TRUE)
+make_nested <- function(d) {
+  paste0(paste(rep('{"a":', d), collapse = ""), "1", paste(rep("}", d), collapse = ""))
+}
+test_type("list", jsondec(make_nested(100))) # Moderate nesting OK
+test_type("list", jsondec(make_nested(512))) # Max depth OK
+test_error(jsondec(make_nested(513)), "JSON nesting too deep") # Exceeds max depth
+test_equal(jsondec('{"k":"a\\\\"}')[["k"]], "a\\") # String ending with escaped backslash
+test_identical(jsondec('{"k1":"a\\\\","k2":"b"}'), list(k1 = "a\\", k2 = "b")) # Multiple keys with escaped backslash
+test_equal(jsondec('{"k":"\\\\\\\\"}')[["k"]], "\\\\") # Multiple escaped backslashes
+test_equal(jsondec('{"k":"test\\\\"}')[["k"]], "test\\") # Value with trailing backslash
+test_identical(jsondec('{"a":"x\\\\","b":"y\\\\","c":"z"}'), list(a = "x\\", b = "y\\", c = "z")) # Three keys
+if (!(.Platform[["OS.type"]] == "windows" && getRversion() < "4.2")) {
 # Unicode escape sequence tests (RFC 8259 Section 7):
 test_equal(jsondec('{"a":"\\u0041"}')[["a"]], "A") # U+0041 = A (ASCII via Unicode escape)
 test_equal(jsondec('{"a":"\\u00e9"}')[["a"]], "\u00e9") # U+00E9 = é (2-byte UTF-8)
@@ -383,3 +395,4 @@ test_equal(jsondec('{"a":"\\uD83D\\uDE00"}')[["a"]], "\U0001F600")
 test_equal(jsondec('{"a":"\\uD83D\\uDCA9"}')[["a"]], "\U0001F4A9")
 test_equal(jsondec('{"a":"Hi \\uD83D\\uDE00!"}')[["a"]], "Hi \U0001F600!")
 test_equal(jsondec('{"a":"\\uZZZZ"}')[["a"]], "uZZZZ") # Invalid hex digits - outputs literally
+}
