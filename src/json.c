@@ -5,6 +5,8 @@
 
 // minimal JSON parser ---------------------------------------------------------
 
+#define JSON_MAX_DEPTH 512
+
 static inline void json_skip_ws(const char **p) {
   while (**p == ' ' || **p == '\t' || **p == '\n' || **p == '\r') (*p)++;
 }
@@ -26,7 +28,24 @@ static int json_parse_hex4(const char *s, unsigned int *cp) {
   return 1;
 }
 
-#define JSON_MAX_DEPTH 512
+static inline char *utf8_encode_cp(char *d, unsigned int cp) {
+  if (cp < 0x80) {
+    *d++ = (char) cp;
+  } else if (cp < 0x800) {
+    *d++ = (char) (0xC0 | (cp >> 6));
+    *d++ = (char) (0x80 | (cp & 0x3F));
+  } else if (cp < 0x10000) {
+    *d++ = (char) (0xE0 | (cp >> 12));
+    *d++ = (char) (0x80 | ((cp >> 6) & 0x3F));
+    *d++ = (char) (0x80 | (cp & 0x3F));
+  } else {
+    *d++ = (char) (0xF0 | (cp >> 18));
+    *d++ = (char) (0x80 | ((cp >> 12) & 0x3F));
+    *d++ = (char) (0x80 | ((cp >> 6) & 0x3F));
+    *d++ = (char) (0x80 | (cp & 0x3F));
+  }
+  return d;
+}
 
 static SEXP json_parse_value_depth(const char **p, int depth);
 
@@ -80,7 +99,7 @@ static SEXP json_parse_string(const char **p) {
   // (\uXXXX = 6 chars -> 1-4 bytes, surrogate pairs = 12 chars -> 4 bytes)
   // always shrink or stay same size when decoded
   size_t buf_size = (size_t)(*p - start) + 1;
-  char *buf = (char *) R_alloc(buf_size, 1);
+  char *buf = R_alloc(buf_size, 1);
   const char *s = start;
   char *d = buf;
   
@@ -113,23 +132,7 @@ static SEXP json_parse_string(const char **p) {
               // If no valid low surrogate follows, cp remains as-is (invalid but tolerated)
             }
             
-            // Encode codepoint as UTF-8
-            if (cp < 0x80) {
-              *d++ = (char) cp;
-            } else if (cp < 0x800) {
-              *d++ = (char) (0xC0 | (cp >> 6));
-              *d++ = (char) (0x80 | (cp & 0x3F));
-            } else if (cp < 0x10000) {
-              *d++ = (char) (0xE0 | (cp >> 12));
-              *d++ = (char) (0x80 | ((cp >> 6) & 0x3F));
-              *d++ = (char) (0x80 | (cp & 0x3F));
-            } else {
-              // 4-byte UTF-8 for codepoints above BMP
-              *d++ = (char) (0xF0 | (cp >> 18));
-              *d++ = (char) (0x80 | ((cp >> 12) & 0x3F));
-              *d++ = (char) (0x80 | ((cp >> 6) & 0x3F));
-              *d++ = (char) (0x80 | (cp & 0x3F));
-            }
+            d = utf8_encode_cp(d, cp);
           } else {
             // Invalid \u sequence, output literally
             *d++ = 'u';
@@ -164,14 +167,13 @@ static SEXP json_parse_array_depth(const char **p, int depth) {
   json_skip_ws(p);
 
   int count = (**p == ']') ? 0 : json_count_elements(*p);
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, count));
+  SEXP out;
+  PROTECT(out = Rf_allocVector(VECSXP, count));
   for (int i = 0; i < count; i++) {
-    json_skip_ws(p);
     SET_VECTOR_ELT(out, i, json_parse_value_depth(p, depth));
     json_skip_ws(p);
     if (**p == ',') (*p)++;
   }
-  json_skip_ws(p);
   if (**p == ']') (*p)++;
   UNPROTECT(1);
   return out;
@@ -204,7 +206,6 @@ static SEXP json_parse_object_depth(const char **p, int depth) {
     json_skip_ws(p);
     if (**p == ',') (*p)++;
   }
-  json_skip_ws(p);
   if (**p == '}') (*p)++;
   UNPROTECT(1);
   return out;
@@ -234,6 +235,15 @@ static SEXP json_parse_value_depth(const char **p, int depth) {
 }
 
 // minimal JSON encoder --------------------------------------------------------
+
+#define JSON_VEC_LOOP(buf, n, encode_elem) do { \
+  if (n != 1) nano_buf_char(buf, '['); \
+  for (R_xlen_t i = 0; i < n; i++) { \
+    if (i > 0) nano_buf_char(buf, ','); \
+    encode_elem; \
+  } \
+  if (n != 1) nano_buf_char(buf, ']'); \
+} while(0)
 
 static void json_encode_string(nano_buf *buf, const char *s) {
   nano_buf_char(buf, '"');
@@ -287,76 +297,44 @@ static void json_encode_array(nano_buf *buf, SEXP x) {
   nano_buf_char(buf, ']');
 }
 
-#define JSON_ARRAY_OPEN(buf, n) if (n != 1) nano_buf_char(buf, '[')
-#define JSON_ARRAY_CLOSE(buf, n) if (n != 1) nano_buf_char(buf, ']')
-
 static void json_encode_value(nano_buf *buf, SEXP x) {
+  R_xlen_t n;
+  char tmp[32];
+  int len;
   switch (TYPEOF(x)) {
     case NILSXP:
       nano_buf_str(buf, "null", 4);
       break;
     case LGLSXP: {
-      R_xlen_t n = XLENGTH(x);
+      n = XLENGTH(x);
       const int *p = (const int *) DATAPTR_RO(x);
-      JSON_ARRAY_OPEN(buf, n);
-      for (R_xlen_t i = 0; i < n; i++) {
-        if (i > 0) nano_buf_char(buf, ',');
-        if (p[i] == NA_LOGICAL)
-          nano_buf_str(buf, "null", 4);
-        else if (p[i])
-          nano_buf_str(buf, "true", 4);
-        else
-          nano_buf_str(buf, "false", 5);
-      }
-      JSON_ARRAY_CLOSE(buf, n);
+      JSON_VEC_LOOP(buf, n,
+        nano_buf_str(buf, p[i] == NA_LOGICAL ? "null" : p[i] ? "true" : "false",
+                     p[i] == NA_LOGICAL ? 4 : p[i] ? 4 : 5));
       break;
     }
     case INTSXP: {
-      R_xlen_t n = XLENGTH(x);
+      n = XLENGTH(x);
       const int *p = (const int *) DATAPTR_RO(x);
-      JSON_ARRAY_OPEN(buf, n);
-      for (R_xlen_t i = 0; i < n; i++) {
-        if (i > 0) nano_buf_char(buf, ',');
-        if (p[i] == NA_INTEGER) {
-          nano_buf_str(buf, "null", 4);
-        } else {
-          char tmp[32];
-          int len = snprintf(tmp, sizeof(tmp), "%d", p[i]);
-          nano_buf_str(buf, tmp, len);
-        }
-      }
-      JSON_ARRAY_CLOSE(buf, n);
+      JSON_VEC_LOOP(buf, n,
+        if (p[i] == NA_INTEGER) nano_buf_str(buf, "null", 4);
+        else { len = snprintf(tmp, sizeof(tmp), "%d", p[i]); nano_buf_str(buf, tmp, len); });
       break;
     }
     case REALSXP: {
-      R_xlen_t n = XLENGTH(x);
+      n = XLENGTH(x);
       const double *p = (const double *) DATAPTR_RO(x);
-      JSON_ARRAY_OPEN(buf, n);
-      for (R_xlen_t i = 0; i < n; i++) {
-        if (i > 0) nano_buf_char(buf, ',');
-        if (ISNA(p[i]) || ISNAN(p[i])) {
-          nano_buf_str(buf, "null", 4);
-        } else {
-          char tmp[32];
-          int len = snprintf(tmp, sizeof(tmp), "%.15g", p[i]);
-          nano_buf_str(buf, tmp, len);
-        }
-      }
-      JSON_ARRAY_CLOSE(buf, n);
+      JSON_VEC_LOOP(buf, n,
+        if (ISNA(p[i]) || ISNAN(p[i])) nano_buf_str(buf, "null", 4);
+        else { len = snprintf(tmp, sizeof(tmp), "%.15g", p[i]); nano_buf_str(buf, tmp, len); });
       break;
     }
     case STRSXP: {
-      R_xlen_t n = XLENGTH(x);
-      JSON_ARRAY_OPEN(buf, n);
-      for (R_xlen_t i = 0; i < n; i++) {
-        if (i > 0) nano_buf_char(buf, ',');
+      n = XLENGTH(x);
+      JSON_VEC_LOOP(buf, n, {
         SEXP s = STRING_ELT(x, i);
-        if (s == NA_STRING)
-          nano_buf_str(buf, "null", 4);
-        else
-          json_encode_string(buf, CHAR(s));
-      }
-      JSON_ARRAY_CLOSE(buf, n);
+        if (s == NA_STRING) nano_buf_str(buf, "null", 4);
+        else json_encode_string(buf, CHAR(s)); });
       break;
     }
     case VECSXP: {
@@ -377,7 +355,7 @@ static void json_encode_value(nano_buf *buf, SEXP x) {
 SEXP secretbase_jsonenc(SEXP x) {
 
   if (TYPEOF(x) != VECSXP ||
-      (XLENGTH(x) > 0 && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue))
+      (Rf_xlength(x) > 0 && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue))
     Rf_error("'x' must be a named list");
 
   nano_buf buf;
