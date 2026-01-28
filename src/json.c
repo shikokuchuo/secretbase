@@ -9,6 +9,23 @@ static inline void json_skip_ws(const char **p) {
   while (**p == ' ' || **p == '\t' || **p == '\n' || **p == '\r') (*p)++;
 }
 
+static inline int json_hex_digit(char c) {
+  if (c >= '0' && c <= '9') return c - '0';
+  if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+  if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+  return -1;
+}
+
+static int json_parse_hex4(const char *s, unsigned int *cp) {
+  *cp = 0;
+  for (int i = 0; i < 4; i++) {
+    int d = json_hex_digit(s[i]);
+    if (d < 0) return 0;
+    *cp = (*cp << 4) | d;
+  }
+  return 1;
+}
+
 static SEXP json_parse_value(const char **p);
 
 static int json_count_elements(const char *scan) {
@@ -32,29 +49,77 @@ static int json_count_elements(const char *scan) {
 static SEXP json_parse_string(const char **p) {
   (*p)++; // skip opening "
   const char *start = *p;
-  size_t len = 0;
+  
+  // Find end of string
   while (**p && **p != '"') {
     if (**p == '\\' && (*p)[1]) (*p)++;
     (*p)++;
-    len++;
   }
   if (**p != '"') return R_NilValue;
-
-  char *buf = (char *) R_alloc(len + 1, 1);
+  
+  // Allocate buffer: input length is sufficient since escape sequences
+  // (\uXXXX = 6 chars -> 1-4 bytes, surrogate pairs = 12 chars -> 4 bytes)
+  // always shrink or stay same size when decoded
+  size_t buf_size = (size_t)(*p - start) + 1;
+  char *buf = (char *) R_alloc(buf_size, 1);
   const char *s = start;
   char *d = buf;
+  
   while (s < *p) {
     if (*s == '\\' && s[1]) {
       s++;
       switch (*s) {
-        case 'n': *d++ = '\n'; break;
-        case 'r': *d++ = '\r'; break;
-        case 't': *d++ = '\t'; break;
-        case 'b': *d++ = '\b'; break;
-        case 'f': *d++ = '\f'; break;
-        default: *d++ = *s;
+        case 'n': *d++ = '\n'; s++; break;
+        case 'r': *d++ = '\r'; s++; break;
+        case 't': *d++ = '\t'; s++; break;
+        case 'b': *d++ = '\b'; s++; break;
+        case 'f': *d++ = '\f'; s++; break;
+        case 'u': {
+          // Parse \uXXXX Unicode escape
+          unsigned int cp;
+          if (s + 5 <= *p && json_parse_hex4(s + 1, &cp)) {
+            s += 5; // skip 'u' and 4 hex digits
+            
+            // Check for UTF-16 surrogate pair (high surrogate: D800-DBFF)
+            if (cp >= 0xD800 && cp <= 0xDBFF) {
+              // Expect \uXXXX low surrogate (DC00-DFFF)
+              if (s + 6 <= *p && s[0] == '\\' && s[1] == 'u') {
+                unsigned int low;
+                if (json_parse_hex4(s + 2, &low) && low >= 0xDC00 && low <= 0xDFFF) {
+                  // Combine surrogate pair into codepoint
+                  cp = 0x10000 + ((cp - 0xD800) << 10) + (low - 0xDC00);
+                  s += 6; // skip second \uXXXX
+                }
+              }
+              // If no valid low surrogate follows, cp remains as-is (invalid but tolerated)
+            }
+            
+            // Encode codepoint as UTF-8
+            if (cp < 0x80) {
+              *d++ = (char) cp;
+            } else if (cp < 0x800) {
+              *d++ = (char) (0xC0 | (cp >> 6));
+              *d++ = (char) (0x80 | (cp & 0x3F));
+            } else if (cp < 0x10000) {
+              *d++ = (char) (0xE0 | (cp >> 12));
+              *d++ = (char) (0x80 | ((cp >> 6) & 0x3F));
+              *d++ = (char) (0x80 | (cp & 0x3F));
+            } else {
+              // 4-byte UTF-8 for codepoints above BMP
+              *d++ = (char) (0xF0 | (cp >> 18));
+              *d++ = (char) (0x80 | ((cp >> 12) & 0x3F));
+              *d++ = (char) (0x80 | ((cp >> 6) & 0x3F));
+              *d++ = (char) (0x80 | (cp & 0x3F));
+            }
+          } else {
+            // Invalid \u sequence, output literally
+            *d++ = 'u';
+            s++;
+          }
+          break;
+        }
+        default: *d++ = *s++;
       }
-      s++;
     } else {
       *d++ = *s++;
     }

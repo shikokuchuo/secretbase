@@ -367,3 +367,19 @@ test_identical(jsondec('  {  "key"  :  "value"  }  ')[["key"]], "value")
 test_identical(jsondec('{\n"key"\t:\r"value"\n}')[["key"]], "value")
 test_identical(jsondec(jsonenc(list(a = 1, b = "test"))), list(a = 1, b = "test"))
 test_identical(jsondec(jsonenc(list(nested = list(x = TRUE))))[["nested"]][["x"]], TRUE)
+# Unicode escape sequence tests (RFC 8259 Section 7):
+test_equal(jsondec('{"a":"\\u0041"}')[["a"]], "A") # U+0041 = A (ASCII via Unicode escape)
+test_equal(jsondec('{"a":"\\u00e9"}')[["a"]], "\u00e9") # U+00E9 = é (2-byte UTF-8)
+test_equal(jsondec('{"a":"\\u4e2d"}')[["a"]], "\u4e2d") # U+4E2D = 中 (3-byte UTF-8)
+test_equal(jsondec('{"a":"\\u0041\\u0042\\u0043"}')[["a"]], "ABC") # Multiple escapes
+test_equal(jsondec('{"\\u006b\\u0065\\u0079":"value"}')[["key"]], "value") # Unicode in key
+test_equal(jsondec('{"a":"\\u00E9"}')[["a"]], "\u00e9") # Uppercase hex
+test_equal(jsondec('{"a":"\\u00eF"}')[["a"]], "\u00ef") # Mixed case hex
+test_equal(jsondec('{"a":"Hello \\u4e16\\u754c!"}')[["a"]], "Hello \u4e16\u754c!") # Mixed content
+test_equal(jsondec('{"a":"line1\\u000aline2"}')[["a"]], "line1\nline2") # Newline via Unicode
+test_equal(charToRaw(jsondec('{"a":"\\u0001"}')[["a"]])[1], as.raw(1)) # Control char U+0001
+# UTF-16 surrogate pair tests (characters outside BMP):
+test_equal(jsondec('{"a":"\\uD83D\\uDE00"}')[["a"]], "\U0001F600")
+test_equal(jsondec('{"a":"\\uD83D\\uDCA9"}')[["a"]], "\U0001F4A9")
+test_equal(jsondec('{"a":"Hi \\uD83D\\uDE00!"}')[["a"]], "Hi \U0001F600!")
+test_equal(jsondec('{"a":"\\uZZZZ"}')[["a"]], "uZZZZ") # Invalid hex digits - outputs literally
