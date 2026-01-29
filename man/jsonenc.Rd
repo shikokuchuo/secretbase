@@ -7,22 +7,20 @@
 jsonenc(x)
 }
 \arguments{
-\item{x}{A named list to encode as JSON.}
+\item{x}{An R object to encode as JSON.}
 }
 \value{
 A character string containing the JSON representation.
 }
 \description{
-Minimal JSON encoder. Converts an R named list to a JSON string.
+Minimal JSON encoder. Converts an R object to a JSON string.
 }
 \details{
 This is a minimal implementation designed for creating HTTP API request
-bodies. It requires a named list (JSON object) at the top level.
+bodies.
+}
+\section{Type Mappings}{
 
-Does not conform to JSON standards and is intended for APIs with fixed
-payloads where correctness can be easily verified, not for arbitrary use.
-
-Type mappings:
 \itemize{
 \item Named list -> object \code{{}}
 \item Unnamed list -> array \verb{[]}
@@ -30,9 +28,12 @@ Type mappings:
 \item Numeric/integer -> number
 \item Logical -> \code{true}/\code{false}
 \item \code{NULL}, \code{NA} -> \code{null}
+\item Scalars (length 1) -> primitive value
 \item Vectors (length > 1) -> array \verb{[]}
+\item Unsupported types (e.g., functions) -> \code{null}
 }
 }
+
 \examples{
 jsonenc(list(name = "John", age = 30L))
 jsonenc(list(valid = TRUE, count = NULL))

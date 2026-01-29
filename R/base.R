@@ -210,15 +210,12 @@ cbordec <- function(x) .Call(secretbase_cbordec, x)
 
 #' JSON Encode
 #'
-#' Minimal JSON encoder. Converts an R named list to a JSON string.
+#' Minimal JSON encoder. Converts an R object to a JSON string.
 #'
 #' This is a minimal implementation designed for creating HTTP API request
-#' bodies. It requires a named list (JSON object) at the top level.
+#' bodies.
 #'
-#' Does not conform to JSON standards and is intended for APIs with fixed
-#' payloads where correctness can be easily verified, not for arbitrary use.
-#'
-#' Type mappings:
+#' @section Type Mappings:
 #' \itemize{
 #'   \item Named list -> object `{}`
 #'   \item Unnamed list -> array `[]`
@@ -226,10 +223,12 @@ cbordec <- function(x) .Call(secretbase_cbordec, x)
 #'   \item Numeric/integer -> number
 #'   \item Logical -> `true`/`false`
 #'   \item `NULL`, `NA` -> `null`
+#'   \item Scalars (length 1) -> primitive value
 #'   \item Vectors (length > 1) -> array `[]`
+#'   \item Unsupported types (e.g., functions) -> `null`
 #' }
 #'
-#' @param x A named list to encode as JSON.
+#' @param x An R object to encode as JSON.
 #'
 #' @return A character string containing the JSON representation.
 #'
@@ -250,15 +249,18 @@ jsonenc <- function(x) .Call(secretbase_jsonenc, x)
 #' proper type handling.
 #'
 #' This is a minimal implementation designed for parsing HTTP API responses. It
-#' expects a JSON object at the top level, i.e. enclosed by curly braces `{}`.
+#' expects a JSON object `{}` or array `[]` at the top level.
 #'
-#' Not fully RFC 8259 compliant. Intended for APIs with fixed payloads where
-#' correctness can be easily verified, not for parsing arbitrary JSON.
-#'
-#' Limitations:
+#' @section RFC 8259 Non-conformance:
 #' \itemize{
-#'   \item Top-level arrays are not supported and will return an empty list.
-#'   \item Duplicate object keys are accepted; the last value is kept.
+#'   \item Invalid JSON returns an empty list instead of erroring.
+#'   \item Duplicate keys are preserved; R accessors (`$`, `[[`) return first
+#'     match.
+#'   \item Non-standard number forms may be accepted (e.g., leading zeros,
+#'     hexadecimal).
+#'   \item Invalid escape sequences are output literally (e.g., `\\uZZZZ`
+#'     becomes `"uZZZZ"`).
+#'   \item Incomplete Unicode escape sequences for emoji are tolerated.
 #'   \item Nesting depth is limited to 512 levels.
 #' }
 #'

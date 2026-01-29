@@ -19,18 +19,23 @@ proper type handling.
 }
 \details{
 This is a minimal implementation designed for parsing HTTP API responses. It
-expects a JSON object at the top level, i.e. enclosed by curly braces \code{{}}.
+expects a JSON object \code{{}} or array \verb{[]} at the top level.
+}
+\section{RFC 8259 Non-conformance}{
 
-Not fully RFC 8259 compliant. Intended for APIs with fixed payloads where
-correctness can be easily verified, not for parsing arbitrary JSON.
-
-Limitations:
 \itemize{
-\item Top-level arrays are not supported and will return an empty list.
-\item Duplicate object keys are accepted; the last value is kept.
+\item Invalid JSON returns an empty list instead of erroring.
+\item Duplicate keys are preserved; R accessors (\code{$}, \code{[[}) return first
+match.
+\item Non-standard number forms may be accepted (e.g., leading zeros,
+hexadecimal).
+\item Invalid escape sequences are output literally (e.g., \verb{\\\\uZZZZ}
+becomes \code{"uZZZZ"}).
+\item Incomplete Unicode escape sequences for emoji are tolerated.
 \item Nesting depth is limited to 512 levels.
 }
 }
+
 \examples{
 jsondec('{"name": "John", "age": 30}')
 jsondec('{"valid": true, "count": null}')

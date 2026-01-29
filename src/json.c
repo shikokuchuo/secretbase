@@ -354,13 +354,9 @@ static void json_encode_value(nano_buf *buf, SEXP x) {
 
 SEXP secretbase_jsonenc(SEXP x) {
 
-  if (TYPEOF(x) != VECSXP ||
-      (Rf_xlength(x) > 0 && Rf_getAttrib(x, R_NamesSymbol) == R_NilValue))
-    Rf_error("'x' must be a named list");
-
   nano_buf buf;
   NANO_ALLOC(&buf, SB_INIT_BUFSIZE);
-  json_encode_object(&buf, x);
+  json_encode_value(&buf, x);
 
   SEXP out;
   PROTECT(out = Rf_allocVector(STRSXP, 1));
@@ -384,7 +380,10 @@ SEXP secretbase_jsondec(SEXP x) {
   }
   json_skip_ws(&json);
   
-  if (*json != '{') return Rf_allocVector(VECSXP, 0);
-  return json_parse_object_depth(&json, 1);
+  if (*json == '{')
+    return json_parse_object_depth(&json, 1);
+  if (*json == '[')
+    return json_parse_array_depth(&json, 1);
+  return Rf_allocVector(VECSXP, 0);
 
 }
