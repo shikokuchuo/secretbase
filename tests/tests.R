@@ -397,6 +397,14 @@ test_identical(jsondec('{"k1":"a\\\\","k2":"b"}'), list(k1 = "a\\", k2 = "b")) #
 test_equal(jsondec('{"k":"\\\\\\\\"}')[["k"]], "\\\\") # Multiple escaped backslashes
 test_equal(jsondec('{"k":"test\\\\"}')[["k"]], "test\\") # Value with trailing backslash
 test_identical(jsondec('{"a":"x\\\\","b":"y\\\\","c":"z"}'), list(a = "x\\", b = "y\\", c = "z")) # Three keys
+test_identical(jsondec('{"key'), list()) # Unterminated string in key
+test_identical(jsondec('{"key"'), list()) # Key without colon/value
+test_identical(jsondec('{"key":'), list()) # Key with colon but no value
+test_identical(jsondec('{"key":"val'), list()) # Unterminated string in value
+test_identical(jsondec('{"x":-}'), list()) # Invalid number (bare minus)
+test_identical(jsondec('-'), list()) # Top-level invalid number
+test_identical(jsondec('{"x":--1}'), list()) # Double minus
+test_identical(jsondec('["a'), list()) # Unterminated string in array
 if (!(.Platform[["OS.type"]] == "windows" && getRversion() < "4.2")) {
 # Unicode escape sequence tests (RFC 8259 Section 7):
 test_equal(jsondec('{"a":"\\u0041"}')[["a"]], "A") # U+0041 = A (ASCII via Unicode escape)

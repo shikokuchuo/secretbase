@@ -93,7 +93,7 @@ static SEXP json_parse_string(const char **p) {
     if (**p == '\\' && (*p)[1]) (*p)++;
     (*p)++;
   }
-  if (**p != '"') return R_NilValue;
+  if (**p != '"') return R_MissingArg;
   
   // Allocate buffer: input length is sufficient since escape sequences
   // (\uXXXX = 6 chars -> 1-4 bytes, surrogate pairs = 12 chars -> 4 bytes)
@@ -154,7 +154,7 @@ static SEXP json_parse_string(const char **p) {
 static SEXP json_parse_number(const char **p) {
   char *end;
   double val = strtod(*p, &end);
-  if (end == *p) return R_NilValue;
+  if (end == *p) return R_MissingArg;
   *p = end;
   return Rf_ScalarReal(val);
 }
@@ -200,10 +200,10 @@ static SEXP json_parse_object_depth(const char **p, int depth) {
     json_skip_ws(p);
     if (**p != '"') { UNPROTECT(1); return R_MissingArg; }
     SEXP key = json_parse_string(p);
+    if (key == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
     SET_STRING_ELT(names, i, STRING_ELT(key, 0));
     json_skip_ws(p);
     if (**p == ':') (*p)++;
-    json_skip_ws(p);
     SEXP val = json_parse_value_depth(p, depth);
     if (val == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
     SET_VECTOR_ELT(out, i, val);
@@ -386,7 +386,6 @@ SEXP secretbase_jsondec(SEXP x) {
       return Rf_allocVector(VECSXP, 0);
   }
 
-  json_skip_ws(&json);
   SEXP out = json_parse_value_depth(&json, 0);
 
   if (out == R_MissingArg)
