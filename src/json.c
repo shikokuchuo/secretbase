@@ -162,7 +162,7 @@ static SEXP json_parse_number(const char **p) {
 static SEXP json_parse_array_depth(const char **p, int depth) {
   if (depth > JSON_MAX_DEPTH)
     Rf_error("JSON nesting too deep (maximum depth: %d)", JSON_MAX_DEPTH);
-  
+
   (*p)++; // skip [
   json_skip_ws(p);
 
@@ -170,7 +170,9 @@ static SEXP json_parse_array_depth(const char **p, int depth) {
   SEXP out;
   PROTECT(out = Rf_allocVector(VECSXP, count));
   for (int i = 0; i < count; i++) {
-    SET_VECTOR_ELT(out, i, json_parse_value_depth(p, depth));
+    SEXP val = json_parse_value_depth(p, depth);
+    if (val == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
+    SET_VECTOR_ELT(out, i, val);
     json_skip_ws(p);
     if (**p == ',') (*p)++;
   }
@@ -182,7 +184,7 @@ static SEXP json_parse_array_depth(const char **p, int depth) {
 static SEXP json_parse_object_depth(const char **p, int depth) {
   if (depth > JSON_MAX_DEPTH)
     Rf_error("JSON nesting too deep (maximum depth: %d)", JSON_MAX_DEPTH);
-  
+
   (*p)++; // skip {
   json_skip_ws(p);
 
@@ -196,13 +198,15 @@ static SEXP json_parse_object_depth(const char **p, int depth) {
 
   for (int i = 0; i < count; i++) {
     json_skip_ws(p);
-    if (**p != '"') break;
+    if (**p != '"') { UNPROTECT(1); return R_MissingArg; }
     SEXP key = json_parse_string(p);
     SET_STRING_ELT(names, i, STRING_ELT(key, 0));
     json_skip_ws(p);
     if (**p == ':') (*p)++;
     json_skip_ws(p);
-    SET_VECTOR_ELT(out, i, json_parse_value_depth(p, depth));
+    SEXP val = json_parse_value_depth(p, depth);
+    if (val == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
+    SET_VECTOR_ELT(out, i, val);
     json_skip_ws(p);
     if (**p == ',') (*p)++;
   }
@@ -219,18 +223,18 @@ static SEXP json_parse_value_depth(const char **p, int depth) {
     case '"': return json_parse_string(p);
     case 't':
       if (strncmp(*p, "true", 4) == 0) { *p += 4; return Rf_ScalarLogical(1); }
-      return R_NilValue;
+      return R_MissingArg;
     case 'f':
       if (strncmp(*p, "false", 5) == 0) { *p += 5; return Rf_ScalarLogical(0); }
-      return R_NilValue;
+      return R_MissingArg;
     case 'n':
       if (strncmp(*p, "null", 4) == 0) { *p += 4; return R_NilValue; }
-      return R_NilValue;
+      return R_MissingArg;
     case '-': case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
       return json_parse_number(p);
     default:
-      return R_NilValue;
+      return R_MissingArg;
   }
 }
 
@@ -371,19 +375,23 @@ SEXP secretbase_jsonenc(SEXP x) {
 SEXP secretbase_jsondec(SEXP x) {
 
   const char *json;
-  if (TYPEOF(x) == RAWSXP) {
-    json = CHAR(Rf_mkCharLenCE((const char *) DATAPTR_RO(x), XLENGTH(x), CE_UTF8));
-  } else if (TYPEOF(x) == STRSXP) {
-    json = CHAR(STRING_ELT(x, 0));
-  } else {
-    return Rf_allocVector(VECSXP, 0);
+  switch (TYPEOF(x)) {
+    case RAWSXP:
+      json = CHAR(Rf_mkCharLenCE((const char *) DATAPTR_RO(x), XLENGTH(x), CE_UTF8));
+      break;
+    case STRSXP:
+      json = CHAR(STRING_ELT(x, 0));
+      break;
+    default:
+      return Rf_allocVector(VECSXP, 0);
   }
+
   json_skip_ws(&json);
-  
-  if (*json == '{')
-    return json_parse_object_depth(&json, 1);
-  if (*json == '[')
-    return json_parse_array_depth(&json, 1);
-  return Rf_allocVector(VECSXP, 0);
+  SEXP out = json_parse_value_depth(&json, 0);
+
+  if (out == R_MissingArg)
+    return Rf_allocVector(VECSXP, 0);
+
+  return out;
 
 }

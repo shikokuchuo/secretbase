@@ -245,11 +245,19 @@ jsonenc <- function(x) .Call(secretbase_jsonenc, x)
 
 #' JSON Decode
 #'
-#' Minimal JSON parser for HTTP response objects. Converts JSON to R list with
-#' proper type handling.
+#' Minimal JSON parser. Converts JSON to R objects with proper type handling.
 #'
-#' This is a minimal implementation designed for parsing HTTP API responses. It
-#' expects a JSON object `{}` or array `[]` at the top level.
+#' This is a minimal implementation designed for parsing HTTP API responses.
+#'
+#' @section Type Mappings:
+#' \itemize{
+#'   \item Object `{}` -> named list
+#'   \item Array `[]` -> unnamed list
+#'   \item String -> character
+#'   \item Number -> numeric
+#'   \item `true`/`false` -> logical
+#'   \item `null` -> `NULL`
+#' }
 #'
 #' @section RFC 8259 Non-conformance:
 #' \itemize{
@@ -266,15 +274,16 @@ jsonenc <- function(x) .Call(secretbase_jsonenc, x)
 #'
 #' @param x Character string or raw vector containing JSON data.
 #'
-#' @return A named list. Returns an empty list for non-object JSON or invalid
-#'   input.
+#' @return The corresponding R object, or an empty list for invalid input.
 #'
 #' @seealso [jsonenc()]
 #'
 #' @examples
 #' jsondec('{"name": "John", "age": 30}')
-#' jsondec('{"valid": true, "count": null}')
-#' jsondec('{"nested": {"a": 1, "b": [2, 3]}}')
+#' jsondec('[1, 2, 3]')
+#' jsondec('"a string"')
+#' jsondec('123')
+#' jsondec('true')
 #'
 #' @export
 jsondec <- function(x) .Call(secretbase_jsondec, x)

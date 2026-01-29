@@ -10,17 +10,26 @@ jsondec(x)
 \item{x}{Character string or raw vector containing JSON data.}
 }
 \value{
-A named list. Returns an empty list for non-object JSON or invalid
-input.
+The corresponding R object, or an empty list for invalid input.
 }
 \description{
-Minimal JSON parser for HTTP response objects. Converts JSON to R list with
-proper type handling.
+Minimal JSON parser. Converts JSON to R objects with proper type handling.
 }
 \details{
-This is a minimal implementation designed for parsing HTTP API responses. It
-expects a JSON object \code{{}} or array \verb{[]} at the top level.
+This is a minimal implementation designed for parsing HTTP API responses.
 }
+\section{Type Mappings}{
+
+\itemize{
+\item Object \code{{}} -> named list
+\item Array \verb{[]} -> unnamed list
+\item String -> character
+\item Number -> numeric
+\item \code{true}/\code{false} -> logical
+\item \code{null} -> \code{NULL}
+}
+}
+
 \section{RFC 8259 Non-conformance}{
 
 \itemize{
@@ -38,8 +47,10 @@ becomes \code{"uZZZZ"}).
 
 \examples{
 jsondec('{"name": "John", "age": 30}')
-jsondec('{"valid": true, "count": null}')
-jsondec('{"nested": {"a": 1, "b": [2, 3]}}')
+jsondec('[1, 2, 3]')
+jsondec('"a string"')
+jsondec('123')
+jsondec('true')
 
 }
 \seealso{
