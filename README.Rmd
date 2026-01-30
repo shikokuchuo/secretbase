@@ -32,11 +32,11 @@ knitr::opts_chunk$set(
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/shikokuchuo/secretbase)
 
-Fast and memory-efficient streaming hash functions, binary encoding and serialization.
+Fast and memory-efficient streaming hash functions, binary/text encoding and serialization.
 
 Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R's serialization mechanism.
 
-Implements the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), 'SipHash' pseudo-random function, base64 and base58 encoding, and 'CBOR' serialization.
+Implements the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), 'SipHash' pseudo-random function, base64 and base58 encoding, ‘CBOR’ and 'JSON' serialization.
 
 | Function | Purpose |
 |----------|---------|
@@ -46,6 +46,7 @@ Implements the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE25
 | `base64enc()` `base64dec()` | Base64 encoding |
 | `base58enc()` `base58dec()` | Base58 encoding with checksum |
 | `cborenc()` `cbordec()` | CBOR serialization |
+| `jsonenc()` `jsondec()`        | JSON serialization                 |
 
 ### Installation
 
@@ -175,6 +176,15 @@ cborenc(list(a = 1L, b = "hello", c = TRUE))
 cbordec(cborenc(list(a = 1L, b = "hello", c = TRUE)))
 ```
 
+#### JSON
+
+Minimal JSON encoder/decoder for HTTP API request/response bodies:
+
+```{r}
+jsonenc(list(name = "John", age = 30L, active = TRUE))
+jsondec('{"name": "John", "age": 30, "active": true}')
+```
+
 ### Implementation
 
 The SHA-3 Secure Hash Standard was published by the National Institute of Standards and Technology (NIST) in 2015 at [doi:10.6028/NIST.FIPS.202](https://dx.doi.org/10.6028/NIST.FIPS.202). SHA-3 is based on the Keccak algorithm, designed by G. Bertoni, J. Daemen, M. Peeters and G. Van Assche.
@@ -191,6 +201,8 @@ The base58 implementation is based on 'libbase58' by Luke Dashjr at <https://git
 
 The CBOR implementation follows RFC 8949, *"Concise Binary Object Representation (CBOR)"*, available at <https://www.rfc-editor.org/rfc/rfc8949>.
 
+The JSON implementation is not fully compliant with RFC 8259, *"The JavaScript Object Notation (JSON) Data Interchange Format"*, available at <https://www.rfc-editor.org/rfc/rfc8259>.
+
 ### References
 
 [1] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard (2017), *"Random numbers for parallel computers: Requirements and methods, with emphasis on GPUs"*, Mathematics and Computers in Simulation, Vol. 135, May 2017, pp. 3-17 [doi:10.1016/j.matcom.2016.05.00](https://doi.org/10.1016/j.matcom.2016.05.005).
@@ -205,7 +217,8 @@ Mbed TLS website: <https://www.trustedfirmware.org/projects/mbed-tls><br />
 SipHash streaming implementation: <https://github.com/c-util/c-siphash><br />
 SipHash reference implementation: <https://github.com/veorq/SipHash><br />
 libbase58: <https://github.com/luke-jr/libbase58><br />
-CBOR RFC 8949: <https://www.rfc-editor.org/rfc/rfc8949>
+CBOR RFC 8949: <https://www.rfc-editor.org/rfc/rfc8949><br />
+JSON RFC 8259: <https://www.rfc-editor.org/rfc/rfc8259>
 
 --
 

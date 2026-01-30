@@ -1,5 +1,7 @@
 # secretbase (development version)
 
+* Adds `jsonenc()` and `jsondec()` for a minimal JSON encoding/decoding implementation.
+
 # secretbase 1.1.1
 
 * CBOR: performance optimizations; scalar values with attributes now encode as scalars rather than arrays.

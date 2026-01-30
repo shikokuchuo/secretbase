@@ -267,6 +267,33 @@ Rf_error("serialization exceeds max length of raw vector")
 #define ERROR_FOPEN(x) Rf_error("file not found or no read permission at '%s'", x)
 #define ERROR_FREAD(x) Rf_error("file read error at '%s'", x)
 
+static inline void nano_buf_ensure(nano_buf *buf, size_t additional) {
+  if (additional > R_XLEN_T_MAX - buf->cur) { ERROR_OUT(buf); }
+  size_t req = buf->cur + additional;
+  if (req > buf->len) {
+    do {
+      buf->len += buf->len > SB_SERIAL_THR ? SB_SERIAL_THR : buf->len;
+    } while (buf->len < req);
+    unsigned char *tmp = realloc(buf->buf, buf->len);
+    if (tmp == NULL) {
+      free(buf->buf);
+      Rf_error("memory allocation failed");
+    }
+    buf->buf = tmp;
+  }
+}
+
+static inline void nano_buf_char(nano_buf *buf, char c) {
+  nano_buf_ensure(buf, 1);
+  buf->buf[buf->cur++] = c;
+}
+
+static inline void nano_buf_str(nano_buf *buf, const char *s, size_t len) {
+  nano_buf_ensure(buf, len);
+  memcpy(buf->buf + buf->cur, s, len);
+  buf->cur += len;
+}
+
 void sb_clear_buffer(void *, const size_t);
 SEXP sb_hash_sexp(unsigned char *, const size_t, const int);
 nano_buf sb_any_buf(const SEXP);
@@ -278,6 +305,10 @@ SEXP secretbase_base64enc(SEXP, SEXP);
 SEXP secretbase_base64dec(SEXP, SEXP);
 SEXP secretbase_base58enc(SEXP, SEXP);
 SEXP secretbase_base58dec(SEXP, SEXP);
+SEXP secretbase_cborenc(SEXP);
+SEXP secretbase_cbordec(SEXP);
+SEXP secretbase_jsonenc(SEXP);
+SEXP secretbase_jsondec(SEXP);
 SEXP secretbase_sha3(SEXP, SEXP, SEXP);
 SEXP secretbase_sha3_file(SEXP, SEXP, SEXP);
 SEXP secretbase_shake256(SEXP, SEXP, SEXP);
