@@ -254,6 +254,10 @@ The CBOR implementation follows RFC 8949, *“Concise Binary Object
 Representation (CBOR)”*, available at
 <https://www.rfc-editor.org/rfc/rfc8949>.
 
+The JSON implementation is not fully compliant with RFC 8259, *“The
+JavaScript Object Notation (JSON) Data Interchange Format”*, available
+at <https://www.rfc-editor.org/rfc/rfc8259>.
+
 ### References
 
 \[1\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
@@ -276,7 +280,8 @@ streaming implementation: <https://github.com/c-util/c-siphash><br />
 SipHash reference implementation:
 <https://github.com/veorq/SipHash><br /> libbase58:
 <https://github.com/luke-jr/libbase58><br /> CBOR RFC 8949:
-<https://www.rfc-editor.org/rfc/rfc8949>
+<https://www.rfc-editor.org/rfc/rfc8949><br /> JSON RFC 8259:
+<https://www.rfc-editor.org/rfc/rfc8259>
 
 –
 
