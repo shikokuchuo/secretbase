@@ -382,8 +382,8 @@ test_equal(jsondec('{"esc":"hello\\bworld"}')[["esc"]], "hello\bworld")
 test_equal(jsondec('{"esc":"page1\\fpage2"}')[["esc"]], "page1\fpage2")
 test_true(grepl("\\\\b", jsonenc(list(text = "a\bb"))))
 test_true(grepl("\\\\f", jsonenc(list(text = "a\fb"))))
-test_identical(jsondec('  {  "key"  :  "value"  }  ')[["key"]], "value")
-test_identical(jsondec('{\n"key"\t:\r"value"\n}')[["key"]], "value")
+test_equal(jsondec('  {  "key"  :  "value"  }  ')[["key"]], "value")
+test_equal(jsondec('{\n"key"\t:\r"value"\n}')[["key"]], "value")
 test_identical(jsondec(jsonenc(list(a = 1, b = "test"))), list(a = 1, b = "test"))
 test_identical(jsondec(jsonenc(list(nested = list(x = TRUE))))[["nested"]][["x"]], TRUE)
 make_nested <- function(d) {
@@ -405,6 +405,7 @@ test_identical(jsondec('{"x":-}'), list()) # Invalid number (bare minus)
 test_identical(jsondec('-'), list()) # Top-level invalid number
 test_identical(jsondec('{"x":--1}'), list()) # Double minus
 test_identical(jsondec('["a'), list()) # Unterminated string in array
+test_identical(jsondec(jsonenc(.libPaths())), as.list(.libPaths()))
 if (!(.Platform[["OS.type"]] == "windows" && getRversion() < "4.2")) {
 # Unicode escape sequence tests (RFC 8259 Section 7):
 test_equal(jsondec('{"a":"\\u0041"}')[["a"]], "A") # U+0041 = A (ASCII via Unicode escape)
