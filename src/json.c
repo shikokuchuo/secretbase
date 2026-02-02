@@ -376,9 +376,14 @@ SEXP secretbase_jsondec(SEXP x) {
 
   const char *json;
   switch (TYPEOF(x)) {
-    case RAWSXP:
-      json = CHAR(Rf_mkCharLenCE((const char *) DATAPTR_RO(x), XLENGTH(x), CE_UTF8));
+    case RAWSXP: {
+      R_xlen_t xlen = XLENGTH(x);
+      char *tmp = R_alloc(xlen + 1, 1);
+      memcpy(tmp, DATAPTR_RO(x), xlen);
+      tmp[xlen] = '\0';
+      json = tmp;
       break;
+    }
     case STRSXP:
       json = CHAR(STRING_ELT(x, 0));
       break;
