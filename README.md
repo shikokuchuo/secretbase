@@ -23,8 +23,8 @@ coverage](https://codecov.io/gh/shikokuchuo/secretbase/graph/badge.svg)](https:/
 [![Ask
 DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/shikokuchuo/secretbase)
 
-Fast and memory-efficient streaming hash functions, binary encoding and
-serialization.
+Fast and memory-efficient streaming hash functions, binary/text encoding
+and serialization.
 
 Hashes strings and raw vectors directly. Stream hashes files which can
 be larger than memory, as well as in-memory objects through R’s
@@ -32,7 +32,7 @@ serialization mechanism.
 
 Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions,
 SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random
-function, base64 and base58 encoding, and ‘CBOR’ serialization.
+function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
 
 | Function                       | Purpose                            |
 |--------------------------------|------------------------------------|
@@ -42,6 +42,7 @@ function, base64 and base58 encoding, and ‘CBOR’ serialization.
 | `base64enc()` `base64dec()`    | Base64 encoding                    |
 | `base58enc()` `base58dec()`    | Base58 encoding with checksum      |
 | `cborenc()` `cbordec()`        | CBOR serialization                 |
+| `jsonenc()` `jsondec()`        | JSON serialization                 |
 
 ### Installation
 
@@ -203,6 +204,24 @@ cbordec(cborenc(list(a = 1L, b = "hello", c = TRUE)))
 #> [1] TRUE
 ```
 
+#### JSON
+
+Minimal JSON encoder/decoder for HTTP API request/response bodies:
+
+``` r
+jsonenc(list(name = "John", age = 30L, active = TRUE))
+#> [1] "{\"name\":\"John\",\"age\":30,\"active\":true}"
+jsondec('{"name": "John", "age": 30, "active": true}')
+#> $name
+#> [1] "John"
+#> 
+#> $age
+#> [1] 30
+#> 
+#> $active
+#> [1] TRUE
+```
+
 ### Implementation
 
 The SHA-3 Secure Hash Standard was published by the National Institute
@@ -235,6 +254,10 @@ The CBOR implementation follows RFC 8949, *“Concise Binary Object
 Representation (CBOR)”*, available at
 <https://www.rfc-editor.org/rfc/rfc8949>.
 
+The JSON implementation is not fully compliant with RFC 8259, *“The
+JavaScript Object Notation (JSON) Data Interchange Format”*, available
+at <https://www.rfc-editor.org/rfc/rfc8259>.
+
 ### References
 
 \[1\] Pierre L’Ecuyer, David Munger, Boris Oreshkin and Richard Simard
@@ -257,7 +280,8 @@ streaming implementation: <https://github.com/c-util/c-siphash><br />
 SipHash reference implementation:
 <https://github.com/veorq/SipHash><br /> libbase58:
 <https://github.com/luke-jr/libbase58><br /> CBOR RFC 8949:
-<https://www.rfc-editor.org/rfc/rfc8949>
+<https://www.rfc-editor.org/rfc/rfc8949><br /> JSON RFC 8259:
+<https://www.rfc-editor.org/rfc/rfc8259>
 
 –
 

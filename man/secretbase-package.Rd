@@ -4,9 +4,9 @@
 \name{secretbase-package}
 \alias{secretbase}
 \alias{secretbase-package}
-\title{secretbase: Cryptographic Hash, Extendable-Output and Binary Encoding Functions}
+\title{secretbase: Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions}
 \description{
-Fast and memory-efficient streaming hash functions, binary encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R's serialization mechanism. Implements the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), 'SipHash' pseudo-random function, base64 and base58 encoding, and 'CBOR' serialization.
+Fast and memory-efficient streaming hash functions, binary/text encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R's serialization mechanism. Implements the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE256 extendable-output function (XOF), 'SipHash' pseudo-random function, base64 and base58 encoding, 'CBOR' and 'JSON' serialization.
 }
 \seealso{
 Useful links:

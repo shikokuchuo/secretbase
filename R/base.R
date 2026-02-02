@@ -1,4 +1,4 @@
-# secretbase - Base64 Functions ------------------------------------------------
+# secretbase - Encoding and Decoding Functions ---------------------------------
 
 #' Base64 Encode
 #'
@@ -206,5 +206,84 @@ cborenc <- function(x) .Call(secretbase_cborenc, x)
 #' cbordec(cborenc(original))
 #'
 #' @export
-#'
 cbordec <- function(x) .Call(secretbase_cbordec, x)
+
+#' JSON Encode
+#'
+#' Minimal JSON encoder. Converts an R object to a JSON string.
+#'
+#' This is a minimal implementation designed for creating HTTP API request
+#' bodies.
+#'
+#' @section Type Mappings:
+#' \itemize{
+#'   \item Named list -> object `{}`
+#'   \item Unnamed list -> array `[]`
+#'   \item Character -> string (with escaping)
+#'   \item Numeric/integer -> number
+#'   \item Logical -> `true`/`false`
+#'   \item `NULL`, `NA` -> `null`
+#'   \item Scalars (length 1) -> primitive value
+#'   \item Vectors (length > 1) -> array `[]`
+#'   \item Unsupported types (e.g., functions) -> `null`
+#' }
+#'
+#' @param x An R object to encode as JSON.
+#'
+#' @return A character string containing the JSON representation.
+#'
+#' @seealso [jsondec()]
+#'
+#' @examples
+#' jsonenc(list(name = "John", age = 30L))
+#' jsonenc(list(valid = TRUE, count = NULL))
+#' jsonenc(list(nested = list(a = 1, b = list(2, 3))))
+#' jsonenc(list(nums = 1:3, strs = c("a", "b")))
+#'
+#' @export
+jsonenc <- function(x) .Call(secretbase_jsonenc, x)
+
+#' JSON Decode
+#'
+#' Minimal JSON parser. Converts JSON to R objects with proper type handling.
+#'
+#' This is a minimal implementation designed for parsing HTTP API responses.
+#'
+#' @section Type Mappings:
+#' \itemize{
+#'   \item Object `{}` -> named list
+#'   \item Array `[]` -> unnamed list
+#'   \item String -> character
+#'   \item Number -> numeric
+#'   \item `true`/`false` -> logical
+#'   \item `null` -> `NULL`
+#' }
+#'
+#' @section RFC 8259 Non-conformance:
+#' \itemize{
+#'   \item Invalid JSON returns an empty list instead of erroring.
+#'   \item Duplicate keys are preserved; R accessors (`$`, `[[`) return first
+#'     match.
+#'   \item Non-standard number forms may be accepted (e.g., leading zeros,
+#'     hexadecimal).
+#'   \item Invalid escape sequences are output literally (e.g., `\\uZZZZ`
+#'     becomes `"uZZZZ"`).
+#'   \item Incomplete Unicode escape sequences for emoji are tolerated.
+#'   \item Nesting depth is limited to 512 levels.
+#' }
+#'
+#' @param x Character string or raw vector containing JSON data.
+#'
+#' @return The corresponding R object, or an empty list for invalid input.
+#'
+#' @seealso [jsonenc()]
+#'
+#' @examples
+#' jsondec('{"name": "John", "age": 30}')
+#' jsondec('[1, 2, 3]')
+#' jsondec('"a string"')
+#' jsondec('123')
+#' jsondec('true')
+#'
+#' @export
+jsondec <- function(x) .Call(secretbase_jsondec, x)

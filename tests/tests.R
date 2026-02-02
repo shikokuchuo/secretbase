@@ -1,6 +1,7 @@
 # minitest - a minimal testing framework v0.0.5 --------------------------------
 test_library <- function(package) library(package = package, character.only = TRUE)
 test_true <- function(x) invisible(isTRUE(x) || {print(x); stop("the above was returned instead of TRUE")})
+test_null <- function(x) invisible(is.null(x) || {print(x); stop("the above was returned instead of NULL")})
 test_type <- function(type, x) invisible(typeof(x) == type || {stop("object of type '", typeof(x), "' was returned instead of '", type, "'")})
 test_equal <- function(a, b) invisible(a == b || {print(a); print(b); stop("the above expressions were not equal")})
 test_identical <- function(a, b) invisible(identical(a, b) || {print(a); print(b); stop("the above expressions were not identical")})
@@ -282,3 +283,144 @@ test_identical(cbordec(as.raw(c(0xf9, 0x7c, 0x00))), Inf)
 test_identical(cbordec(as.raw(c(0xf9, 0xfc, 0x00))), -Inf)
 test_true(is.nan(cbordec(as.raw(c(0xf9, 0x7e, 0x00)))))
 test_identical(cbordec(as.raw(c(0x82, 0x61, 0x61, 0xa1, 0x61, 0x62, 0x61, 0x63))), list("a", list(b = "c")))
+# JSON encoding/decoding tests:
+test_type("character", jsonenc(list(key = "value")))
+test_identical(jsonenc(list(key = "value")), '{"key":"value"}')
+test_identical(jsonenc(list(a = "1", b = "2")), '{"a":"1","b":"2"}')
+test_identical(jsonenc(structure(list(), names = character())), '{}')
+test_identical(jsonenc(list(num = 123L)), '{"num":123}')
+test_identical(jsonenc(list(neg = -42L)), '{"neg":-42}')
+test_identical(jsonenc(list(zero = 0L)), '{"zero":0}')
+test_equal(jsonenc(list(float = 3.14)), '{"float":3.14}')
+test_identical(jsonenc(list(bool = TRUE)), '{"bool":true}')
+test_identical(jsonenc(list(bool = FALSE)), '{"bool":false}')
+test_identical(jsonenc(list(val = NULL)), '{"val":null}')
+test_identical(jsonenc(list(val = NA)), '{"val":null}')
+test_identical(jsonenc(list(val = NA_character_)), '{"val":null}')
+test_identical(jsonenc(list(nested = list(a = 1))), '{"nested":{"a":1}}')
+test_identical(jsonenc(list(arr = list(1, 2, 3))), '{"arr":[1,2,3]}')
+test_identical(jsonenc(list(esc = "line1\nline2")), '{"esc":"line1\\nline2"}')
+test_identical(jsonenc(list(esc = "col1\tcol2")), '{"esc":"col1\\tcol2"}')
+test_identical(jsonenc(list(esc = "return\rhere")), '{"esc":"return\\rhere"}')
+test_identical(jsonenc(list(quote = 'say "hi"')), '{"quote":"say \\"hi\\""}')
+test_identical(jsonenc(list(p = "c:\\d")), '{"p":"c:\\\\d"}')
+test_identical(jsonenc(c(1, 2, 3)), "[1,2,3]")
+test_identical(jsonenc("string"), '"string"')
+test_identical(jsonenc(1L), "1")
+test_identical(jsonenc(TRUE), "true")
+test_identical(jsonenc(NULL), "null")
+test_identical(jsonenc(list(1, 2, 3)), "[1,2,3]")
+test_identical(jsonenc(list("a", "b")), '["a","b"]')
+test_identical(jsonenc(list()), "[]")
+test_identical(jsonenc(list(1, "a", TRUE, NULL)), '[1,"a",true,null]')
+test_identical(jsonenc(list(nums = 1:3)), '{"nums":[1,2,3]}')
+test_identical(jsonenc(list(floats = c(1.5, 2.5))), '{"floats":[1.5,2.5]}')
+test_identical(jsonenc(list(strs = c("a", "b", "c"))), '{"strs":["a","b","c"]}')
+test_identical(jsonenc(list(bools = c(TRUE, FALSE, TRUE))), '{"bools":[true,false,true]}')
+test_identical(jsonenc(list(mix = c(1L, NA_integer_, 3L))), '{"mix":[1,null,3]}')
+test_identical(jsonenc(list(mix = c(1.0, NA_real_, 3.0))), '{"mix":[1,null,3]}')
+test_identical(jsonenc(list(mix = c("a", NA_character_, "c"))), '{"mix":["a",null,"c"]}')
+test_identical(jsonenc(list(mix = c(TRUE, NA, FALSE))), '{"mix":[true,null,false]}')
+test_identical(jsonenc(list(empty = integer(0))), '{"empty":[]}')
+test_identical(jsonenc(list(empty = character(0))), '{"empty":[]}')
+test_identical(jsonenc(list(empty = numeric(0))), '{"empty":[]}')
+test_identical(jsonenc(list(empty = logical(0))), '{"empty":[]}')
+test_identical(jsonenc(list(fun = function() {})), '{"fun":null}')
+test_true(grepl("\\\\u0001", jsonenc(list(text = paste0("a", rawToChar(as.raw(1)), "b")))))
+test_true(grepl("\\\\u001f", jsonenc(list(text = paste0("a", rawToChar(as.raw(31)), "b")))))
+test_equal(jsondec('{"key":"value"}')[["key"]], "value")
+test_identical(jsondec('{"a":"1","b":"2"}'), list(a = "1", b = "2"))
+test_identical(jsondec('{"key":"value:with:colons"}')[["key"]], "value:with:colons")
+test_identical(jsondec('{"key":"value,with,commas"}')[["key"]], "value,with,commas")
+test_identical(jsondec('{}'), list())
+test_identical(jsondec(''), list())
+test_identical(jsondec('not json'), list())
+test_identical(jsondec('{a}'), list())
+test_identical(jsondec('{a,b}'), list())
+test_identical(jsondec('[a,b]'), list())
+test_identical(jsondec('[1,a,3]'), list())
+test_equal(jsondec('[1,2,3]')[[2]], 2)
+test_identical(jsondec('[1,"a",true,null]'), list(1, "a", TRUE, NULL))
+test_identical(jsondec('"bare string"'), "bare string")
+test_identical(jsondec('123'), 123)
+test_identical(jsondec('true'), TRUE)
+test_identical(jsondec('false'), FALSE)
+test_null(jsondec('null'))
+test_identical(jsondec('  "with whitespace"  '), "with whitespace")
+test_identical(jsondec('-42.5'), -42.5)
+test_identical(jsondec('1.5e-3'), 0.0015)
+test_type("list", jsondec(charToRaw('{"key":"value"}')))
+test_equal(jsondec(charToRaw('{"key":"value"}'))[["key"]], "value")
+test_identical(jsondec(NULL), list())
+test_identical(jsondec(123), list())
+test_equal(jsondec('{"num":123}')[["num"]], 123)
+test_equal(jsondec('{"float":3.14}')[["float"]], 3.14)
+test_equal(jsondec('{"neg":-42}')[["neg"]], -42)
+test_equal(jsondec('{"exp":1.5e-3}')[["exp"]], 0.0015)
+test_equal(jsondec('{"zero":0}')[["zero"]], 0)
+test_true(jsondec('{"bool":true}')[["bool"]])
+test_true(!jsondec('{"bool":false}')[["bool"]])
+test_null(jsondec('{"val":null}')[["val"]])
+test_type("list", jsondec('{"nested":{"a":1,"b":2}}')[["nested"]])
+test_equal(jsondec('{"deep":{"level1":{"level2":3}}}')[["deep"]][["level1"]][["level2"]], 3)
+test_equal(jsondec('{"arr":[1,2,3]}')[["arr"]][[2]], 2)
+test_equal(jsondec('{"mixed":["text",123,true,null]}')[["mixed"]][[1]], "text")
+test_null(jsondec('{"mixed":["text",123,true,null]}')[["mixed"]][[4]])
+test_equal(length(jsondec('{"empty":[]}')[["empty"]]), 0)
+test_equal(jsondec('{"objects":[{"id":1},{"id":2}]}')[["objects"]][[2]][["id"]], 2)
+test_equal(jsondec('{"esc":"line1\\nline2"}')[["esc"]], "line1\nline2")
+test_equal(jsondec('{"esc":"col1\\tcol2"}')[["esc"]], "col1\tcol2")
+test_equal(jsondec('{"esc":"return\\rhere"}')[["esc"]], "return\rhere")
+test_equal(jsondec('{"quote":"say \\"hi\\""}')[["quote"]], 'say "hi"')
+test_null(jsondec('{"t":tru}')[["t"]])
+test_null(jsondec('{"f":fals}')[["f"]])
+test_null(jsondec('{"n":nul}')[["n"]])
+test_null(jsondec('{"x":@}')[["x"]])
+rawjson <- as.raw(c(0x7b, 0x22, 0x70, 0x22, 0x3a, 0x22, 0x63, 0x3a, 0x5c, 0x5c, 0x64, 0x22, 0x7d))
+test_equal(jsondec(rawjson)[["p"]], "c:\\d")
+test_equal(jsondec('{"esc":"hello\\bworld"}')[["esc"]], "hello\bworld")
+test_equal(jsondec('{"esc":"page1\\fpage2"}')[["esc"]], "page1\fpage2")
+test_true(grepl("\\\\b", jsonenc(list(text = "a\bb"))))
+test_true(grepl("\\\\f", jsonenc(list(text = "a\fb"))))
+test_equal(jsondec('  {  "key"  :  "value"  }  ')[["key"]], "value")
+test_equal(jsondec('{\n"key"\t:\r"value"\n}')[["key"]], "value")
+test_identical(jsondec(jsonenc(list(a = 1, b = "test"))), list(a = 1, b = "test"))
+test_identical(jsondec(jsonenc(list(nested = list(x = TRUE))))[["nested"]][["x"]], TRUE)
+make_nested <- function(d) {
+  paste0(paste(rep('{"a":', d), collapse = ""), "1", paste(rep("}", d), collapse = ""))
+}
+test_type("list", jsondec(make_nested(100))) # Moderate nesting OK
+test_type("list", jsondec(make_nested(512))) # Max depth OK
+test_error(jsondec(make_nested(513)), "JSON nesting too deep") # Exceeds max depth
+test_equal(jsondec('{"k":"a\\\\"}')[["k"]], "a\\") # String ending with escaped backslash
+test_identical(jsondec('{"k1":"a\\\\","k2":"b"}'), list(k1 = "a\\", k2 = "b")) # Multiple keys with escaped backslash
+test_equal(jsondec('{"k":"\\\\\\\\"}')[["k"]], "\\\\") # Multiple escaped backslashes
+test_equal(jsondec('{"k":"test\\\\"}')[["k"]], "test\\") # Value with trailing backslash
+test_identical(jsondec('{"a":"x\\\\","b":"y\\\\","c":"z"}'), list(a = "x\\", b = "y\\", c = "z")) # Three keys
+test_identical(jsondec('{"key'), list()) # Unterminated string in key
+test_identical(jsondec('{"key"'), list()) # Key without colon/value
+test_identical(jsondec('{"key":'), list()) # Key with colon but no value
+test_identical(jsondec('{"key":"val'), list()) # Unterminated string in value
+test_identical(jsondec('{"x":-}'), list()) # Invalid number (bare minus)
+test_identical(jsondec('-'), list()) # Top-level invalid number
+test_identical(jsondec('{"x":--1}'), list()) # Double minus
+test_identical(jsondec('["a'), list()) # Unterminated string in array
+test_identical(jsondec(jsonenc(.libPaths())), as.list(.libPaths()))
+if (!(.Platform[["OS.type"]] == "windows" && getRversion() < "4.2")) {
+# Unicode escape sequence tests (RFC 8259 Section 7):
+test_equal(jsondec('{"a":"\\u0041"}')[["a"]], "A") # U+0041 = A (ASCII via Unicode escape)
+test_equal(jsondec('{"a":"\\u00e9"}')[["a"]], "\u00e9") # U+00E9 = é (2-byte UTF-8)
+test_equal(jsondec('{"a":"\\u4e2d"}')[["a"]], "\u4e2d") # U+4E2D = 中 (3-byte UTF-8)
+test_equal(jsondec('{"a":"\\u0041\\u0042\\u0043"}')[["a"]], "ABC") # Multiple escapes
+test_equal(jsondec('{"\\u006b\\u0065\\u0079":"value"}')[["key"]], "value") # Unicode in key
+test_equal(jsondec('{"a":"\\u00E9"}')[["a"]], "\u00e9") # Uppercase hex
+test_equal(jsondec('{"a":"\\u00eF"}')[["a"]], "\u00ef") # Mixed case hex
+test_equal(jsondec('{"a":"Hello \\u4e16\\u754c!"}')[["a"]], "Hello \u4e16\u754c!") # Mixed content
+test_equal(jsondec('{"a":"line1\\u000aline2"}')[["a"]], "line1\nline2") # Newline via Unicode
+test_equal(charToRaw(jsondec('{"a":"\\u0001"}')[["a"]])[1], as.raw(1)) # Control char U+0001
+# UTF-16 surrogate pair tests (characters outside BMP):
+test_equal(jsondec('{"a":"\\uD83D\\uDE00"}')[["a"]], "\U0001F600")
+test_equal(jsondec('{"a":"\\uD83D\\uDCA9"}')[["a"]], "\U0001F4A9")
+test_equal(jsondec('{"a":"Hi \\uD83D\\uDE00!"}')[["a"]], "Hi \U0001F600!")
+test_equal(jsondec('{"a":"\\uZZZZ"}')[["a"]], "uZZZZ") # Invalid hex digits - outputs literally
+}
