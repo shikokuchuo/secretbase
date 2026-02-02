@@ -5,16 +5,16 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Cryptographic Hash, Extendable-Output and Binary Encoding Functions • secretbase</title>
+<title>Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions • secretbase</title>
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Cryptographic Hash, Extendable-Output and Binary Encoding Functions">
-<meta name="description" content="Fast and memory-efficient streaming hash functions, binary encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through Rs serialization mechanism. Implements the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), SipHash pseudo-random function, base64 and base58 encoding, and CBOR' serialization.">
-<meta property="og:description" content="Fast and memory-efficient streaming hash functions, binary encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through Rs serialization mechanism. Implements the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), SipHash pseudo-random function, base64 and base58 encoding, and CBOR' serialization.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions">
+<meta name="description" content="Fast and memory-efficient streaming hash functions, binary/text encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through Rs serialization mechanism. Implements the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), SipHash pseudo-random function, base64 and base58 encoding, CBOR and JSON' serialization.">
+<meta property="og:description" content="Fast and memory-efficient streaming hash functions, binary/text encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through Rs serialization mechanism. Implements the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), SipHash pseudo-random function, base64 and base58 encoding, CBOR and JSON' serialization.">
 <meta name="robots" content="noindex">
 </head>
 <body>
@@ -69,9 +69,9 @@
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>\  <span class="sc">/</span>  base <span class="sc">/</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a> \<span class="sc">/</span>_______<span class="sc">/</span></span></code></pre></div>
 <p><a href="https://deepwiki.com/shikokuchuo/secretbase" class="external-link"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a></p>
-<p>Fast and memory-efficient streaming hash functions, binary encoding and serialization.</p>
+<p>Fast and memory-efficient streaming hash functions, binary/text encoding and serialization.</p>
 <p>Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R’s serialization mechanism.</p>
-<p>Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions, SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random function, base64 and base58 encoding, and ‘CBOR’ serialization.</p>
+<p>Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions, SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.</p>
 <table class="table">
 <thead><tr class="header">
 <th>Function</th>
@@ -109,6 +109,12 @@
 <code><a href="reference/cborenc.html">cborenc()</a></code> <code><a href="reference/cbordec.html">cbordec()</a></code>
 </td>
 <td>CBOR serialization</td>
+</tr>
+<tr class="odd">
+<td>
+<code><a href="reference/jsonenc.html">jsonenc()</a></code> <code><a href="reference/jsondec.html">jsondec()</a></code>
+</td>
+<td>JSON serialization</td>
 </tr>
 </tbody>
 </table>
@@ -255,6 +261,23 @@
 <span><span class="co">#&gt; $c</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
+<div class="section level4">
+<h4 id="json">JSON<a class="anchor" aria-label="anchor" href="#json"></a>
+</h4>
+<p>Minimal JSON encoder/decoder for HTTP API request/response bodies:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/jsonenc.html">jsonenc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"John"</span>, age <span class="op">=</span> <span class="fl">30L</span>, active <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "{\"name\":\"John\",\"age\":30,\"active\":true}"</span></span>
+<span><span class="fu"><a href="reference/jsondec.html">jsondec</a></span><span class="op">(</span><span class="st">'{"name": "John", "age": 30, "active": true}'</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $name</span></span>
+<span><span class="co">#&gt; [1] "John"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $age</span></span>
+<span><span class="co">#&gt; [1] 30</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $active</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
@@ -266,6 +289,7 @@
 <p>The SipHash implementation is based on that of Daniele Nicolodi, David Rheinsberg and Tom Gundersen at <a href="https://github.com/c-util/c-siphash" class="external-link uri">https://github.com/c-util/c-siphash</a>, which is in turn based on the reference implementation by Jean-Philippe Aumasson and Daniel J. Bernstein released to the public domain at <a href="https://github.com/veorq/SipHash" class="external-link uri">https://github.com/veorq/SipHash</a>.</p>
 <p>The base58 implementation is based on ‘libbase58’ by Luke Dashjr at <a href="https://github.com/luke-jr/libbase58" class="external-link uri">https://github.com/luke-jr/libbase58</a>.</p>
 <p>The CBOR implementation follows RFC 8949, <em>“Concise Binary Object Representation (CBOR)”</em>, available at <a href="https://www.rfc-editor.org/rfc/rfc8949" class="external-link uri">https://www.rfc-editor.org/rfc/rfc8949</a>.</p>
+<p>The JSON implementation is not fully compliant with RFC 8259, <em>“The JavaScript Object Notation (JSON) Data Interchange Format”</em>, available at <a href="https://www.rfc-editor.org/rfc/rfc8259" class="external-link uri">https://www.rfc-editor.org/rfc/rfc8259</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -277,7 +301,7 @@
 <h3 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
 </h3>
 <p>◈ secretbase R package: <a href="https://shikokuchuo.net/secretbase/" class="uri">https://shikokuchuo.net/secretbase/</a></p>
-<p>Mbed TLS website: <a href="https://www.trustedfirmware.org/projects/mbed-tls" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls</a><br> SipHash streaming implementation: <a href="https://github.com/c-util/c-siphash" class="external-link uri">https://github.com/c-util/c-siphash</a><br> SipHash reference implementation: <a href="https://github.com/veorq/SipHash" class="external-link uri">https://github.com/veorq/SipHash</a><br> libbase58: <a href="https://github.com/luke-jr/libbase58" class="external-link uri">https://github.com/luke-jr/libbase58</a><br> CBOR RFC 8949: <a href="https://www.rfc-editor.org/rfc/rfc8949" class="external-link uri">https://www.rfc-editor.org/rfc/rfc8949</a></p>
+<p>Mbed TLS website: <a href="https://www.trustedfirmware.org/projects/mbed-tls" class="external-link uri">https://www.trustedfirmware.org/projects/mbed-tls</a><br> SipHash streaming implementation: <a href="https://github.com/c-util/c-siphash" class="external-link uri">https://github.com/c-util/c-siphash</a><br> SipHash reference implementation: <a href="https://github.com/veorq/SipHash" class="external-link uri">https://github.com/veorq/SipHash</a><br> libbase58: <a href="https://github.com/luke-jr/libbase58" class="external-link uri">https://github.com/luke-jr/libbase58</a><br> CBOR RFC 8949: <a href="https://www.rfc-editor.org/rfc/rfc8949" class="external-link uri">https://www.rfc-editor.org/rfc/rfc8949</a><br> JSON RFC 8259: <a href="https://www.rfc-editor.org/rfc/rfc8259" class="external-link uri">https://www.rfc-editor.org/rfc/rfc8259</a></p>
 <p>–</p>
 <p>Please note that this project is released with a <a href="https://shikokuchuo.net/secretbase/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>

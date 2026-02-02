@@ -2,7 +2,7 @@
 
 - [`secretbase`](https://shikokuchuo.net/secretbase/dev/reference/secretbase-package.md)
   [`secretbase-package`](https://shikokuchuo.net/secretbase/dev/reference/secretbase-package.md)
-  : secretbase: Cryptographic Hash, Extendable-Output and Binary
+  : secretbase: Cryptographic Hash, Extendable-Output and Binary/Text
   Encoding Functions
 - [`base58dec()`](https://shikokuchuo.net/secretbase/dev/reference/base58dec.md)
   : Base58 Decode
@@ -16,6 +16,10 @@
   : CBOR Decode
 - [`cborenc()`](https://shikokuchuo.net/secretbase/dev/reference/cborenc.md)
   : CBOR Encode
+- [`jsondec()`](https://shikokuchuo.net/secretbase/dev/reference/jsondec.md)
+  : JSON Decode
+- [`jsonenc()`](https://shikokuchuo.net/secretbase/dev/reference/jsonenc.md)
+  : JSON Encode
 - [`keccak()`](https://shikokuchuo.net/secretbase/dev/reference/keccak.md)
   : Keccak Cryptographic Hash Algorithms
 - [`sha256()`](https://shikokuchuo.net/secretbase/dev/reference/sha256.md)
