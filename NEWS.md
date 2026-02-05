@@ -1,4 +1,4 @@
-# secretbase (development version)
+# secretbase 1.2.0
 
 * Adds `jsonenc()` and `jsondec()` for a minimal JSON encoding/decoding implementation.
 
