@@ -1,5 +1,15 @@
 # Changelog
 
+## secretbase 1.2.0
+
+CRAN release: 2026-02-05
+
+- Adds
+  [`jsonenc()`](https://shikokuchuo.net/secretbase/reference/jsonenc.md)
+  and
+  [`jsondec()`](https://shikokuchuo.net/secretbase/reference/jsondec.md)
+  for a minimal JSON encoding/decoding implementation.
+
 ## secretbase 1.1.1
 
 CRAN release: 2026-01-15
