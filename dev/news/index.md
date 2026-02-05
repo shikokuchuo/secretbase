@@ -2,6 +2,10 @@
 
 ## secretbase (development version)
 
+## secretbase 1.2.0
+
+CRAN release: 2026-02-05
+
 - Adds
   [`jsonenc()`](https://shikokuchuo.net/secretbase/dev/reference/jsonenc.md)
   and
