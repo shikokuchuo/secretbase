@@ -2,7 +2,7 @@ Type: Package
 Package: secretbase
 Title: Cryptographic Hash, Extendable-Output and Binary/Text Encoding
     Functions
-Version: 1.2.0
+Version: 1.2.0.9000
 Authors@R: c(
     person("Charlie", "Gao", , "charlie.gao@posit.co", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0750-061X")),
