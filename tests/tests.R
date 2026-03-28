@@ -208,8 +208,8 @@ test_identical(cbordec(cborenc(c(1L, NA, 3L))), list(1L, NA, 3L))
 test_identical(cbordec(cborenc(c(1.5, NA, 2.5))), list(1.5, NA, 2.5))
 test_identical(cbordec(cborenc(c("a", NA, "b"))), list("a", NA, "b"))
 test_identical(cbordec(as.raw(c(0xfa, 0x41, 0x20, 0x00, 0x00))), 10)
-test_identical(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x00, 0x00))), -2147483649)
 test_identical(cbordec(as.raw(c(0x1b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00))), 4294967296)  # 64-bit uint (2^32)
+test_identical(cbordec(as.raw(c(0x3b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00))), -4294967297)  # 64-bit negint -(2^32+1)
 test_type("double", cbordec(as.raw(c(0x1a, 0x80, 0x00, 0x00, 0x00))))  # uint > INT_MAX returns double
 test_identical(cbordec(as.raw(c(0x01, 0xff))), 1L)  # trailing bytes silently dropped
 test_error(cborenc(function() {}), "unsupported type")
