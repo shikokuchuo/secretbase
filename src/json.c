@@ -47,7 +47,7 @@ static inline char *utf8_encode_cp(char *d, unsigned int cp) {
   return d;
 }
 
-static SEXP json_parse_value_depth(const char **p, int depth);
+static SEXP json_parse_value_depth(const char **p, int depth, int *err);
 
 static int json_count_elements(const char *scan) {
   int depth = 1, count = 1;
@@ -84,16 +84,16 @@ static int json_count_elements(const char *scan) {
   return count;
 }
 
-static SEXP json_parse_string(const char **p) {
+static SEXP json_parse_string(const char **p, int *err) {
   (*p)++; // skip opening "
   const char *start = *p;
-  
+
   // Find end of string
   while (**p && **p != '"') {
     if (**p == '\\' && (*p)[1]) (*p)++;
     (*p)++;
   }
-  if (**p != '"') return R_MissingArg;
+  if (**p != '"') { *err = 1; return R_NilValue; }
   
   // Allocate buffer: input length is sufficient since escape sequences
   // (\uXXXX = 6 chars -> 1-4 bytes, surrogate pairs = 12 chars -> 4 bytes)
@@ -151,15 +151,15 @@ static SEXP json_parse_string(const char **p) {
   return Rf_mkString(buf);
 }
 
-static SEXP json_parse_number(const char **p) {
+static SEXP json_parse_number(const char **p, int *err) {
   char *end;
   double val = strtod(*p, &end);
-  if (end == *p) return R_MissingArg;
+  if (end == *p) { *err = 1; return R_NilValue; }
   *p = end;
   return Rf_ScalarReal(val);
 }
 
-static SEXP json_parse_array_depth(const char **p, int depth) {
+static SEXP json_parse_array_depth(const char **p, int depth, int *err) {
   if (depth > JSON_MAX_DEPTH)
     Rf_error("JSON nesting too deep (maximum depth: %d)", JSON_MAX_DEPTH);
 
@@ -170,8 +170,8 @@ static SEXP json_parse_array_depth(const char **p, int depth) {
   SEXP out;
   PROTECT(out = Rf_allocVector(VECSXP, count));
   for (int i = 0; i < count; i++) {
-    SEXP val = json_parse_value_depth(p, depth);
-    if (val == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
+    SEXP val = json_parse_value_depth(p, depth, err);
+    if (*err) { UNPROTECT(1); return R_NilValue; }
     SET_VECTOR_ELT(out, i, val);
     json_skip_ws(p);
     if (**p == ',') (*p)++;
@@ -181,7 +181,7 @@ static SEXP json_parse_array_depth(const char **p, int depth) {
   return out;
 }
 
-static SEXP json_parse_object_depth(const char **p, int depth) {
+static SEXP json_parse_object_depth(const char **p, int depth, int *err) {
   if (depth > JSON_MAX_DEPTH)
     Rf_error("JSON nesting too deep (maximum depth: %d)", JSON_MAX_DEPTH);
 
@@ -198,14 +198,14 @@ static SEXP json_parse_object_depth(const char **p, int depth) {
 
   for (int i = 0; i < count; i++) {
     json_skip_ws(p);
-    if (**p != '"') { UNPROTECT(1); return R_MissingArg; }
-    SEXP key = json_parse_string(p);
-    if (key == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
+    if (**p != '"') { *err = 1; UNPROTECT(1); return R_NilValue; }
+    SEXP key = json_parse_string(p, err);
+    if (*err) { UNPROTECT(1); return R_NilValue; }
     SET_STRING_ELT(names, i, STRING_ELT(key, 0));
     json_skip_ws(p);
     if (**p == ':') (*p)++;
-    SEXP val = json_parse_value_depth(p, depth);
-    if (val == R_MissingArg) { UNPROTECT(1); return R_MissingArg; }
+    SEXP val = json_parse_value_depth(p, depth, err);
+    if (*err) { UNPROTECT(1); return R_NilValue; }
     SET_VECTOR_ELT(out, i, val);
     json_skip_ws(p);
     if (**p == ',') (*p)++;
@@ -215,26 +215,26 @@ static SEXP json_parse_object_depth(const char **p, int depth) {
   return out;
 }
 
-static SEXP json_parse_value_depth(const char **p, int depth) {
+static SEXP json_parse_value_depth(const char **p, int depth, int *err) {
   json_skip_ws(p);
   switch (**p) {
-    case '{': return json_parse_object_depth(p, depth + 1);
-    case '[': return json_parse_array_depth(p, depth + 1);
-    case '"': return json_parse_string(p);
+    case '{': return json_parse_object_depth(p, depth + 1, err);
+    case '[': return json_parse_array_depth(p, depth + 1, err);
+    case '"': return json_parse_string(p, err);
     case 't':
       if (strncmp(*p, "true", 4) == 0) { *p += 4; return Rf_ScalarLogical(1); }
-      return R_MissingArg;
+      *err = 1; return R_NilValue;
     case 'f':
       if (strncmp(*p, "false", 5) == 0) { *p += 5; return Rf_ScalarLogical(0); }
-      return R_MissingArg;
+      *err = 1; return R_NilValue;
     case 'n':
       if (strncmp(*p, "null", 4) == 0) { *p += 4; return R_NilValue; }
-      return R_MissingArg;
+      *err = 1; return R_NilValue;
     case '-': case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
-      return json_parse_number(p);
+      return json_parse_number(p, err);
     default:
-      return R_MissingArg;
+      *err = 1; return R_NilValue;
   }
 }
 
@@ -391,9 +391,10 @@ SEXP secretbase_jsondec(SEXP x) {
       return Rf_allocVector(VECSXP, 0);
   }
 
-  SEXP out = json_parse_value_depth(&json, 0);
+  int err = 0;
+  SEXP out = json_parse_value_depth(&json, 0, &err);
 
-  if (out == R_MissingArg)
+  if (err)
     return Rf_allocVector(VECSXP, 0);
 
   return out;
