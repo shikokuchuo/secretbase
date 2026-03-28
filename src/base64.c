@@ -354,6 +354,10 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   
   nano_buf hash = sb_any_buf(x);
   xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur);
+  if (olen == SIZE_MAX) {
+    NANO_FREE(hash);
+    Rf_error("object too large to encode");
+  }
   unsigned char *buf = malloc(olen);
   if (buf == NULL) {
     NANO_FREE(hash);
