@@ -1,6 +1,6 @@
-# secretbase (development version)
+# secretbase 1.2.1
 
-* Silences a warning when compiling under GCC 16.
+* Fixes UB as detected when compiling under GCC 16.
 
 # secretbase 1.2.0
 
