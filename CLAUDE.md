@@ -6,11 +6,13 @@ with code in this repository.
 ## Package Overview
 
 secretbase is an R package providing fast, memory-efficient streaming
-hash functions and encoding/decoding. It implements: - SHA-256, SHA-3,
-and Keccak cryptographic hash functions - SHAKE256 extendable-output
-function (XOF) - SipHash-1-3 pseudo-random function - Base64
-encoding/decoding - Base58 encoding/decoding with 4-byte double SHA-256
-checksum (no version byte prefix)
+hash functions, encoding/decoding, and serialization. It implements: -
+SHA-256, SHA-3, and Keccak cryptographic hash functions - SHAKE256
+extendable-output function (XOF) - SipHash-1-3 pseudo-random function -
+Base64 encoding/decoding - Base58 encoding/decoding with 4-byte double
+SHA-256 checksum (no version byte prefix) - CBOR (RFC 8949)
+encoding/decoding - JSON encoding/decoding (minimal, designed for HTTP
+API request/response bodies)
 
 All hash functions support both direct hashing of strings/raw vectors
 and streaming hashing of files and R objects through serialization.
@@ -53,18 +55,20 @@ codecov - `pkgdown.yaml` - Build and deploy package documentation site
 ### Two-Layer Design
 
 \*\*R Layer (R/\*.R)\*\*: - `R/secret.R` - Hash function interfaces
-(sha3, shake256, keccak, sha256, siphash13) - `R/base.R` - Base64 and
-Base58Check encoding/decoding interfaces - All R functions are thin
-wrappers that call C code via
+(sha3, shake256, keccak, sha256, siphash13) - `R/base.R` -
+Encoding/decoding/serialization interfaces (base64, base58, CBOR,
+JSON) - All R functions are thin wrappers that call C code via
 [`.Call()`](https://rdrr.io/r/base/CallExternal.html)
 
 \*\*C Layer (src/\*.c)\*\*: - `src/secret.h` - Header with context
-structures and constants - `src/init.c` - Package registration for .Call
-interface - `src/secret.c` - SHA-3/SHAKE256/Keccak implementations (Mbed
-TLS based) - `src/secret2.c` - SHA-256 implementation (Mbed TLS based) -
-`src/secret3.c` - SipHash implementation (c-siphash based) -
-`src/base.c` - Base64 implementation (Mbed TLS based) - `src/base2.c` -
-Base58Check implementation (libbase58 based)
+structures, constants, and shared utilities - `src/init.c` - Package
+registration for .Call interface - `src/sha3.c` - SHA-3/SHAKE256/Keccak
+implementations (Mbed TLS based) - `src/sha256.c` - SHA-256
+implementation (Mbed TLS based) - `src/siphash.c` - SipHash
+implementation (c-siphash based) - `src/base64.c` - Base64
+implementation (Mbed TLS based) - `src/base58.c` - Base58Check
+implementation (libbase58 based) - `src/cbor.c` - CBOR encoding/decoding
+(RFC 8949) - `src/json.c` - JSON encoding/decoding
 
 ### Key Implementation Details
 

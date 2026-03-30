@@ -1,5 +1,11 @@
 # Changelog
 
+## secretbase 1.2.1
+
+CRAN release: 2026-03-30
+
+- Fixes UB as detected when compiling under GCC 16.
+
 ## secretbase 1.2.0
 
 CRAN release: 2026-02-05

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">secretbase</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>CLAUDE.md</h1>
-      <small class="dont-index">Source: <a href="https://github.com/shikokuchuo/secretbase/blob/v1.2.0/CLAUDE.md" class="external-link"><code>CLAUDE.md</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/shikokuchuo/secretbase/blob/v1.2.1/CLAUDE.md" class="external-link"><code>CLAUDE.md</code></a></small>
     </div>
 
 <div id="claudemd" class="section level1">
@@ -44,7 +44,7 @@
 <p>This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.</p>
 <div class="section level2">
 <h2 id="package-overview">Package Overview<a class="anchor" aria-label="anchor" href="#package-overview"></a></h2>
-<p>secretbase is an R package providing fast, memory-efficient streaming hash functions and encoding/decoding. It implements: - SHA-256, SHA-3, and Keccak cryptographic hash functions - SHAKE256 extendable-output function (XOF) - SipHash-1-3 pseudo-random function - Base64 encoding/decoding - Base58 encoding/decoding with 4-byte double SHA-256 checksum (no version byte prefix)</p>
+<p>secretbase is an R package providing fast, memory-efficient streaming hash functions, encoding/decoding, and serialization. It implements: - SHA-256, SHA-3, and Keccak cryptographic hash functions - SHAKE256 extendable-output function (XOF) - SipHash-1-3 pseudo-random function - Base64 encoding/decoding - Base58 encoding/decoding with 4-byte double SHA-256 checksum (no version byte prefix) - CBOR (RFC 8949) encoding/decoding - JSON encoding/decoding (minimal, designed for HTTP API request/response bodies)</p>
 <p>All hash functions support both direct hashing of strings/raw vectors and streaming hashing of files and R objects through serialization.</p>
 </div>
 <div class="section level2">
@@ -79,8 +79,8 @@
 <h2 id="architecture">Architecture<a class="anchor" aria-label="anchor" href="#architecture"></a></h2>
 <div class="section level3">
 <h3 id="two-layer-design">Two-Layer Design<a class="anchor" aria-label="anchor" href="#two-layer-design"></a></h3>
-<p>**R Layer (R/*.R)**: - <code>R/secret.R</code> - Hash function interfaces (sha3, shake256, keccak, sha256, siphash13) - <code>R/base.R</code> - Base64 and Base58Check encoding/decoding interfaces - All R functions are thin wrappers that call C code via <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code></p>
-<p>**C Layer (src/*.c)**: - <code>src/secret.h</code> - Header with context structures and constants - <code>src/init.c</code> - Package registration for .Call interface - <code>src/secret.c</code> - SHA-3/SHAKE256/Keccak implementations (Mbed TLS based) - <code>src/secret2.c</code> - SHA-256 implementation (Mbed TLS based) - <code>src/secret3.c</code> - SipHash implementation (c-siphash based) - <code>src/base.c</code> - Base64 implementation (Mbed TLS based) - <code>src/base2.c</code> - Base58Check implementation (libbase58 based)</p>
+<p>**R Layer (R/*.R)**: - <code>R/secret.R</code> - Hash function interfaces (sha3, shake256, keccak, sha256, siphash13) - <code>R/base.R</code> - Encoding/decoding/serialization interfaces (base64, base58, CBOR, JSON) - All R functions are thin wrappers that call C code via <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code></p>
+<p>**C Layer (src/*.c)**: - <code>src/secret.h</code> - Header with context structures, constants, and shared utilities - <code>src/init.c</code> - Package registration for .Call interface - <code>src/sha3.c</code> - SHA-3/SHAKE256/Keccak implementations (Mbed TLS based) - <code>src/sha256.c</code> - SHA-256 implementation (Mbed TLS based) - <code>src/siphash.c</code> - SipHash implementation (c-siphash based) - <code>src/base64.c</code> - Base64 implementation (Mbed TLS based) - <code>src/base58.c</code> - Base58Check implementation (libbase58 based) - <code>src/cbor.c</code> - CBOR encoding/decoding (RFC 8949) - <code>src/json.c</code> - JSON encoding/decoding</p>
 </div>
 <div class="section level3">
 <h3 id="key-implementation-details">Key Implementation Details<a class="anchor" aria-label="anchor" href="#key-implementation-details"></a></h3>
