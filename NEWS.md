@@ -1,3 +1,5 @@
+# secretbase (development version)
+
 # secretbase 1.2.1
 
 * Fixes UB as detected when compiling under GCC 16.
