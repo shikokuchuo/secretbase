@@ -1,4 +1,4 @@
-# secretbase: Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions
+# secretbase: Cryptographic Hash Functions and Data Encoding
 
 Fast and memory-efficient streaming hash functions, binary/text encoding
 and serialization. Hashes strings and raw vectors directly. Stream
