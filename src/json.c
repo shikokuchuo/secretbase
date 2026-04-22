@@ -146,9 +146,8 @@ static SEXP json_parse_string(const char **p, int *err) {
       *d++ = *s++;
     }
   }
-  *d = '\0';
   (*p)++; // skip closing "
-  return Rf_mkString(buf);
+  return Rf_ScalarString(Rf_mkCharLenCE(buf, (int) (d - buf), CE_UTF8));
 }
 
 static SEXP json_parse_number(const char **p, int *err) {
