@@ -3,6 +3,8 @@
 ## secretbase (development version)
 
 - Speeds up hex string conversion for hash output (`convert = TRUE`).
+- [`jsondec()`](https://shikokuchuo.net/secretbase/dev/reference/jsondec.md)
+  now tags decoded strings as UTF-8 per RFC 8259.
 
 ## secretbase 1.2.1
 
