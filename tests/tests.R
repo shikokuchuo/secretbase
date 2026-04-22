@@ -418,6 +418,9 @@ test_equal(jsondec('{"a":"\\u00eF"}')[["a"]], "\u00ef") # Mixed case hex
 test_equal(jsondec('{"a":"Hello \\u4e16\\u754c!"}')[["a"]], "Hello \u4e16\u754c!") # Mixed content
 test_equal(jsondec('{"a":"line1\\u000aline2"}')[["a"]], "line1\nline2") # Newline via Unicode
 test_equal(charToRaw(jsondec('{"a":"\\u0001"}')[["a"]])[1], as.raw(1)) # Control char U+0001
+# UTF-8 encoding tag tests (RFC 8259 Section 8):
+test_equal(Encoding(jsondec('{"a":"\\u00e9"}')[["a"]]), "UTF-8") # decoded value tagged UTF-8
+test_equal(Encoding(names(jsondec('{"\\u00e9":"v"}'))), "UTF-8") # decoded key tagged UTF-8
 # UTF-16 surrogate pair tests (characters outside BMP):
 test_equal(jsondec('{"a":"\\uD83D\\uDE00"}')[["a"]], "\U0001F600")
 test_equal(jsondec('{"a":"\\uD83D\\uDCA9"}')[["a"]], "\U0001F4A9")
