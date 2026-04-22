@@ -2,6 +2,8 @@
 
 ## secretbase (development version)
 
+- Speeds up hex string conversion for hash output (`convert = TRUE`).
+
 ## secretbase 1.2.1
 
 CRAN release: 2026-03-30
