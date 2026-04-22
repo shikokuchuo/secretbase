@@ -1,5 +1,7 @@
 # secretbase (development version)
 
+* Speeds up hex string conversion for hash output (`convert = TRUE`).
+
 # secretbase 1.2.1
 
 * Fixes UB as detected when compiling under GCC 16.
