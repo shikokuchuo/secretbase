@@ -286,16 +286,19 @@ static void hash_object(mbedtls_sha3_context *ctx, const SEXP x) {
 }
 
 SEXP sb_hash_sexp(unsigned char *buf, const size_t sz, const int conv) {
-  
+
+  static const char hex[] = "0123456789abcdef";
   SEXP out;
   if (conv == 0) {
     out = Rf_allocVector(RAWSXP, sz);
     memcpy(SB_DATAPTR(out), buf, sz);
   } else if (conv == 1) {
     char cbuf[sz + sz + 1];
-    char *cptr = cbuf;
-    for (size_t i = 0; i < sz; i++)
-      cptr += snprintf(cptr, 3, "%.2x", buf[i]);
+    for (size_t i = 0; i < sz; i++) {
+      cbuf[2 * i]     = hex[buf[i] >> 4];
+      cbuf[2 * i + 1] = hex[buf[i] & 0x0f];
+    }
+    cbuf[sz + sz] = '\0';
     PROTECT(out = Rf_allocVector(STRSXP, 1));
     SET_STRING_ELT(out, 0, Rf_mkCharLenCE(cbuf, (int) (sz + sz), CE_NATIVE));
     UNPROTECT(1);
@@ -303,9 +306,9 @@ SEXP sb_hash_sexp(unsigned char *buf, const size_t sz, const int conv) {
     out = Rf_allocVector(INTSXP, sz / sizeof(int));
     memcpy(SB_DATAPTR(out), buf, sz);
   }
-  
+
   return out;
-  
+
 }
 
 static SEXP secretbase_sha3_impl(const SEXP x, const SEXP bits, const SEXP convert,
