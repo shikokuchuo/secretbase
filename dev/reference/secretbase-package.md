@@ -29,3 +29,9 @@ Other contributors:
   holder, funder\]
 
 - Hibiki AI Limited \[copyright holder\]
+
+- The Mbed TLS Contributors (Mbed TLS library) \[copyright holder\]
+
+- Red Hat, Inc. (c-siphash library) \[copyright holder\]
+
+- Luke Dashjr (libbase58 library) \[copyright holder\]

@@ -10,6 +10,15 @@
 
 - **Hibiki AI Limited**. Copyright holder.
 
+- **The Mbed TLS Contributors**. Copyright holder.  
+  Mbed TLS library
+
+- **Red Hat, Inc.**. Copyright holder.  
+  c-siphash library
+
+- **Luke Dashjr**. Copyright holder.  
+  libbase58 library
+
 ## Citation
 
 Source:
