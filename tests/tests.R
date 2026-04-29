@@ -405,7 +405,8 @@ test_identical(jsondec('{"x":-}'), list()) # Invalid number (bare minus)
 test_identical(jsondec('-'), list()) # Top-level invalid number
 test_identical(jsondec('{"x":--1}'), list()) # Double minus
 test_identical(jsondec('["a'), list()) # Unterminated string in array
-test_identical(jsondec(jsonenc(.libPaths())), as.list(.libPaths()))
+paths <- c(.libPaths(), tempdir())
+test_identical(jsondec(jsonenc(paths)), as.list(paths))
 if (!(.Platform[["OS.type"]] == "windows" && getRversion() < "4.2")) {
 # Unicode escape sequence tests (RFC 8259 Section 7):
 test_equal(jsondec('{"a":"\\u0041"}')[["a"]], "A") # U+0041 = A (ASCII via Unicode escape)
