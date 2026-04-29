@@ -24,6 +24,9 @@ Other contributors:
 \itemize{
   \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
   \item Hibiki AI Limited [copyright holder]
+  \item The Mbed TLS Contributors (Mbed TLS library) [copyright holder]
+  \item Red Hat, Inc. (c-siphash library) [copyright holder]
+  \item Luke Dashjr (libbase58 library) [copyright holder]
 }
 
 }

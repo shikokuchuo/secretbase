@@ -7,7 +7,13 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-0750-061X")),
     person("Posit Software, PBC", role = c("cph", "fnd"),
            comment = c(ROR = "03wc8by49")),
-    person("Hibiki AI Limited", role = "cph")
+    person("Hibiki AI Limited", role = "cph"),
+    person("The Mbed TLS Contributors", role = "cph",
+           comment = "Mbed TLS library"),
+    person("Red Hat, Inc.", role = "cph",
+           comment = "c-siphash library"),
+    person("Luke", "Dashjr", role = "cph",
+           comment = "libbase58 library")
   )
 Description: Fast and memory-efficient streaming hash functions,
     binary/text encoding and serialization. Hashes strings and raw vectors
