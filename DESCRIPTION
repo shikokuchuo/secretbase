@@ -9,11 +9,11 @@ Authors@R: c(
            comment = c(ROR = "03wc8by49")),
     person("Hibiki AI Limited", role = "cph"),
     person("The Mbed TLS Contributors", role = "cph",
-           comment = "Mbed TLS library"),
+           comment = "SHA-3, SHA-256 and base64 code from Mbed TLS"),
     person("Red Hat, Inc.", role = "cph",
-           comment = "c-siphash library"),
+           comment = "SipHash code from c-siphash"),
     person("Luke", "Dashjr", role = "cph",
-           comment = "libbase58 library")
+           comment = "Base58 code from libbase58")
   )
 Description: Fast and memory-efficient streaming hash functions,
     binary/text encoding and serialization. Hashes strings and raw vectors
