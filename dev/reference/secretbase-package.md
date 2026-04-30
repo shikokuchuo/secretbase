@@ -30,8 +30,9 @@ Other contributors:
 
 - Hibiki AI Limited \[copyright holder\]
 
-- The Mbed TLS Contributors (Mbed TLS library) \[copyright holder\]
+- The Mbed TLS Contributors (SHA-3, SHA-256 and base64 code from Mbed
+  TLS) \[copyright holder\]
 
-- Red Hat, Inc. (c-siphash library) \[copyright holder\]
+- Red Hat, Inc. (SipHash code from c-siphash) \[copyright holder\]
 
-- Luke Dashjr (libbase58 library) \[copyright holder\]
+- Luke Dashjr (Base58 code from libbase58) \[copyright holder\]

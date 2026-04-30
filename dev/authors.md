@@ -11,13 +11,13 @@
 - **Hibiki AI Limited**. Copyright holder.
 
 - **The Mbed TLS Contributors**. Copyright holder.  
-  Mbed TLS library
+  SHA-3, SHA-256 and base64 code from Mbed TLS
 
 - **Red Hat, Inc.**. Copyright holder.  
-  c-siphash library
+  SipHash code from c-siphash
 
 - **Luke Dashjr**. Copyright holder.  
-  libbase58 library
+  Base58 code from libbase58
 
 ## Citation
 
