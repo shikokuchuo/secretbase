@@ -2,6 +2,10 @@
 
 ## secretbase (development version)
 
+## secretbase 1.2.2
+
+CRAN release: 2026-05-01
+
 - Speeds up hex string conversion for hash output (`convert = TRUE`).
 - [`jsondec()`](https://shikokuchuo.net/secretbase/dev/reference/jsondec.md)
   now tags decoded strings as UTF-8 per RFC 8259.
