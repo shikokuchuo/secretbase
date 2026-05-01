@@ -22,7 +22,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/shikokuchuo/secretbase/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/shikokuchuo/secretbase/blob/v1.2.2/DESCRIPTION)
 
 Gao C (2026). *secretbase: Cryptographic Hash Functions and Data
 Encoding*. R package version 1.2.2,
