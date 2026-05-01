@@ -1,4 +1,4 @@
-# secretbase: Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions
+# secretbase: Cryptographic Hash Functions and Data Encoding
 
 Fast and memory-efficient streaming hash functions, binary/text encoding
 and serialization. Hashes strings and raw vectors directly. Stream
@@ -29,3 +29,10 @@ Other contributors:
   holder, funder\]
 
 - Hibiki AI Limited \[copyright holder\]
+
+- The Mbed TLS Contributors (SHA-3, SHA-256 and base64 code from Mbed
+  TLS) \[copyright holder\]
+
+- Red Hat, Inc. (SipHash code from c-siphash) \[copyright holder\]
+
+- Luke Dashjr (Base58 code from libbase58) \[copyright holder\]

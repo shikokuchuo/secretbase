@@ -22,25 +22,27 @@ Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions,
 SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random
 function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
 
-| Function                                                                                                                                                                                                   | Purpose                            |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-| [`sha3()`](https://shikokuchuo.net/secretbase/reference/sha3.md) [`sha256()`](https://shikokuchuo.net/secretbase/reference/sha256.md) [`keccak()`](https://shikokuchuo.net/secretbase/reference/keccak.md) | Cryptographic hashes               |
-| [`shake256()`](https://shikokuchuo.net/secretbase/reference/shake256.md)                                                                                                                                   | Extendable-output function (XOF)   |
-| [`siphash13()`](https://shikokuchuo.net/secretbase/reference/siphash13.md)                                                                                                                                 | Keyed, fast pseudo-random function |
-| [`base64enc()`](https://shikokuchuo.net/secretbase/reference/base64enc.md) [`base64dec()`](https://shikokuchuo.net/secretbase/reference/base64dec.md)                                                      | Base64 encoding                    |
-| [`base58enc()`](https://shikokuchuo.net/secretbase/reference/base58enc.md) [`base58dec()`](https://shikokuchuo.net/secretbase/reference/base58dec.md)                                                      | Base58 encoding with checksum      |
-| [`cborenc()`](https://shikokuchuo.net/secretbase/reference/cborenc.md) [`cbordec()`](https://shikokuchuo.net/secretbase/reference/cbordec.md)                                                              | CBOR serialization                 |
-| [`jsonenc()`](https://shikokuchuo.net/secretbase/reference/jsonenc.md) [`jsondec()`](https://shikokuchuo.net/secretbase/reference/jsondec.md)                                                              | JSON serialization                 |
+| Function | Purpose |
+|----|----|
+| [`sha3()`](https://shikokuchuo.net/secretbase/reference/sha3.md) [`sha256()`](https://shikokuchuo.net/secretbase/reference/sha256.md) [`keccak()`](https://shikokuchuo.net/secretbase/reference/keccak.md) | Cryptographic hashes |
+| [`shake256()`](https://shikokuchuo.net/secretbase/reference/shake256.md) | Extendable-output function (XOF) |
+| [`siphash13()`](https://shikokuchuo.net/secretbase/reference/siphash13.md) | Keyed, fast pseudo-random function |
+| [`base64enc()`](https://shikokuchuo.net/secretbase/reference/base64enc.md) [`base64dec()`](https://shikokuchuo.net/secretbase/reference/base64dec.md) | Base64 encoding |
+| [`base58enc()`](https://shikokuchuo.net/secretbase/reference/base58enc.md) [`base58dec()`](https://shikokuchuo.net/secretbase/reference/base58dec.md) | Base58 encoding with checksum |
+| [`cborenc()`](https://shikokuchuo.net/secretbase/reference/cborenc.md) [`cbordec()`](https://shikokuchuo.net/secretbase/reference/cbordec.md) | CBOR serialization |
+| [`jsonenc()`](https://shikokuchuo.net/secretbase/reference/jsonenc.md) [`jsondec()`](https://shikokuchuo.net/secretbase/reference/jsondec.md) | JSON serialization |
 
 ### Installation
 
 ``` r
+
 install.packages("secretbase")
 ```
 
 ### Get Started
 
 ``` r
+
 library(secretbase)
 ```
 
@@ -51,6 +53,7 @@ library(secretbase)
 Specify `bits` as `224`, `256`, `384` or `512`:
 
 ``` r
+
 sha3("secret base")
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
 sha3("secret base", convert = FALSE)
@@ -63,6 +66,7 @@ sha3("秘密の基地の中", bits = 512L)
 #### SHA-256
 
 ``` r
+
 sha256("secret base")
 #> [1] "1951c1ca3d50e95e6ede2b1c26fefd0f0e8eba1e51a837f8ccefb583a2b686fe"
 ```
@@ -70,6 +74,7 @@ sha256("secret base")
 For HMAC, pass a character string or raw vector to `key`:
 
 ``` r
+
 sha256("secret base", key = "秘密の基地の中")
 #> [1] "ec58099ab21325e792bef8f1aafc0a70e1a7227463cfc410931112705d753392"
 ```
@@ -77,6 +82,7 @@ sha256("secret base", key = "秘密の基地の中")
 #### Keccak
 
 ``` r
+
 keccak("secret base", bits = 384L)
 #> [1] "c82bae24175676028e44aa08b9e2424311847adb0b071c68c7ea47edf049b0e935ddd2fc7c499333bccc08c7eb7b1203"
 ```
@@ -88,6 +94,7 @@ used as deterministic random seeds for R’s pseudo random number
 generators (RNGs) - use `convert = NA` for integer output:
 
 ``` r
+
 shake256("秘密の基地の中", bits = 32L, convert = NA)
 #> [1] 2000208511
 ```
@@ -104,6 +111,7 @@ SipHash-1-3 is a fast, keyed pseudo-random function. Pass to `key` up to
 16 bytes (128 bits):
 
 ``` r
+
 siphash13("secret base", key = "秘密の基地の中")
 #> [1] "a1f0a751892cc7dd"
 ```
@@ -123,6 +131,7 @@ are stream hashed using R serialization:
   skipping headers
 
 ``` r
+
 sha3(data.frame(a = 1, b = 2), bits = 224L)
 #> [1] "03778aad53bff7dd68caab94374bba6f07cea235fb97b3c52cf612e9"
 sha3(NULL)
@@ -135,6 +144,7 @@ Files are read and hashed incrementally, accepting files larger than
 memory:
 
 ``` r
+
 file <- tempfile(); cat("secret base", file = file)
 sha3(file = file)
 #> [1] "a721d57570e7ce366adee2fccbe9770723c6e3622549c31c7cab9dbb4a795520"
@@ -145,6 +155,7 @@ sha3(file = file)
 #### Base64
 
 ``` r
+
 base64enc("secret base")
 #> [1] "c2VjcmV0IGJhc2U="
 base64dec(base64enc("secret base"))
@@ -160,6 +171,7 @@ base64dec(base64enc(data.frame()), convert = NA)
 Includes a 4-byte checksum (double SHA-256), verified on decode:
 
 ``` r
+
 base58enc("secret base")
 #> [1] "4EFRHUcj9ookBnv1yX9Gt"
 base58dec(base58enc("secret base"))
@@ -179,6 +191,7 @@ integers, doubles, strings, raw vectors, logical, NULL, and lists (named
 lists become maps):
 
 ``` r
+
 cborenc(list(a = 1L, b = "hello", c = TRUE))
 #>  [1] a3 61 61 01 61 62 65 68 65 6c 6c 6f 61 63 f5
 cbordec(cborenc(list(a = 1L, b = "hello", c = TRUE)))
@@ -197,6 +210,7 @@ cbordec(cborenc(list(a = 1L, b = "hello", c = TRUE)))
 Minimal JSON encoder/decoder for HTTP API request/response bodies:
 
 ``` r
+
 jsonenc(list(name = "John", age = 30L, active = TRUE))
 #> [1] "{\"name\":\"John\",\"age\":30,\"active\":true}"
 jsondec('{"name": "John", "age": 30, "active": true}')
@@ -280,8 +294,7 @@ participating in this project you agree to abide by its terms.
 
 - [`secretbase`](https://shikokuchuo.net/secretbase/reference/secretbase-package.md)
   [`secretbase-package`](https://shikokuchuo.net/secretbase/reference/secretbase-package.md)
-  : secretbase: Cryptographic Hash, Extendable-Output and Binary/Text
-  Encoding Functions
+  : secretbase: Cryptographic Hash Functions and Data Encoding
 - [`base58dec()`](https://shikokuchuo.net/secretbase/reference/base58dec.md)
   : Base58 Decode
 - [`base58enc()`](https://shikokuchuo.net/secretbase/reference/base58enc.md)

@@ -2,8 +2,7 @@
 
 - [`secretbase`](https://shikokuchuo.net/secretbase/reference/secretbase-package.md)
   [`secretbase-package`](https://shikokuchuo.net/secretbase/reference/secretbase-package.md)
-  : secretbase: Cryptographic Hash, Extendable-Output and Binary/Text
-  Encoding Functions
+  : secretbase: Cryptographic Hash Functions and Data Encoding
 - [`base58dec()`](https://shikokuchuo.net/secretbase/reference/base58dec.md)
   : Base58 Decode
 - [`base58enc()`](https://shikokuchuo.net/secretbase/reference/base58enc.md)

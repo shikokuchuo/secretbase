@@ -36,6 +36,7 @@ R CMD INSTALL .
 ### Testing from R Console
 
 ``` r
+
 # Load package
 library(secretbase)
 

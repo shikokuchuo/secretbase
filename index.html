@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions • secretbase</title>
+<title>Cryptographic Hash Functions and Data Encoding • secretbase</title>
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Cryptographic Hash, Extendable-Output and Binary/Text Encoding Functions">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Cryptographic Hash Functions and Data Encoding">
 <meta name="description" content="Fast and memory-efficient streaming hash functions, binary/text encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through Rs serialization mechanism. Implements the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), SipHash pseudo-random function, base64 and base58 encoding, CBOR and JSON' serialization.">
 <meta property="og:description" content="Fast and memory-efficient streaming hash functions, binary/text encoding and serialization. Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through Rs serialization mechanism. Implements the SHA-256, SHA-3 and Keccak cryptographic hash functions, SHAKE256 extendable-output function (XOF), SipHash pseudo-random function, base64 and base58 encoding, CBOR and JSON' serialization.">
 </head>
@@ -24,7 +24,7 @@
 
     <a class="navbar-brand me-2" href="index.html">secretbase</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,44 +72,44 @@
 <p>Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R’s serialization mechanism.</p>
 <p>Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions, SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.</p>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th>Function</th>
 <th>Purpose</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>
 <code><a href="reference/sha3.html">sha3()</a></code> <code><a href="reference/sha256.html">sha256()</a></code> <code><a href="reference/keccak.html">keccak()</a></code>
 </td>
 <td>Cryptographic hashes</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code><a href="reference/shake256.html">shake256()</a></code></td>
 <td>Extendable-output function (XOF)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code><a href="reference/siphash13.html">siphash13()</a></code></td>
 <td>Keyed, fast pseudo-random function</td>
 </tr>
-<tr class="even">
+<tr>
 <td>
 <code><a href="reference/base64enc.html">base64enc()</a></code> <code><a href="reference/base64dec.html">base64dec()</a></code>
 </td>
 <td>Base64 encoding</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>
 <code><a href="reference/base58enc.html">base58enc()</a></code> <code><a href="reference/base58dec.html">base58dec()</a></code>
 </td>
 <td>Base58 encoding with checksum</td>
 </tr>
-<tr class="even">
+<tr>
 <td>
 <code><a href="reference/cborenc.html">cborenc()</a></code> <code><a href="reference/cbordec.html">cbordec()</a></code>
 </td>
 <td>CBOR serialization</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>
 <code><a href="reference/jsonenc.html">jsonenc()</a></code> <code><a href="reference/jsondec.html">jsondec()</a></code>
 </td>
