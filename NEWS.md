@@ -1,4 +1,4 @@
-# secretbase (development version)
+# secretbase 1.3.0
 
 * `base64enc()` and `base64dec()` gain a `url` argument for the URL- and filename-safe base64 variant (RFC 4648 section 5), using the `-` and `_` alphabet without padding.
 
