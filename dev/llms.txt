@@ -20,7 +20,8 @@ serialization mechanism.
 
 Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions,
 SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random
-function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
+function, base64 (including the URL-safe variant) and base58 encoding,
+‘CBOR’ and ‘JSON’ serialization.
 
 | Function | Purpose |
 |----|----|
