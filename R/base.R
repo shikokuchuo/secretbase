@@ -8,9 +8,15 @@
 #' whilst all other objects are first serialized (using R serialisation version
 #' 3, big-endian representation).
 #'
+#' Set `url = TRUE` for the URL- and filename-safe variant (RFC 4648 section 5),
+#' which substitutes `-` and `_` for `+` and `/` and omits padding (`=`), making
+#' the output safe to use within URLs and filenames without further escaping.
+#'
 #' @param x an object.
 #' @param convert logical `TRUE` to encode to a character string or `FALSE` to a
 #'   raw vector.
+#' @param url logical `TRUE` to use the URL- and filename-safe base64url alphabet
+#'   without padding, or `FALSE` (the default) for standard base64.
 #'
 #' @return A character string or raw vector depending on the value of `convert`.
 #'
@@ -25,10 +31,12 @@
 #' base64enc("secret base")
 #' base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 #' base64enc(data.frame())
+#' base64enc("secret base", url = TRUE)
 #'
 #' @export
 #'
-base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
+base64enc <- function(x, convert = TRUE, url = FALSE)
+  .Call(secretbase_base64enc, x, convert, url)
 
 #' Base64 Decode
 #'
@@ -38,10 +46,16 @@ base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 #' reverse of the 3 encoding operations (for strings, raw vectors and arbitrary
 #' objects), in order to return the original object.
 #'
+#' Set `url = TRUE` to decode the URL- and filename-safe variant (RFC 4648
+#' section 5), which expects the `-` and `_` alphabet without padding; inputs
+#' containing `+`, `/` or `=` are then rejected. The value of `url` must match
+#' the variant used to encode.
+#'
 #' @param x an object.
 #' @param convert logical `TRUE` to convert back to a character string, `FALSE`
 #'   to convert back to a raw vector or `NA` to decode and then unserialize back
 #'   to the original object.
+#' @inheritParams base64enc
 #'
 #' @return A character string, raw vector, or other object depending on the
 #'   value of `convert`.
@@ -57,10 +71,12 @@ base64enc <- function(x, convert = TRUE) .Call(secretbase_base64enc, x, convert)
 #' base64dec(base64enc("secret base"))
 #' base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
 #' base64dec(base64enc(data.frame()), convert = NA)
+#' base64dec(base64enc("secret base", url = TRUE), url = TRUE)
 #'
 #' @export
 #'
-base64dec <- function(x, convert = TRUE) .Call(secretbase_base64dec, x, convert)
+base64dec <- function(x, convert = TRUE, url = FALSE)
+  .Call(secretbase_base64dec, x, convert, url)
 
 #' Base58 Encode
 #'

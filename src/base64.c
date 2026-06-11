@@ -43,28 +43,33 @@ static inline unsigned char mbedtls_ct_uchar_in_range_if(unsigned char low,
   return (unsigned char) (~(low_mask | high_mask)) & to;
 }
 
-unsigned char mbedtls_ct_base64_enc_char(unsigned char value) {
+unsigned char mbedtls_ct_base64_enc_char(unsigned char value, int url) {
   unsigned char digit = 0;
   digit |= mbedtls_ct_uchar_in_range_if(0, 25, value, 'A' + value);
   digit |= mbedtls_ct_uchar_in_range_if(26, 51, value, 'a' + value - 26);
   digit |= mbedtls_ct_uchar_in_range_if(52, 61, value, '0' + value - 52);
-  digit |= mbedtls_ct_uchar_in_range_if(62, 62, value, '+');
-  digit |= mbedtls_ct_uchar_in_range_if(63, 63, value, '/');
+  digit |= mbedtls_ct_uchar_in_range_if(62, 62, value, url ? '-' : '+');
+  digit |= mbedtls_ct_uchar_in_range_if(63, 63, value, url ? '_' : '/');
   return digit;
 }
 
-signed char mbedtls_ct_base64_dec_value(unsigned char c) {
+signed char mbedtls_ct_base64_dec_value(unsigned char c, int url) {
   unsigned char val = 0;
   val |= mbedtls_ct_uchar_in_range_if('A', 'Z', c, c - 'A' +  0 + 1);
   val |= mbedtls_ct_uchar_in_range_if('a', 'z', c, c - 'a' + 26 + 1);
   val |= mbedtls_ct_uchar_in_range_if('0', '9', c, c - '0' + 52 + 1);
-  val |= mbedtls_ct_uchar_in_range_if('+', '+', c, c - '+' + 62 + 1);
-  val |= mbedtls_ct_uchar_in_range_if('/', '/', c, c - '/' + 63 + 1);
+  if (url) {
+    val |= mbedtls_ct_uchar_in_range_if('-', '-', c, c - '-' + 62 + 1);
+    val |= mbedtls_ct_uchar_in_range_if('_', '_', c, c - '_' + 63 + 1);
+  } else {
+    val |= mbedtls_ct_uchar_in_range_if('+', '+', c, c - '+' + 62 + 1);
+    val |= mbedtls_ct_uchar_in_range_if('/', '/', c, c - '/' + 63 + 1);
+  }
   return val - 1;
 }
 
 int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
-                          const unsigned char *src, size_t slen) {
+                          const unsigned char *src, size_t slen, int url) {
   
   size_t i, n;
   int C1, C2, C3;
@@ -78,9 +83,12 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
   n = slen / 3 + (slen % 3 != 0);
   
   if (n > (SIZE_MAX - 1) / 4) { *olen = SIZE_MAX; return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL; }
-  
+
   n *= 4;
-  
+
+  if (url && (slen % 3))
+    n -= 3 - (slen % 3);
+
   if ((dlen < n + 1) || (NULL == dst)) {
     *olen = n + 1;
     return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
@@ -92,30 +100,31 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
     C1 = *src++;
     C2 = *src++;
     C3 = *src++;
-    
-    *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+
+    *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F, url);
     *p++ = mbedtls_ct_base64_enc_char((((C1 &  3) << 4) + (C2 >> 4))
-    & 0x3F);
+    & 0x3F, url);
     *p++ = mbedtls_ct_base64_enc_char((((C2 & 15) << 2) + (C3 >> 6))
-    & 0x3F);
-    *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F);
+    & 0x3F, url);
+    *p++ = mbedtls_ct_base64_enc_char(C3 & 0x3F, url);
   }
-  
+
   if (i < slen) {
     C1 = *src++;
     C2 = ((i + 1) < slen) ? *src++ : 0;
-    
-    *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F);
+
+    *p++ = mbedtls_ct_base64_enc_char((C1 >> 2) & 0x3F, url);
     *p++ = mbedtls_ct_base64_enc_char((((C1 & 3) << 4) + (C2 >> 4))
-    & 0x3F);
-    
+    & 0x3F, url);
+
     if ((i + 1) < slen) {
-      *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F);
-    } else {
+      *p++ = mbedtls_ct_base64_enc_char(((C2 & 15) << 2) & 0x3F, url);
+    } else if (!url) {
       *p++ = '=';
     }
-    
-    *p++ = '=';
+
+    if (!url)
+      *p++ = '=';
   }
   
   *olen = (size_t) (p - dst);
@@ -126,7 +135,7 @@ int mbedtls_base64_encode(unsigned char *dst, size_t dlen, size_t *olen,
 }
 
 int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
-                          const unsigned char *src, size_t slen) {
+                          const unsigned char *src, size_t slen, int url) {
   
   size_t i;
   size_t n;
@@ -161,14 +170,14 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
     if (src[i] > 127) { return MBEDTLS_ERR_BASE64_INVALID_CHARACTER; }
     
     if (src[i] == '=') {
-      if (++equals > 2) {
+      if (url || ++equals > 2) {
         return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
     } else {
       if (equals != 0) {
         return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
-      if (mbedtls_ct_base64_dec_value(src[i]) < 0) {
+      if (mbedtls_ct_base64_dec_value(src[i], url) < 0) {
         return MBEDTLS_ERR_BASE64_INVALID_CHARACTER;
       }
     }
@@ -180,9 +189,15 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
     return 0;
   }
 
-  n = (6 * (n >> 3)) + ((6 * (n & 0x7) + 7) >> 3);
-  n -= equals;
-  
+  if (url) {
+    size_t rem = n & 0x3;
+    if (rem == 1) { return MBEDTLS_ERR_BASE64_INVALID_CHARACTER; }
+    n = (n >> 2) * 3 + (rem ? rem - 1 : 0);
+  } else {
+    n = (6 * (n >> 3)) + ((6 * (n & 0x7) + 7) >> 3);
+    n -= equals;
+  }
+
   if (dst == NULL || dlen < n) {
     *olen = n;
     return MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL;
@@ -198,9 +213,9 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
     if (*src == '=') {
       ++equals;
     } else {
-      x |= mbedtls_ct_base64_dec_value(*src);
+      x |= mbedtls_ct_base64_dec_value(*src, url);
     }
-    
+
     if (++accumulated_digits == 4) {
       accumulated_digits = 0;
       *p++ = MBEDTLS_BYTE_2(x);
@@ -212,11 +227,19 @@ int mbedtls_base64_decode(unsigned char *dst, size_t dlen, size_t *olen,
       }
     }
   }
-  
+
+  if (url && accumulated_digits) {
+    x <<= 6 * (4 - accumulated_digits);
+    *p++ = MBEDTLS_BYTE_2(x);
+    if (accumulated_digits == 3) {
+      *p++ = MBEDTLS_BYTE_1(x);
+    }
+  }
+
   *olen = (size_t) (p - dst);
-  
+
   return 0;
-  
+
 }
 
 // secretbase - internals ------------------------------------------------------
@@ -344,16 +367,18 @@ nano_buf sb_any_buf(const SEXP x) {
 
 // secretbase - exported functions ---------------------------------------------
 
-SEXP secretbase_base64enc(SEXP x, SEXP convert) {
-  
+SEXP secretbase_base64enc(SEXP x, SEXP convert, SEXP url) {
+
   SB_ASSERT_LOGICAL(convert);
+  SB_ASSERT_FLAG(url);
   const int conv = SB_LOGICAL(convert);
+  const int urlsafe = SB_LOGICAL(url);
   int xc;
   SEXP out;
   size_t olen;
-  
+
   nano_buf hash = sb_any_buf(x);
-  xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur);
+  xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur, urlsafe);
   if (olen == SIZE_MAX) {
     NANO_FREE(hash);
     Rf_error("object too large to encode");
@@ -363,7 +388,7 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
     NANO_FREE(hash);
     Rf_error("memory allocation failed");
   }
-  xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur);
+  xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur, urlsafe);
   NANO_FREE(hash);
   CHECK_ERROR(xc, buf);
 
@@ -375,20 +400,23 @@ SEXP secretbase_base64enc(SEXP x, SEXP convert) {
   }
 
   free(buf);
-  
+
   return out;
-  
+
 }
 
-SEXP secretbase_base64dec(SEXP x, SEXP convert) {
-  
+SEXP secretbase_base64dec(SEXP x, SEXP convert, SEXP url) {
+
   SB_ASSERT_LOGICAL(convert);
+  SB_ASSERT_FLAG(url);
   const int conv = SB_LOGICAL(convert);
+  const int urlsafe = SB_LOGICAL(url);
+  const char *err = urlsafe ? "input is not valid base64url" : "input is not valid base64";
   int xc;
   const unsigned char *inbuf;
   SEXP out;
   size_t inlen, olen;
-  
+
   switch (TYPEOF(x)) {
   case STRSXP: {
     const char *str = CHAR(*STRING_PTR_RO(x));
@@ -401,16 +429,16 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
     inlen = XLENGTH(x);
     break;
   default:
-    Rf_error("input is not valid base64");
+    Rf_error("%s", err);
   }
-  
-  xc = mbedtls_base64_decode(NULL, 0, &olen, inbuf, inlen);
+
+  xc = mbedtls_base64_decode(NULL, 0, &olen, inbuf, inlen, urlsafe);
   if (xc == MBEDTLS_ERR_BASE64_INVALID_CHARACTER)
-    Rf_error("input is not valid base64");
+    Rf_error("%s", err);
   unsigned char *buf = malloc(olen);
   if (buf == NULL)
     Rf_error("memory allocation failed");
-  xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen);
+  xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen, urlsafe);
   CHECK_ERROR(xc, buf);
 
   switch (conv) {
@@ -426,7 +454,7 @@ SEXP secretbase_base64dec(SEXP x, SEXP convert) {
   }
 
   free(buf);
-  
+
   return out;
-  
+
 }

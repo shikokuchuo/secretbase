@@ -43,7 +43,7 @@ Implements the SHA-256, SHA-3 and 'Keccak' cryptographic hash functions, SHAKE25
 | `sha3()` `sha256()` `keccak()` | Cryptographic hashes |
 | `shake256()` | Extendable-output function (XOF) |
 | `siphash13()` | Keyed, fast pseudo-random function |
-| `base64enc()` `base64dec()` | Base64 encoding |
+| `base64enc()` `base64dec()` | Base64 encoding (incl. URL-safe variant) |
 | `base58enc()` `base58dec()` | Base58 encoding with checksum |
 | `cborenc()` `cbordec()` | CBOR serialization |
 | `jsonenc()` `jsondec()`        | JSON serialization                 |
@@ -152,6 +152,13 @@ base64enc("secret base")
 base64dec(base64enc("secret base"))
 base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 base64dec(base64enc(data.frame()), convert = NA)
+```
+
+Set `url = TRUE` for the URL- and filename-safe variant (RFC 4648 section 5), which uses the `-` and `_` alphabet without padding:
+```{r}
+#| label: base64url
+base64enc("secret base", url = TRUE)
+base64dec(base64enc("secret base", url = TRUE), url = TRUE)
 ```
 
 #### Base58
