@@ -4,13 +4,16 @@
 \alias{base64enc}
 \title{Base64 Encode}
 \usage{
-base64enc(x, convert = TRUE)
+base64enc(x, convert = TRUE, url = FALSE)
 }
 \arguments{
 \item{x}{an object.}
 
 \item{convert}{logical \code{TRUE} to encode to a character string or \code{FALSE} to a
 raw vector.}
+
+\item{url}{logical \code{TRUE} to use the URL- and filename-safe base64url alphabet
+without padding, or \code{FALSE} (the default) for standard base64.}
 }
 \value{
 A character string or raw vector depending on the value of \code{convert}.
@@ -22,11 +25,16 @@ Encodes a character string, raw vector or other object to base64 encoding.
 A character string or raw vector (with no attributes) is encoded as is,
 whilst all other objects are first serialized (using R serialisation version
 3, big-endian representation).
+
+Set \code{url = TRUE} for the URL- and filename-safe variant (RFC 4648 section 5),
+which substitutes \code{-} and \verb{_} for \code{+} and \code{/} and omits padding (\code{=}), making
+the output safe to use within URLs and filenames without further escaping.
 }
 \examples{
 base64enc("secret base")
 base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 base64enc(data.frame())
+base64enc("secret base", url = TRUE)
 
 }
 \references{

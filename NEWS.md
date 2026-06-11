@@ -1,5 +1,7 @@
 # secretbase (development version)
 
+* `base64enc()` and `base64dec()` gain a `url` argument for the URL- and filename-safe base64 variant (RFC 4648 section 5), using the `-` and `_` alphabet without padding.
+
 # secretbase 1.2.2
 
 * Speeds up hex string conversion for hash output (`convert = TRUE`).

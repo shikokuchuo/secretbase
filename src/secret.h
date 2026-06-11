@@ -248,6 +248,8 @@ typedef struct nano_buf_s {
 #define SB_LOGICAL(x) *(int *) DATAPTR_RO(x)
 #define SB_ASSERT_LOGICAL(x) if (TYPEOF(x) != LGLSXP)          \
 Rf_error("'convert' must be a logical value")
+#define SB_ASSERT_FLAG(x) if (TYPEOF(x) != LGLSXP)             \
+Rf_error("'url' must be a logical value")
 #define SB_ASSERT_STR(x) if (TYPEOF(x) != STRSXP)              \
 Rf_error("'file' must be a character string")
 #define NANO_ALLOC(x, sz)                                      \
@@ -301,8 +303,8 @@ SEXP sb_raw_char(unsigned char *, const size_t);
 SEXP sb_unserialize(unsigned char *, const size_t);
 void sb_sha256_raw(const void *, size_t, void *);
 
-SEXP secretbase_base64enc(SEXP, SEXP);
-SEXP secretbase_base64dec(SEXP, SEXP);
+SEXP secretbase_base64enc(SEXP, SEXP, SEXP);
+SEXP secretbase_base64dec(SEXP, SEXP, SEXP);
 SEXP secretbase_base58enc(SEXP, SEXP);
 SEXP secretbase_base58dec(SEXP, SEXP);
 SEXP secretbase_cborenc(SEXP);

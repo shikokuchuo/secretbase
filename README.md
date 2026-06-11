@@ -34,15 +34,15 @@ Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions,
 SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random
 function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
 
-| Function                       | Purpose                            |
-|--------------------------------|------------------------------------|
-| `sha3()` `sha256()` `keccak()` | Cryptographic hashes               |
-| `shake256()`                   | Extendable-output function (XOF)   |
-| `siphash13()`                  | Keyed, fast pseudo-random function |
-| `base64enc()` `base64dec()`    | Base64 encoding                    |
-| `base58enc()` `base58dec()`    | Base58 encoding with checksum      |
-| `cborenc()` `cbordec()`        | CBOR serialization                 |
-| `jsonenc()` `jsondec()`        | JSON serialization                 |
+| Function                       | Purpose                                  |
+|--------------------------------|------------------------------------------|
+| `sha3()` `sha256()` `keccak()` | Cryptographic hashes                     |
+| `shake256()`                   | Extendable-output function (XOF)         |
+| `siphash13()`                  | Keyed, fast pseudo-random function       |
+| `base64enc()` `base64dec()`    | Base64 encoding (incl. URL-safe variant) |
+| `base58enc()` `base58dec()`    | Base58 encoding with checksum            |
+| `cborenc()` `cbordec()`        | CBOR serialization                       |
+| `jsonenc()` `jsondec()`        | JSON serialization                       |
 
 ### Installation
 
@@ -165,6 +165,16 @@ base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 #> [1] 41 51 49 45
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
+```
+
+Set `url = TRUE` for the URL- and filename-safe variant (RFC 4648
+section 5), which uses the `-` and `_` alphabet without padding:
+
+``` r
+base64enc("secret base", url = TRUE)
+#> [1] "c2VjcmV0IGJhc2U"
+base64dec(base64enc("secret base", url = TRUE), url = TRUE)
+#> [1] "secret base"
 ```
 
 #### Base58

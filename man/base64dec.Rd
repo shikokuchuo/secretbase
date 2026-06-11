@@ -4,7 +4,7 @@
 \alias{base64dec}
 \title{Base64 Decode}
 \usage{
-base64dec(x, convert = TRUE)
+base64dec(x, convert = TRUE, url = FALSE)
 }
 \arguments{
 \item{x}{an object.}
@@ -12,6 +12,9 @@ base64dec(x, convert = TRUE)
 \item{convert}{logical \code{TRUE} to convert back to a character string, \code{FALSE}
 to convert back to a raw vector or \code{NA} to decode and then unserialize back
 to the original object.}
+
+\item{url}{logical \code{TRUE} to use the URL- and filename-safe base64url alphabet
+without padding, or \code{FALSE} (the default) for standard base64.}
 }
 \value{
 A character string, raw vector, or other object depending on the
@@ -24,11 +27,17 @@ Decodes a character string, raw vector or other object from base64 encoding.
 The value of \code{convert} should be set to \code{TRUE}, \code{FALSE} or \code{NA} to be the
 reverse of the 3 encoding operations (for strings, raw vectors and arbitrary
 objects), in order to return the original object.
+
+Set \code{url = TRUE} to decode the URL- and filename-safe variant (RFC 4648
+section 5), which expects the \code{-} and \verb{_} alphabet without padding; inputs
+containing \code{+}, \code{/} or \code{=} are then rejected. The value of \code{url} must match
+the variant used to encode.
 }
 \examples{
 base64dec(base64enc("secret base"))
 base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
 base64dec(base64enc(data.frame()), convert = NA)
+base64dec(base64enc("secret base", url = TRUE), url = TRUE)
 
 }
 \references{
