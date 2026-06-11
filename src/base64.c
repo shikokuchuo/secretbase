@@ -367,16 +367,18 @@ nano_buf sb_any_buf(const SEXP x) {
 
 // secretbase - exported functions ---------------------------------------------
 
-static SEXP sb_base64_encode_impl(SEXP x, SEXP convert, int url) {
+SEXP secretbase_base64enc(SEXP x, SEXP convert, SEXP url) {
 
   SB_ASSERT_LOGICAL(convert);
+  SB_ASSERT_FLAG(url);
   const int conv = SB_LOGICAL(convert);
+  const int urlsafe = SB_LOGICAL(url);
   int xc;
   SEXP out;
   size_t olen;
 
   nano_buf hash = sb_any_buf(x);
-  xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur, url);
+  xc = mbedtls_base64_encode(NULL, 0, &olen, hash.buf, hash.cur, urlsafe);
   if (olen == SIZE_MAX) {
     NANO_FREE(hash);
     Rf_error("object too large to encode");
@@ -386,7 +388,7 @@ static SEXP sb_base64_encode_impl(SEXP x, SEXP convert, int url) {
     NANO_FREE(hash);
     Rf_error("memory allocation failed");
   }
-  xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur, url);
+  xc = mbedtls_base64_encode(buf, olen, &olen, hash.buf, hash.cur, urlsafe);
   NANO_FREE(hash);
   CHECK_ERROR(xc, buf);
 
@@ -403,11 +405,13 @@ static SEXP sb_base64_encode_impl(SEXP x, SEXP convert, int url) {
 
 }
 
-static SEXP sb_base64_decode_impl(SEXP x, SEXP convert, int url) {
+SEXP secretbase_base64dec(SEXP x, SEXP convert, SEXP url) {
 
   SB_ASSERT_LOGICAL(convert);
+  SB_ASSERT_FLAG(url);
   const int conv = SB_LOGICAL(convert);
-  const char *err = url ? "input is not valid base64url" : "input is not valid base64";
+  const int urlsafe = SB_LOGICAL(url);
+  const char *err = urlsafe ? "input is not valid base64url" : "input is not valid base64";
   int xc;
   const unsigned char *inbuf;
   SEXP out;
@@ -428,13 +432,13 @@ static SEXP sb_base64_decode_impl(SEXP x, SEXP convert, int url) {
     Rf_error("%s", err);
   }
 
-  xc = mbedtls_base64_decode(NULL, 0, &olen, inbuf, inlen, url);
+  xc = mbedtls_base64_decode(NULL, 0, &olen, inbuf, inlen, urlsafe);
   if (xc == MBEDTLS_ERR_BASE64_INVALID_CHARACTER)
     Rf_error("%s", err);
   unsigned char *buf = malloc(olen);
   if (buf == NULL)
     Rf_error("memory allocation failed");
-  xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen, url);
+  xc = mbedtls_base64_decode(buf, olen, &olen, inbuf, inlen, urlsafe);
   CHECK_ERROR(xc, buf);
 
   switch (conv) {
@@ -453,14 +457,4 @@ static SEXP sb_base64_decode_impl(SEXP x, SEXP convert, int url) {
 
   return out;
 
-}
-
-SEXP secretbase_base64enc(SEXP x, SEXP convert, SEXP url) {
-  SB_ASSERT_FLAG(url);
-  return sb_base64_encode_impl(x, convert, SB_LOGICAL(url));
-}
-
-SEXP secretbase_base64dec(SEXP x, SEXP convert, SEXP url) {
-  SB_ASSERT_FLAG(url);
-  return sb_base64_decode_impl(x, convert, SB_LOGICAL(url));
 }
