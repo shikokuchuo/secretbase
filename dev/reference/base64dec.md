@@ -6,7 +6,7 @@ encoding.
 ## Usage
 
 ``` r
-base64dec(x, convert = TRUE)
+base64dec(x, convert = TRUE, url = FALSE)
 ```
 
 ## Arguments
@@ -21,6 +21,11 @@ base64dec(x, convert = TRUE)
   convert back to a raw vector or `NA` to decode and then unserialize
   back to the original object.
 
+- url:
+
+  logical `TRUE` to use the URL- and filename-safe base64url alphabet
+  without padding, or `FALSE` (the default) for standard base64.
+
 ## Value
 
 A character string, raw vector, or other object depending on the value
@@ -31,6 +36,11 @@ of `convert`.
 The value of `convert` should be set to `TRUE`, `FALSE` or `NA` to be
 the reverse of the 3 encoding operations (for strings, raw vectors and
 arbitrary objects), in order to return the original object.
+
+Set `url = TRUE` to decode the URL- and filename-safe variant (RFC 4648
+section 5), which expects the `-` and `_` alphabet without padding;
+inputs containing `+`, `/` or `=` are then rejected. The value of `url`
+must match the variant used to encode.
 
 ## References
 
@@ -51,4 +61,6 @@ base64dec(base64enc(as.raw(c(1L, 2L, 4L))), convert = FALSE)
 #> [1] 01 02 04
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
+base64dec(base64enc("secret base", url = TRUE), url = TRUE)
+#> [1] "secret base"
 ```

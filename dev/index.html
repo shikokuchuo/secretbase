@@ -73,6 +73,10 @@
 <p>Hashes strings and raw vectors directly. Stream hashes files which can be larger than memory, as well as in-memory objects through R’s serialization mechanism.</p>
 <p>Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions, SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.</p>
 <table class="table">
+<colgroup>
+<col width="43%">
+<col width="56%">
+</colgroup>
 <thead><tr>
 <th>Function</th>
 <th>Purpose</th>
@@ -96,7 +100,7 @@
 <td>
 <code><a href="reference/base64enc.html">base64enc()</a></code> <code><a href="reference/base64dec.html">base64dec()</a></code>
 </td>
-<td>Base64 encoding</td>
+<td>Base64 encoding (incl. URL-safe variant)</td>
 </tr>
 <tr>
 <td>
@@ -225,12 +229,18 @@
 <span><span class="co">#&gt; [1] 41 51 49 45</span></span>
 <span><span class="fu"><a href="reference/base64dec.html">base64dec</a></span><span class="op">(</span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, convert <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; data frame with 0 columns and 0 rows</span></span></code></pre></div>
+<p>Set <code>url = TRUE</code> for the URL- and filename-safe variant (RFC 4648 section 5), which uses the <code>-</code> and <code>_</code> alphabet without padding:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="st">"secret base"</span>, url <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "c2VjcmV0IGJhc2U"</span></span>
+<span><span class="fu"><a href="reference/base64dec.html">base64dec</a></span><span class="op">(</span><span class="fu"><a href="reference/base64enc.html">base64enc</a></span><span class="op">(</span><span class="st">"secret base"</span>, url <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, url <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "secret base"</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="base58">Base58<a class="anchor" aria-label="anchor" href="#base58"></a>
 </h4>
 <p>Includes a 4-byte checksum (double SHA-256), verified on decode:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/base58enc.html">base58enc</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "4EFRHUcj9ookBnv1yX9Gt"</span></span>
 <span><span class="fu"><a href="reference/base58dec.html">base58dec</a></span><span class="op">(</span><span class="fu"><a href="reference/base58enc.html">base58enc</a></span><span class="op">(</span><span class="st">"secret base"</span><span class="op">)</span><span class="op">)</span></span>
@@ -248,7 +258,7 @@
 <h4 id="cbor">CBOR<a class="anchor" aria-label="anchor" href="#cbor"></a>
 </h4>
 <p>Encode R objects to CBOR (RFC 8949) - a compact binary format. Supports integers, doubles, strings, raw vectors, logical, NULL, and lists (named lists become maps):</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/cborenc.html">cborenc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1L</span>, b <span class="op">=</span> <span class="st">"hello"</span>, c <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] a3 61 61 01 61 62 65 68 65 6c 6c 6f 61 63 f5</span></span>
 <span><span class="fu"><a href="reference/cbordec.html">cbordec</a></span><span class="op">(</span><span class="fu"><a href="reference/cborenc.html">cborenc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">1L</span>, b <span class="op">=</span> <span class="st">"hello"</span>, c <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -265,7 +275,7 @@
 <h4 id="json">JSON<a class="anchor" aria-label="anchor" href="#json"></a>
 </h4>
 <p>Minimal JSON encoder/decoder for HTTP API request/response bodies:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/jsonenc.html">jsonenc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"John"</span>, age <span class="op">=</span> <span class="fl">30L</span>, active <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "{\"name\":\"John\",\"age\":30,\"active\":true}"</span></span>
 <span><span class="fu"><a href="reference/jsondec.html">jsondec</a></span><span class="op">(</span><span class="st">'{"name": "John", "age": 30, "active": true}'</span><span class="op">)</span></span>

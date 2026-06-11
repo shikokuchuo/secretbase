@@ -46,7 +46,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">base64enc</span><span class="op">(</span><span class="va">x</span>, convert <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">base64enc</span><span class="op">(</span><span class="va">x</span>, convert <span class="op">=</span> <span class="cn">TRUE</span>, url <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -61,6 +61,11 @@
 <dd><p>logical <code>TRUE</code> to encode to a character string or <code>FALSE</code> to a
 raw vector.</p></dd>
 
+
+<dt id="arg-url">url<a class="anchor" aria-label="anchor" href="#arg-url"></a></dt>
+<dd><p>logical <code>TRUE</code> to use the URL- and filename-safe base64url alphabet
+without padding, or <code>FALSE</code> (the default) for standard base64.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -71,6 +76,9 @@ raw vector.</p></dd>
     <p>A character string or raw vector (with no attributes) is encoded as is,
 whilst all other objects are first serialized (using R serialisation version
 3, big-endian representation).</p>
+<p>Set <code>url = TRUE</code> for the URL- and filename-safe variant (RFC 4648 section 5),
+which substitutes <code>-</code> and <code>_</code> for <code>+</code> and <code>/</code> and omits padding (<code>=</code>), making
+the output safe to use within URLs and filenames without further escaping.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -91,6 +99,8 @@ whilst all other objects are first serialized (using R serialisation version
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 41 51 49 45</span>
 <span class="r-in"><span><span class="fu">base64enc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "WAoAAAADAAQGAAADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"</span>
+<span class="r-in"><span><span class="fu">base64enc</span><span class="op">(</span><span class="st">"secret base"</span>, url <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "c2VjcmV0IGJhc2U"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

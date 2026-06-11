@@ -27,7 +27,7 @@ function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
 | [`sha3()`](https://shikokuchuo.net/secretbase/dev/reference/sha3.md) [`sha256()`](https://shikokuchuo.net/secretbase/dev/reference/sha256.md) [`keccak()`](https://shikokuchuo.net/secretbase/dev/reference/keccak.md) | Cryptographic hashes |
 | [`shake256()`](https://shikokuchuo.net/secretbase/dev/reference/shake256.md) | Extendable-output function (XOF) |
 | [`siphash13()`](https://shikokuchuo.net/secretbase/dev/reference/siphash13.md) | Keyed, fast pseudo-random function |
-| [`base64enc()`](https://shikokuchuo.net/secretbase/dev/reference/base64enc.md) [`base64dec()`](https://shikokuchuo.net/secretbase/dev/reference/base64dec.md) | Base64 encoding |
+| [`base64enc()`](https://shikokuchuo.net/secretbase/dev/reference/base64enc.md) [`base64dec()`](https://shikokuchuo.net/secretbase/dev/reference/base64dec.md) | Base64 encoding (incl. URL-safe variant) |
 | [`base58enc()`](https://shikokuchuo.net/secretbase/dev/reference/base58enc.md) [`base58dec()`](https://shikokuchuo.net/secretbase/dev/reference/base58dec.md) | Base58 encoding with checksum |
 | [`cborenc()`](https://shikokuchuo.net/secretbase/dev/reference/cborenc.md) [`cbordec()`](https://shikokuchuo.net/secretbase/dev/reference/cbordec.md) | CBOR serialization |
 | [`jsonenc()`](https://shikokuchuo.net/secretbase/dev/reference/jsonenc.md) [`jsondec()`](https://shikokuchuo.net/secretbase/dev/reference/jsondec.md) | JSON serialization |
@@ -164,6 +164,17 @@ base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 #> [1] 41 51 49 45
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
+```
+
+Set `url = TRUE` for the URL- and filename-safe variant (RFC 4648
+section 5), which uses the `-` and `_` alphabet without padding:
+
+``` r
+
+base64enc("secret base", url = TRUE)
+#> [1] "c2VjcmV0IGJhc2U"
+base64dec(base64enc("secret base", url = TRUE), url = TRUE)
+#> [1] "secret base"
 ```
 
 #### Base58
