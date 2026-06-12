@@ -2,6 +2,10 @@
 
 ## secretbase (development version)
 
+## secretbase 1.3.0
+
+CRAN release: 2026-06-12
+
 - [`base64enc()`](https://shikokuchuo.net/secretbase/dev/reference/base64enc.md)
   and
   [`base64dec()`](https://shikokuchuo.net/secretbase/dev/reference/base64dec.md)
