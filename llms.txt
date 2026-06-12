@@ -20,14 +20,15 @@ serialization mechanism.
 
 Implements the SHA-256, SHA-3 and ‘Keccak’ cryptographic hash functions,
 SHAKE256 extendable-output function (XOF), ‘SipHash’ pseudo-random
-function, base64 and base58 encoding, ‘CBOR’ and ‘JSON’ serialization.
+function, base64 (including the URL-safe variant) and base58 encoding,
+‘CBOR’ and ‘JSON’ serialization.
 
 | Function | Purpose |
 |----|----|
 | [`sha3()`](https://shikokuchuo.net/secretbase/reference/sha3.md) [`sha256()`](https://shikokuchuo.net/secretbase/reference/sha256.md) [`keccak()`](https://shikokuchuo.net/secretbase/reference/keccak.md) | Cryptographic hashes |
 | [`shake256()`](https://shikokuchuo.net/secretbase/reference/shake256.md) | Extendable-output function (XOF) |
 | [`siphash13()`](https://shikokuchuo.net/secretbase/reference/siphash13.md) | Keyed, fast pseudo-random function |
-| [`base64enc()`](https://shikokuchuo.net/secretbase/reference/base64enc.md) [`base64dec()`](https://shikokuchuo.net/secretbase/reference/base64dec.md) | Base64 encoding |
+| [`base64enc()`](https://shikokuchuo.net/secretbase/reference/base64enc.md) [`base64dec()`](https://shikokuchuo.net/secretbase/reference/base64dec.md) | Base64 encoding (incl. URL-safe variant) |
 | [`base58enc()`](https://shikokuchuo.net/secretbase/reference/base58enc.md) [`base58dec()`](https://shikokuchuo.net/secretbase/reference/base58dec.md) | Base58 encoding with checksum |
 | [`cborenc()`](https://shikokuchuo.net/secretbase/reference/cborenc.md) [`cbordec()`](https://shikokuchuo.net/secretbase/reference/cbordec.md) | CBOR serialization |
 | [`jsonenc()`](https://shikokuchuo.net/secretbase/reference/jsonenc.md) [`jsondec()`](https://shikokuchuo.net/secretbase/reference/jsondec.md) | JSON serialization |
@@ -164,6 +165,17 @@ base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 #> [1] 41 51 49 45
 base64dec(base64enc(data.frame()), convert = NA)
 #> data frame with 0 columns and 0 rows
+```
+
+Set `url = TRUE` for the URL- and filename-safe variant (RFC 4648
+section 5), which uses the `-` and `_` alphabet without padding:
+
+``` r
+
+base64enc("secret base", url = TRUE)
+#> [1] "c2VjcmV0IGJhc2U"
+base64dec(base64enc("secret base", url = TRUE), url = TRUE)
+#> [1] "secret base"
 ```
 
 #### Base58

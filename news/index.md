@@ -1,5 +1,15 @@
 # Changelog
 
+## secretbase 1.3.0
+
+CRAN release: 2026-06-12
+
+- [`base64enc()`](https://shikokuchuo.net/secretbase/reference/base64enc.md)
+  and
+  [`base64dec()`](https://shikokuchuo.net/secretbase/reference/base64dec.md)
+  gain a `url` argument for the URL- and filename-safe base64 variant
+  (RFC 4648 section 5), using the `-` and `_` alphabet without padding.
+
 ## secretbase 1.2.2
 
 CRAN release: 2026-05-01

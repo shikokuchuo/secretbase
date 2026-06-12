@@ -6,7 +6,7 @@ encoding.
 ## Usage
 
 ``` r
-base64enc(x, convert = TRUE)
+base64enc(x, convert = TRUE, url = FALSE)
 ```
 
 ## Arguments
@@ -20,6 +20,11 @@ base64enc(x, convert = TRUE)
   logical `TRUE` to encode to a character string or `FALSE` to a raw
   vector.
 
+- url:
+
+  logical `TRUE` to use the URL- and filename-safe base64url alphabet
+  without padding, or `FALSE` (the default) for standard base64.
+
 ## Value
 
 A character string or raw vector depending on the value of `convert`.
@@ -29,6 +34,11 @@ A character string or raw vector depending on the value of `convert`.
 A character string or raw vector (with no attributes) is encoded as is,
 whilst all other objects are first serialized (using R serialisation
 version 3, big-endian representation).
+
+Set `url = TRUE` for the URL- and filename-safe variant (RFC 4648
+section 5), which substitutes `-` and `_` for `+` and `/` and omits
+padding (`=`), making the output safe to use within URLs and filenames
+without further escaping.
 
 ## References
 
@@ -49,4 +59,6 @@ base64enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 #> [1] 41 51 49 45
 base64enc(data.frame())
 #> [1] "WAoAAAADAAQGAAADBQAAAAAFVVRGLTgAAAMTAAAAAAAABAIAAAABAAQACQAAAAVuYW1lcwAAABAAAAAAAAAEAgAAAAEABAAJAAAACXJvdy5uYW1lcwAAAA0AAAAAAAAEAgAAAAEABAAJAAAABWNsYXNzAAAAEAAAAAEABAAJAAAACmRhdGEuZnJhbWUAAAD+"
+base64enc("secret base", url = TRUE)
+#> [1] "c2VjcmV0IGJhc2U"
 ```
