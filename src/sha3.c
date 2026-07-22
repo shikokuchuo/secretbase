@@ -209,7 +209,7 @@ static void * (*const volatile secure_memset)(void *, int, size_t) = memset;
 inline void sb_clear_buffer(void *buf, const size_t sz) {
 #ifdef MBEDTLS_CT_ASM
   memset(buf, 0, sz);
-  asm volatile ("" ::: "memory");
+  __asm__ volatile ("" ::: "memory");
 #else
   secure_memset(buf, 0, sz);
 #endif
