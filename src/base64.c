@@ -25,7 +25,7 @@ volatile uint32_t mbedtls_ct_zero = 0;
 
 static inline uint32_t mbedtls_ct_compiler_opaque(uint32_t x) {
 #if defined(MBEDTLS_CT_ASM)
-  asm volatile ("" : [x] "+r" (x) :);
+  __asm__ volatile ("" : [x] "+r" (x) :);
   return x;
 #else
   return x ^ mbedtls_ct_zero;
