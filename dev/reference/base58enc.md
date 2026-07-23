@@ -51,5 +51,5 @@ base58enc("secret base")
 base58enc(as.raw(c(1L, 2L, 4L)), convert = FALSE)
 #> [1] 33 44 56 41 66 71 55 64 77
 base58enc(data.frame())
-#> [1] "Z8bXTedt3w8U2Cnx2rzM7KJi2BNLSCyfQo6ky2a42WrkKJExSaprvqXNp1wP2nfK5JqtWWkoTyKU3NzpMFzxNZyZ6Y3tTAo46MhcGuQUHjdFxApsZWarjTymZ8JXkSENq7BWy9aU2G9FUKqgqQi2JcuA35uX4wP9nZTHRTeV5nnxfqWCrbV73PrnN2VhF1j7Cf8m3bNVkT"
+#> [1] "Z8bXTedt3w8U2KHiu7WH2MswsjzBGynwW55sFsbxeHE6UhNFc7end5TXRPcQxrkPMcMtPbR7Ncb5eQxnz4c4pHzgD9mtMRgz5aW1q6c2VnCKBrb5hf6YFdkqCN5D1vKBt9HrWb6VnR8UYAmyPFiwVPSGGEWbQ1EdpZX6N5j8sF3vciQ46Wg4zKvu6pRmsXzpVDj9prCwtz"
 ```
