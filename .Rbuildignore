@@ -12,5 +12,6 @@
 ^compile_commands\.json$
 ^\.cache$
 ^\.claude$
-^\CLAUDE.md$
+^\.posit$
+^AGENTS\.md$
 ^[\.]?air\.toml$
