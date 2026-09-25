@@ -1,5 +1,12 @@
 # Changelog
 
+## secretbase 1.3.1
+
+- Fixes possible compilation failures under strict C standards
+  compliance by using the `__asm__` keyword in place of `asm` (thanks
+  [@MichaelChirico](https://github.com/MichaelChirico),
+  [\#41](https://github.com/shikokuchuo/secretbase/issues/41)).
+
 ## secretbase 1.3.0
 
 CRAN release: 2026-06-12
