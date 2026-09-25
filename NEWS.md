@@ -1,4 +1,4 @@
-# secretbase (development version)
+# secretbase 1.3.1
 
 * Fixes possible compilation failures under strict C standards compliance by using the `__asm__` keyword in place of `asm` (thanks @MichaelChirico, #41).
 
