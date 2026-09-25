@@ -1,5 +1,7 @@
 # secretbase (development version)
 
+* Fixes possible compilation failures under strict C standards compliance by using the `__asm__` keyword in place of `asm` (thanks @MichaelChirico, #41).
+
 # secretbase 1.3.0
 
 * `base64enc()` and `base64dec()` gain a `url` argument for the URL- and filename-safe base64 variant (RFC 4648 section 5), using the `-` and `_` alphabet without padding.
