@@ -4,6 +4,8 @@
 
 ## secretbase 1.3.1
 
+CRAN release: 2026-09-25
+
 - Fixes possible compilation failures under strict C standards
   compliance by using the `__asm__` keyword in place of `asm` (thanks
   [@MichaelChirico](https://github.com/MichaelChirico),
